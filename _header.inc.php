@@ -28,8 +28,8 @@ if(login_check($mysqli) != true) {
 
 <div class="container">
 	<div class="container">
-		<div class="col-md-10"></div>
-	  	<div class="col-md-2"><?php include_once '../_header_LIAM.inc.php'; ?></div>
+		<div class="col-md-8"></div>
+	  	<div class="col-md-4"><?php include_once '../_header_LIAM.inc.php'; ?></div>
 	</div>
 
     <div class="container text-right">
