@@ -19,6 +19,17 @@
 -- Table structure for table `mylog`
 --
 
+--
+-- Datenbank: `bpmspace_sqms_v1`
+--
+
+DROP DATABASE IF EXISTS`bpmspace_sqms_v1` ;
+CREATE DATABASE `bpmspace_sqms_v1` ;
+GRANT SELECT, INSERT, UPDATE ON `bpmspace_sqms_v1`.* TO 'bpmspace_sqms'@'localhost';
+USE bpmspace_sqms_v1;
+
+
+
 DROP TABLE IF EXISTS `mylog`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;

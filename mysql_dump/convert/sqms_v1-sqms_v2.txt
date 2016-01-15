@@ -1,0 +1,75 @@
+convert
+use bpmspace_sqms_v1;
+drop mylog;
+drop sqms_users;
+drop SQMS_log;
+drop SQMS_logged;
+
+
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_state` 
+RENAME TO  `bpmspace_sqms_v2`.`sqms_syllabus_state` ;
+
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_answer` 
+CHANGE COLUMN `id` `sqms_answer_id` BIGINT(20) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_history` 
+CHANGE COLUMN `id` `sqms_history_id` BIGINT(20) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_language` 
+CHANGE COLUMN `id` `sqms_language_id` BIGINT(20) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_question` 
+CHANGE COLUMN `id` `sqms_question_id` BIGINT(20) NOT NULL AUTO_INCREMENT FIRST;
+
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_question_type` 
+CHANGE COLUMN `id` `sqms_question_type_id` BIGINT(20) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_syllabus_element` 
+CHANGE COLUMN `id` `sqms_syllabus_element_id` BIGINT(20) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_syllabus_element_question` 
+CHANGE COLUMN `id` `sqms_syllabus_element_question_id` BIGINT(20) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_syllabus_state` 
+CHANGE COLUMN `id` `sqms_syllabus_state_id` BIGINT(20) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_syllabus_state_rules` 
+CHANGE COLUMN `id` `sqms_syllabus_state_rules_id` BIGINT(20) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_topic` 
+CHANGE COLUMN `id` `sqms_topic_id` BIGINT(20) NOT NULL AUTO_INCREMENT ;
+
+
+INSERT INTO `bpmspace_sqms_v2`.`sqms_question_state` (`id`, `sqms_state_id`) VALUES ('1', 'new');
+INSERT INTO `bpmspace_sqms_v2`.`sqms_question_state` (`id`, `sqms_state_id`) VALUES ('2', 'ready');
+INSERT INTO `bpmspace_sqms_v2`.`sqms_question_state` (`id`, `sqms_state_id`) VALUES ('3', 'released');
+INSERT INTO `bpmspace_sqms_v2`.`sqms_question_state` (`id`, `sqms_state_id`) VALUES ('4', 'deprecated');
+
+
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_syllabus` 
+DROP FOREIGN KEY `fk_sqms_syllabus_sqms_state1`;
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_syllabus` 
+CHANGE COLUMN `sqms_state_id` `sqms_syllabus_state_id` BIGINT(20) NOT NULL ;
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_syllabus` 
+ADD CONSTRAINT `fk_sqms_syllabus_sqms_state1`
+  FOREIGN KEY (`sqms_syllabus_state_id`)
+  REFERENCES `bpmspace_sqms_v2`.`sqms_syllabus_state` (`sqms_syllabus_state_id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  
+  ALTER TABLE `bpmspace_sqms_v2`.`sqms_question` 
+DROP FOREIGN KEY `fk_sqms_question_sqms_state1`;
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_question` 
+CHANGE COLUMN `sqms_state_id` `sqms_question_state_id` BIGINT(20) NOT NULL ,
+ADD INDEX `fk_sqms_question_sqms_state1_idx` (`sqms_question_state_id` ASC),
+DROP INDEX `fk_sqms_question_sqms_state1_idx` ;
+ALTER TABLE `bpmspace_sqms_v2`.`sqms_question` 
+ADD CONSTRAINT `fk_sqms_question_sqms_state1`
+  FOREIGN KEY (`sqms_question_state_id`)
+  REFERENCES `bpmspace_sqms_v2`.`sqms_question_state` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+  
+
