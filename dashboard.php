@@ -1,7 +1,5 @@
 <?php
 include_once '_dbconfig.inc.php';
-?>
-<?php
 include_once '_header.inc.php';
 ?>
 <div class="clearfix"></div>
