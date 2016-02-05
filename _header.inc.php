@@ -1,35 +1,34 @@
 <?php
-include_once '../phpSecureLogin/includes/db_connect.inc.php';
-include_once '../phpSecureLogin/includes/functions.inc.php';
-sec_session_start(); 
-if(login_check($mysqli) != true) {
-  header("Location: ../index.php?error_messages='You are not logged in!'");
-  exit();
-}
+	include_once '../phpSecureLogin/includes/db_connect.inc.php';
+	include_once '../phpSecureLogin/includes/functions.inc.php';
+	sec_session_start();
+	if(login_check($mysqli) != true) {
+	  header("Location: ../index.php?error_messages='You are not logged in!'");
+	  exit();
+	}
   else {
   	$logged = 'in';
   }
-
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="phonecatApp">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>BPMspace SQMS</title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" media="screen">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="http://www.fuelcdn.com/fuelux/3.13.0/css/fuelux.min.css">
-<link rel="stylesheet" href="custom/custom.css">
-
-<!----- js scripts are loadede in the footer --------------------> 
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>BPMspace SQMS</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css" media="screen">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<link rel="stylesheet" href="http://www.fuelcdn.com/fuelux/3.13.0/css/fuelux.min.css">
+	<script src="js/angular.min.js"></script>
+	<script src="./js/test.js"></script>
+	<link rel="stylesheet" href="custom/custom.css">
+	<!----- js scripts are loaded in the footer --------------------> 
 </head>
-<body>
+<body ng-controller="PhoneListCtrl">
 	<div class="container">
 		<div class="container">
 			<div class="col-md-8"></div>
 			<div class="col-md-4"><?php include_once '../_header_LIAM.inc.php'; ?></div>
 		</div>
-
 		<div class="container text-right">
 		<a href='#' class="btn collapsed row" data-toggle="collapse" data-target="#logo"><i class="fa fa-caret-square-o-down"></i></a>
 		</div>
@@ -83,12 +82,12 @@ if(login_check($mysqli) != true) {
 		</nav>
 	</div>
 <?php
-/* presente $error_messages when not empty */
-if (!empty($_GET["error_messages"])) {
-	echo '<div class="container alert alert-danger 90_percent" role="alert"> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' ;
-	echo '&nbsp;error:&nbsp;' . htmlspecialchars($_GET["error_messages"]);
-	echo '</br></div>';
-}
+	/* presente $error_messages when not empty */
+	if (!empty($_GET["error_messages"])) {
+		echo '<div class="container alert alert-danger 90_percent" role="alert"> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' ;
+		echo '&nbsp;error:&nbsp;' . htmlspecialchars($_GET["error_messages"]);
+		echo '</br></div>';
+	}
 ?>
 <!--------------- END MAIN MENU --------->
 <!--------------- SUB MENU --------->
@@ -109,7 +108,7 @@ if (!empty($_GET["error_messages"])) {
 <div class="clearfix"></br></div>
 <!--------------- END SUB MENU --------->
 <?php
-	$help_text = "true";
+	$help_text = null;
 	/* presente file with helptxt if $help_text = "true" (or set) when not empty */
 	if ($help_text) {
 		echo '<div class="container bg-info 90_percent" >' ;
