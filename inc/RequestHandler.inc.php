@@ -51,10 +51,21 @@ class RequestHandler
         switch($route[0]){
 
 			case 'syllabus':
-                $return = $this->getSyllabusList();
+				$return = array_merge(
+					$this->getSyllabusList(),
+					$this->getTopicList()
+				);
+				return $return;
+                break;
+				
+			case 'syllabuselements':
+                $return = $this->getSyllabusElementsList();
 				return $return;
                 break;
 
+				
+				
+				
             case 'boot':
                 $return['sidebar'] = array(array("text"=>"requ-handler>handleBoot()>sidebar."));
                 $return['content'] = file_get_contents('../../EduMS-client/boot.html');
@@ -107,17 +118,22 @@ class RequestHandler
     ###################################################################################################################
 
     private function getSyllabusList(){
-        $query = "SELECT * FROM bpmspace_sqms_v1.sqms_syllabus"; // TODO: Replace * -> column names
-		/*$result = $this->db->query($query);
-        if($result->num_rows>0){
-            $query .= " AND location_id IN (SELECT location_id FROM `brand_location` WHERE brand_id = ".$this->userid.")";
-        }*/
+        $query = "SELECT * FROM sqms_syllabus;"; // TODO: Replace * -> column names
         $return = array();
         $return['syllabus'] = $this->getResultArray($query);
-        //$return['nextEvents'] = $this->getAllEvents();
         return $return;
     }
-		
+    private function getSyllabusElementsList(){
+        $query = "SELECT * FROM sqms_syllabus_element;"; // TODO: Replace * -> column names
+        $return = array();
+        $return['syllabuselements'] = $this->getResultArray($query);
+        return $return;
+    }
+
+
+
+
+	
     public function showStartPage(){
         $return['sidebar'] = array(array("text"=>"requ-handler>showStartpage()>Startpage>sidebar."));
         $return['content'] = array(array("text"=>"showStartpage()>Startpage>Content"));
@@ -196,6 +212,7 @@ class RequestHandler
      * @param int $id ID des Topics das angezeigt werden soll
      * @return mixed
      */
+	 /*
     private function getPackageList($id=-1){
         $query = "SELECT * FROM `package` WHERE TRUE";
         if($id!=-1){
@@ -203,16 +220,15 @@ class RequestHandler
         }
         $return['packagelist'] = $this->getResultArray($query);
         return $return;
-    }
+    }*/
 
     /*Zweck: Rückgabe eines oder aller Topics aus der Datenbank*/
     private function getTopicList($id=-1){
-        $query = "SELECT * FROM `topic` WHERE `deprecated`=0";
+        $query = "SELECT * FROM `sqms_topic`";
         if($id!=-1){
-            $query .= " AND topic_id='$id'";
+            $query .= " AND sqms_topic_id='$id'";
         }
         $return['topiclist'] = $this->getResultArray($query);
-        $return['nextEvents'] = $this->getEvents();
         return $return;
     }
 

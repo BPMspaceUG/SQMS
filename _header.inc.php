@@ -15,19 +15,18 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>BPMspace SQMS</title>
+	<!-- CSS -->
 	<link rel="stylesheet" href="css/bootstrap.min.css" media="screen">
 	<link rel="stylesheet" href="css/font-awesome.min.css">
 	<link rel="stylesheet" href="http://www.fuelcdn.com/fuelux/3.13.0/css/fuelux.min.css">
 	<script src="js/angular.min.js"></script>
-	<script src="./js/test.js"></script>
 	<link rel="stylesheet" href="custom/custom.css">
 	<!----- js scripts are loaded in the footer --------------------> 
 </head>
 <body ng-controller="PhoneListCtrl">
 	<div class="container">
 		<div class="container">
-			<div class="col-md-8"></div>
-			<div class="col-md-4"><?php include_once '../_header_LIAM.inc.php'; ?></div>
+			<div class="col-md-12"><?php include_once '../_header_LIAM.inc.php'; ?></div>
 		</div>
 		<div class="container text-right">
 		<a href='#' class="btn collapsed row" data-toggle="collapse" data-target="#logo"><i class="fa fa-caret-square-o-down"></i></a>
@@ -45,13 +44,12 @@
 			<ul class="nav navbar-nav">
 				<li><a href="dashboard.php" title='Dashboard'><i class="fa fa-tachometer"></i>&nbsp;Dashboard</a></li>
 				<li>
-					<a title='Show Syllabus' class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-						<i class="fa fa-table"></i>&nbsp;Syllabus<span class="caret"></span>
+					<a title='Show Syllabus' role="button"href="syllabus.php"><i class="fa fa-table"></i>&nbsp;Syllabus</a>
+				</li>
+				<li>
+					<a title='Show Syllabus Elemtents' class="dropdown-toggle" role="button" href="syllabuselement.php">
+						<i class="fa fa-table"></i>&nbsp;Syllabus-Element
 					</a>
-					<ul class="dropdown-menu">
-						<li><a href="user.php" title='user'><i class="fa fa-user-plus"></i>&nbsp;New Syllabus</a></li>
-						<li><a href="user.php" title='user'><i class="fa fa-user-plus"></i>&nbsp;New Syllabus-Element</a></li>
-					</ul>
 				</li>
 				<li>
 					<a title='Show all questions' class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -93,12 +91,9 @@
 <!--------------- SUB MENU --------->
 <div class="clearfix"></div>
 <div class="container 90_percent" >
-	<a href="#" class="btn btn-default" title='Add new Participant'><i class="fa fa-plus"></i>&nbsp;<i class="fa fa-user"></i></a>  
-	<a href="#" class="btn btn-default" title='Add new Event'><i class="fa fa-plus"></i>&nbsp;<i class="fa fa-calendar"></i></a>  
-	<a href="#" class="btn btn-default" title='Add new Organization'><i class="fa fa-plus"></i>&nbsp;<i class="fa fa-cubes"></i></a>  
-	<a href="#" class="btn btn-default" title='Add new Location'><i class="fa fa-plus"></i>&nbsp;<i class="fa fa-location-arrow"></i></a>  
-	<a href="#" class="btn btn-default" title='book participant on event'><i class="fa fa-plus"></i>&nbsp;<i class="fa fa-user"></i>&nbsp;<i class="fa fa-calendar"></i></a>
-	<a href="#" class="btn btn-default" title='book trainer on event'><i class="fa fa-plus"></i>&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<i class="fa fa-calendar"></i></a>
+	<a href="#" class="btn btn-success" title='Add new Participant'><i class="fa fa-plus"></i>&nbsp;New Element</a>
+	<a href="#" class="btn btn-success" title='Add new Event'><i class="fa fa-plus"></i>&nbsp;Copy Element</a>  
+	<a href="#" class="btn btn-danger" title='Add new Organization'><i class="fa fa-minus"></i>&nbsp;Delete Element</a>  
 	<a href="#" title='switch help on/off' class="btn btn-large btn-default navbar-right">
 		<span class="fa-stack">
 			<i class="fa fa-question fa-stack-1x"></i>
