@@ -15,32 +15,20 @@
 ?>
 <div class="clearfix"></div>
 <div class="container">
-	<div class="panel panel-default" ng-repeat="phone in phones | filter:{'sqms_syllabus_id':  '104'}:true">
+	<div class="panel panel-default" ng-repeat="phone in phones | filter:{'sqms_syllabus_id':'104'}:true">
 	  <div class="panel-body">
 		<!-- Navigation-Syllabus -->
 		<ul class="nav nav-tabs">
-		  <li role="presentation" class="active"><a href="#">General</a></li>
-		  <li role="presentation"><a href="#">Element</a></li>
-		  <li role="presentation"><a href="#">History</a></li>
+		  <li role="presentation" class="active"><a href="#" id="tab_general">General</a></li>
+		  <li role="presentation"><a href="#" id="tab_element">Element</a></li>
+		  <li role="presentation"><a href="#" id="tab_history">History</a></li>
 		</ul>
 		<br/>
-		<?php
-			// Attention: Secure Input
-			// TODO: Make in Javascript bzw. AJAX
-			switch ($_GET['tab']) {
-				case "general":
-					include_once("syllabus_general.inc.php");
-					break;
-					
-				case "elements":
-					include_once("syllabus_element.inc.php");
-					break;
-					
-				default:
-					include_once("syllabus_general.inc.php");
-					break;
-			}
+		<div id="tab_content">
+		<?php			
+			include_once("syllabus_general.inc.php");
 		?>
+		</div>
 	  </div>
 	</div>
 	<!-- List of Syllabuses -->
@@ -61,7 +49,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr class="success" ng-repeat="phone in phones | filter:yourName">
+			<tr ng-repeat="phone in phones | filter:yourName">
 				<td><checkbox>#</checkbox></td>
 				<td>{{phone.sqms_syllabus_id}}</td>
 				<td>{{phone.sqms_state_id}}</td>

@@ -62,8 +62,13 @@ class RequestHandler
                 $return = $this->getSyllabusElementsList();
 				return $return;
                 break;
-
 				
+			case 'report_questionswithoutquestionmarks':
+				$return = $this->getReport_QuestionsWithoutQuestionmarks();
+				return $return;
+				break;
+
+			// ====================================================
 				
 				
             case 'boot':
@@ -129,7 +134,15 @@ class RequestHandler
         $return['syllabuselements'] = $this->getResultArray($query);
         return $return;
     }
-
+	
+	// ----------------------------------- Reports
+    private function getReport_QuestionsWithoutQuestionmarks(){
+        $query = "SELECT COUNT(*) AS NrOfQuestionsWOQmarks FROM sqms_question WHERE question NOT LIKE '%?%';";
+        $return = array();
+        $return['reports'] = $this->getResultArray($query);
+        return $return;
+    }
+	
 
 
 

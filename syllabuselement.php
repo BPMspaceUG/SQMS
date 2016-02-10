@@ -15,7 +15,7 @@
 ?>
 <div class="clearfix"></div>
 <div class="container">
-	<div class="panel panel-default" ng-repeat="phone in phones | filter:{'sqms_syllabus_element_id':  '50'}:true">
+	<div class="panel panel-default" ng-repeat="phone in phones | filter:{'sqms_syllabus_element_id':'50'}:true">
 	  <div class="panel-body">
 		<!-- Navigation-Syllabus -->
 		<ul class="nav nav-tabs">
@@ -25,7 +25,7 @@
 		</ul>
 		<br/>
 		<div class="row">
-			
+		
 			<div class="col-sm-12">
 				<p>ID {{phone.sqms_syllabus_element_id}}&nbsp;&nbsp;&nbsp;&nbsp;Syllabus&nbsp;<select class="form-control" style="display:inline;width:200px;">
 					  <option>{{phone.sqms_syllabus_id}}</option>
@@ -90,7 +90,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr class="success" ng-repeat="phone in phones | filter:yourName">
+			<tr ng-repeat="phone in phones | filter:yourName">
 				<td><checkbox>#</checkbox></td>
 				<td>{{phone.sqms_syllabus_element_id}}</td>
 				<td>{{phone.element_order}}</td>
@@ -104,6 +104,18 @@
 	</table>
 </div>
 </div>
+<!-- AngularJS -->
+<script>
+	'use strict';
+	/* Controllers */
+	var phonecatApp = angular.module('phonecatApp', []);
+
+	phonecatApp.controller('PhoneListCtrl', ['$scope', '$http', function($scope, $http) {
+	  $http.get('getjson.php?c=syllabuselements').success(function(data) {
+		$scope.phones = data.syllabuselements;
+	  });
+	}]);
+</script>
 <?php
 	include_once '_footer.inc.php';
 ?>

@@ -19,8 +19,8 @@
 	<link rel="stylesheet" href="css/bootstrap.min.css" media="screen">
 	<link rel="stylesheet" href="css/font-awesome.min.css">
 	<link rel="stylesheet" href="http://www.fuelcdn.com/fuelux/3.13.0/css/fuelux.min.css">
-	<script src="js/angular.min.js"></script>
 	<link rel="stylesheet" href="custom/custom.css">
+	<script type="text/javascript" src="js/angular.min.js"></script>
 	<!----- js scripts are loaded in the footer --------------------> 
 </head>
 <body ng-controller="PhoneListCtrl">
@@ -42,24 +42,25 @@
 	<div class="container">
 		<nav class="navbar navbar-light bg-faded">
 			<ul class="nav navbar-nav">
-				<li><a href="dashboard.php" title='Dashboard'><i class="fa fa-tachometer"></i>&nbsp;Dashboard</a></li>
-				<li>
-					<a title='Show Syllabus' role="button"href="syllabus.php"><i class="fa fa-table"></i>&nbsp;Syllabus</a>
+				<li class="active">
+					<a href="dashboard.php" title='Dashboard'><i class="fa fa-tachometer"></i>&nbsp;Dashboard</a>
 				</li>
 				<li>
-					<a title='Show Syllabus Elemtents' class="dropdown-toggle" role="button" href="syllabuselement.php">
+					<a title='Show Syllabus' href="syllabus.php"><i class="fa fa-table"></i>&nbsp;Syllabus</a>
+				</li>
+				<li>
+					<a title='Show Syllabus Elemtents' href="syllabuselement.php">
 						<i class="fa fa-table"></i>&nbsp;Syllabus-Element
 					</a>
 				</li>
 				<li>
-					<a title='Show all questions' class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<a title='Show all questions' href="#">
 						<i class="fa fa-question"></i>&nbsp;Question<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu">
-						<li><a href="question.php" title='user'><i class="fa fa-user-plus"></i>&nbsp;New Question</a></li>
-					</ul>
 				</li>
-				<li><a href="topic.php" title='Show all Topics'><i class="fa fa-table"></i>&nbsp;Topic</a></li>
+				<li>
+					<a href="topic.php" title='Show all Topics'><i class="fa fa-table"></i>&nbsp;Topic</a>
+				</li>
 				<li class="dropdown">
 					<a title='Admin' class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 						<i class="fa fa-user-secret"></i>&nbsp;Admin<span class="caret"></span>
@@ -71,8 +72,8 @@
 						<li><a href="course.php" title='Course'><i class="fa fa-university"></i>&nbsp;Course</a></li>
 					</ul>
 				</li> 		
-				<li class="nav-item">
-					<a href="../phpSecureLogin/includes/logout.php" title='Logout' class="nav-link">
+				<li>
+					<a href="../phpSecureLogin/includes/logout.php" title='Logout'>
 						<i class="fa fa-sign-out"></i>&nbsp;Logout
 					</a>
 				</li>
@@ -88,6 +89,7 @@
 	}
 ?>
 <!--------------- END MAIN MENU --------->
+<hr>
 <!--------------- SUB MENU --------->
 <div class="clearfix"></div>
 <div class="container 90_percent" >
@@ -103,7 +105,7 @@
 <div class="clearfix"></br></div>
 <!--------------- END SUB MENU --------->
 <?php
-	$help_text = null;
+	$help_text = null; // TODO: Remove!!
 	/* presente file with helptxt if $help_text = "true" (or set) when not empty */
 	if ($help_text) {
 		echo '<div class="container bg-info 90_percent" >' ;

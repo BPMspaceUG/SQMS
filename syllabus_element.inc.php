@@ -5,6 +5,9 @@
 			<th>Name</th>
 			<th>Severity</th>
 			<th>Description</th>
+			<th></th>
+			<th></th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>

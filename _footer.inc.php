@@ -1,6 +1,6 @@
 	<div class="clearfix"></div>
+	<hr/>
 	<div class="container">
-		<hr/>		
 		BPMspace SQMS using
 		<small>
 			<ul>
@@ -13,9 +13,9 @@
 		</small>
 	</div>
 	<!-- JS -->
-	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script> 
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="./jquery_plugin/tablesorter-master/jquery.tablesorter.js"></script> 
+	<!-- obsolete because of Angular ::: <script type="text/javascript" src="./jquery_plugin/tablesorter-master/jquery.tablesorter.js"></script> --> 
 	<script type="text/javascript" src="https://www.fuelcdn.com/fuelux/3.13.0/js/fuelux.min.js"></script>
 	<script type="text/javascript" src="./custom/custom.js"></script> 
 </body>
