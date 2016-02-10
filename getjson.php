@@ -11,12 +11,20 @@
 	else
 		die("no data");
 	
+	// Angular transmits data in JSON Format
+	//$post_data = file_get_contents('php://input');
+	$params = json_decode(file_get_contents('php://input'), true);
+	
 	// RequestHandler from EduMS
-	$routes = array($command); // testing
 	$handler = new RequestHandler(); // Maybe: DB-Connection parameter required
-	$content = $handler->handle($routes);
+	$content = $handler->handle($command, $params);
+	
 	// Convert data from database into JSON Format
 	$jsdata = json_encode($content);
+	
 	// Return data
-	echo $jsdata;
+	if ($content == "" || $content == "goaway")
+		http_response_code(400); // Bad Request
+	else
+		echo $jsdata;
 ?>

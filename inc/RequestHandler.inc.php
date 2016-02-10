@@ -46,9 +46,9 @@ class RequestHandler
         $this->db = $db;
     }
 
-    public function handle($route){
+    public function handle($command, $params){
 
-        switch($route[0]){
+        switch($command){
 
 			case 'syllabus':
 				$return = array_merge(
@@ -63,14 +63,29 @@ class RequestHandler
 				return $return;
                 break;
 				
+			case 'create_syllabus':
+				return $this->addSyllabus($route);
+				break;
+
+			case 'create_topic':
+				return $this->addTopic($params["Name"]);
+				break;				
+				
 			case 'report_questionswithoutquestionmarks':
 				$return = $this->getReport_QuestionsWithoutQuestionmarks();
 				return $return;
 				break;
+				
+			case 'topics':
+				return $this->getTopicList();
+				break;
+			
+			case 'questions':
+				return $this->getQuestionList();
+				break;
 
 			// ====================================================
-				
-				
+/*				
             case 'boot':
                 $return['sidebar'] = array(array("text"=>"requ-handler>handleBoot()>sidebar."));
                 $return['content'] = file_get_contents('../../EduMS-client/boot.html');
@@ -78,8 +93,7 @@ class RequestHandler
                 return $return;
                 break;
 
-            case 'getTopics':
-                
+            case 'getTopics':                
                 return $this->getTopicList();
                 break;
 
@@ -88,30 +102,19 @@ class RequestHandler
                 break;
 
             case 'events':
-                /*
+                
                 /events = Liste aller Events die freigegben sind
                 /events/id = Daten des Events
-                */
+                
                 return $this->handleEvents($handle);
                 break;
 
-            case 'topics':
-                /*
-                /topics = Liste aller Topics
-                /topics/{id} = Daten eines Topics incl. events
-                */
-                return $this->handleTopic($handle);
-                break;
-
             case 'package':
-                /*
-                 *
-                */
                 return $this->handlePackage($handle);
                 break;              
-
+*/
             default:
-                echo "Requesthandler>handle>defaultRequest";
+                return "goaway";
                 exit;
                 break;
 
@@ -128,13 +131,54 @@ class RequestHandler
         $return['syllabus'] = $this->getResultArray($query);
         return $return;
     }
+	private function addSyllabus($route){
+		// TODO: Prepare statement
+		$query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, validity_period_from, validity_period_to, description) VALUES (".
+			"'Swagetti Yolonese',".
+			"1,". // StateID
+			"1,". // Version
+			"1,". // Topic
+			"'B. A. Troll',".
+			"1,". // LangID
+			"'2015-06-01',".
+			"'2016-12-12',".
+			"'<p>This is a test, HTML should be possible!</p>');";
+        $result = $this->db->query($query);
+		if (!$result) $this->db->error;
+		return $result;
+	}
+	private function addTopic($name){
+		// TODO: Prepare statement
+		$query = "INSERT INTO sqms_topic (name) VALUES (".
+			"'".$name."');";
+        $result = $this->db->query($query);
+		//if (!$result) $this->db->error;
+		return (!is_null($result) ? 1 : null);
+	}
+	
     private function getSyllabusElementsList(){
         $query = "SELECT * FROM sqms_syllabus_element;"; // TODO: Replace * -> column names
         $return = array();
         $return['syllabuselements'] = $this->getResultArray($query);
         return $return;
     }
-	
+	private function getTopicList($id=-1){
+        $query = "SELECT * FROM `sqms_topic`";
+        if($id!=-1){
+            $query .= " AND sqms_topic_id='$id'";
+        }
+        $return['topiclist'] = $this->getResultArray($query);
+        return $return;
+    }
+	private function getQuestionList($id=-1){
+        $query = "SELECT * FROM `sqms_question`";
+        if($id!=-1){
+            $query .= " AND sqms_question_id='$id'";
+        }
+        $return['questionlist'] = $this->getResultArray($query);
+        return $return;
+    }
+		
 	// ----------------------------------- Reports
     private function getReport_QuestionsWithoutQuestionmarks(){
         $query = "SELECT COUNT(*) AS NrOfQuestionsWOQmarks FROM sqms_question WHERE question NOT LIKE '%?%';";
@@ -142,9 +186,6 @@ class RequestHandler
         $return['reports'] = $this->getResultArray($query);
         return $return;
     }
-	
-
-
 
 	
     public function showStartPage(){
@@ -236,15 +277,6 @@ class RequestHandler
     }*/
 
     /*Zweck: Rückgabe eines oder aller Topics aus der Datenbank*/
-    private function getTopicList($id=-1){
-        $query = "SELECT * FROM `sqms_topic`";
-        if($id!=-1){
-            $query .= " AND sqms_topic_id='$id'";
-        }
-        $return['topiclist'] = $this->getResultArray($query);
-        return $return;
-    }
-
 
     public function getNextEvents(){
         return $this->getEvents();

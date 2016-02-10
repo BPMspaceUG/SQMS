@@ -13,76 +13,36 @@
 		echo "</div><p></p><p></p>";
 	}
 ?>
+<!--------------- SUB MENU --------->
 <div class="clearfix"></div>
+<div class="container 90_percent" >
+	<a href="#" class="btn btn-success" title='Add new Participant'><i class="fa fa-plus"></i>&nbsp;New</a>
+	<a href="#" class="btn btn-success" title='Add new Event'><i class="fa fa-plus"></i>&nbsp;Copy</a>  
+	<a href="#" class="btn btn-danger" title='Add new Organization'><i class="fa fa-minus"></i>&nbsp;Delete</a>  
+	<a href="#" title='switch help on/off' class="btn btn-large btn-default navbar-right">
+		<span class="fa-stack">
+			<i class="fa fa-question fa-stack-1x"></i>
+			<i class="fa fa-ban fa-stack-1x text-danger"></i>
+		</span>Help</a>
+</div>
+<div class="clearfix"></br></div>
+<!--------------- END SUB MENU --------->
 <div class="container">
-	<div class="panel panel-default" ng-repeat="phone in phones | filter:{'sqms_syllabus_element_id':'50'}:true">
-	  <div class="panel-body">
-		<!-- Navigation-Syllabus -->
-		<ul class="nav nav-tabs">
-		  <li role="presentation" class="active"><a href="#">General</a></li>
-		  <li role="presentation"><a href="#">Questions</a></li>
-		  <li role="presentation"><a href="#">History</a></li>
-		</ul>
-		<br/>
-		<div class="row">
-		
-			<div class="col-sm-12">
-				<p>ID {{phone.sqms_syllabus_element_id}}&nbsp;&nbsp;&nbsp;&nbsp;Syllabus&nbsp;<select class="form-control" style="display:inline;width:200px;">
-					  <option>{{phone.sqms_syllabus_id}}</option>
-					  <option>2</option>
-					  <option>3</option>
-					  <option>4</option>
-					  <option>5</option>
-					</select>&nbsp;&nbsp;&nbsp;Order&nbsp;<select class="form-control" style="display:inline;width:100px;">
-					  <option>{{phone.element_order}}</option>
-					  <option>2</option>
-					  <option>3</option>
-					  <option>4</option>
-					  <option>5</option>
-					</select>&nbsp;&nbsp;&nbsp;Severity % &nbsp;<select class="form-control" style="display:inline;width:100px;">
-					  <option>{{phone.severity}}</option>
-					  <option>2</option>
-					  <option>3</option>
-					  <option>4</option>
-					  <option>5</option>
-					</select></p>
-			</div>
-			
-			<div class="col-sm-12">
-				<h5>Name</h5>
-				<input type="text" class="form-control" value="{{phone.name}}"/>
-			</div>
-			
-			<div class="col-sm-12">
-				<h5>Description</h5>
-				<textarea class="form-control" rows="3">{{phone.description}}</textarea>
-			</div>
-			
-			<br/>
-
-			<div class="col-sm-12">
-				<form class="form-inline">
-					<input class="btn btn-default" type="submit" value="Save & unblock">
-					<input class="btn btn-default" type="submit" value="Save">
-					<input class="btn btn-default" type="submit" value="Unblock w/o save">
-				</form>
-			</ul>
-			</div>
-		</div>
-	  </div>
-	</div>
+	<?php
+		//include_once("syllabus_general.inc.php");
+	?>
 	<!-- List of Syllabus Elements -->
+	<h2>Syllabus Elements</h2>
 	<div class="pull-right">
 		<input type="text" ng-model="yourName" class="form-control" style="width:200px;" placeholder="filter">
-	</div>
-	<h2>Syllabus Elements</h2>
+	</div>	
 	<table class="table table-striped table-hover">
 		<thead>
 			<tr>
 				<th>&nbsp;</th>
-				<th>SyllabusEl_ID</th>
+				<th>ID</th>
 				<th>Order</th>
-				<th>Name(english)</th>
+				<th>Name (english)</th>
 				<th>Syllabus</th>
 				<th>Severity</th>
 				<th>block</th>

@@ -54,8 +54,8 @@
 					</a>
 				</li>
 				<li>
-					<a title='Show all questions' href="#">
-						<i class="fa fa-question"></i>&nbsp;Question<span class="caret"></span>
+					<a title='Show all questions' href="question.php">
+						<i class="fa fa-question"></i>&nbsp;Question</span>
 					</a>
 				</li>
 				<li>
@@ -89,21 +89,6 @@
 	}
 ?>
 <!--------------- END MAIN MENU --------->
-<hr>
-<!--------------- SUB MENU --------->
-<div class="clearfix"></div>
-<div class="container 90_percent" >
-	<a href="#" class="btn btn-success" title='Add new Participant'><i class="fa fa-plus"></i>&nbsp;New Element</a>
-	<a href="#" class="btn btn-success" title='Add new Event'><i class="fa fa-plus"></i>&nbsp;Copy Element</a>  
-	<a href="#" class="btn btn-danger" title='Add new Organization'><i class="fa fa-minus"></i>&nbsp;Delete Element</a>  
-	<a href="#" title='switch help on/off' class="btn btn-large btn-default navbar-right">
-		<span class="fa-stack">
-			<i class="fa fa-question fa-stack-1x"></i>
-			<i class="fa fa-ban fa-stack-1x text-danger"></i>
-		</span>Help</a>
-</div>
-<div class="clearfix"></br></div>
-<!--------------- END SUB MENU --------->
 <?php
 	$help_text = null; // TODO: Remove!!
 	/* presente file with helptxt if $help_text = "true" (or set) when not empty */
