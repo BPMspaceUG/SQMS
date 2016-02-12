@@ -14,6 +14,7 @@
 	}
 ?>
 <!--------------- SUB MENU --------->
+<!--
 <div class="clearfix"></div>
 <div class="container 90_percent" >
 	<a href="#" onclick="test();" class="btn btn-success" title='Add new Syllabus'><i class="fa fa-plus"></i>&nbsp;New</a>
@@ -26,17 +27,18 @@
 		</span>Help</a>
 </div>
 <div class="clearfix"></br></div>
+-->
 <!--------------- END SUB MENU --------->
 <div class="container">
-	<?php
-		//include_once("syllabus_general.inc.php");
-	?>
-	<!-- List of Syllabuses -->
-	<h2>Syllabi</h2>
-	<div class="pull-right">
-		<input type="text" ng-model="yourName" class="form-control" style="width:200px;" placeholder="filter">
-	</div>	
-	<table class="table table-striped table-hover">
+	<div class="row">
+		<div class="col-sm-8">
+			<h2 style="margin:0;">Syllabi</h2>
+		</div>
+		<div class="col-sm-4">
+			<input type="text" ng-model="filtertext" class="form-control pull-right" style="width:200px;" placeholder="filter">
+		</div>
+	</div>
+	<table class="table">
 		<thead>
 			<tr>
 				<th>&nbsp;</th>
@@ -49,7 +51,9 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr ng-repeat="syllabus in syllabi | filter:yourName">
+			<tr ng-repeat="syllabus in syllabi | filter:filtertext"
+				ng-click="setSelected(syllabus)"
+				ng-class="{success: syllabus.sqms_syllabus_id === actSyllabus.sqms_syllabus_id}">
 				<td><checkbox>#</checkbox></td>
 				<td>{{syllabus.sqms_syllabus_id}}</td>
 				<td>{{syllabus.sqms_state_id}}</td>
@@ -68,26 +72,49 @@
 	var phonecatApp = angular.module('phonecatApp', []);
 
 	phonecatApp.controller('PhoneListCtrl', ['$scope', '$http', function($scope, $http) {
-	  $http.get('getjson.php?c=syllabus').success(function(data) {
-		$scope.syllabi = data.syllabus;
-		$scope.topics = data.topiclist;
-	  });
+		
+		// READ
+		$scope.getData = function () {
+			$http.get('getjson.php?c=syllabus').success(function(data) {
+				$scope.syllabi = data.syllabus;
+				$scope.topics = data.topiclist;
+				// TODO: owner
+			});
+		}
+		
+		// WRITE
+		$scope.writeData = function (command) {
+			$scope.status = "Sending command...";
+			$http({
+				url: 'getjson.php?c=' + command,
+				method: "POST",
+				data: JSON.stringify($scope.actSyllabus)
+			}).
+			success(function(data){
+				$scope.status = "Executed command successfully! Return: " + data;
+				$scope.getData(); // Refresh data
+			}).
+			error(function(error){
+				$scope.status = "Error! " + error.message;
+			});
+		}
+		$scope.createSyllabus = function () { $scope.writeData('create_syllabus'); } // CREATE		
+		$scope.updateSyllabus = function () { $scope.writeData('update_syllabus'); } // UPDATE		
+		$scope.deleteSyllabus = function () { $scope.writeData('delete_syllabus'); } // DELETE
+		
+		$scope.getData(); // Load data at start
+		
+		// initial selected data
+		$scope.actSyllabus = {
+			sqms_syllabus_id: 0,
+			name: ''
+		};
+		
+		$scope.setSelected = function (selElement) {
+		   $scope.actSyllabus = selElement;
+		};
+		
 	}]);
-	//TODO: $scope.selected_topic = $phones.items[$scope.phones[0].owner];
-</script>
-<!-- jQuery -->
-<script>
-	// TODO: Send Formular Data
-	function test() {
-		$.ajax({
-		  method: "GET",
-		  url: "getjson.php",
-		  data: { c: "create_syllabus"}
-		}).done(function(msg) {
-			//alert( "Data Saved: " + msg );
-			location.reload();
-		});
-	};
 </script>
 <?php
 	include_once '_footer.inc.php';

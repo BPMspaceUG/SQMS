@@ -67,22 +67,39 @@ class RequestHandler
 				return $this->addSyllabus($route);
 				break;
 
-			case 'create_topic':
-				return $this->addTopic($params["Name"]);
+			//-------- Topics
+				
+			case 'topics':
+				return $this->getTopicList();
 				break;				
+			case 'create_topic':
+				return $this->addTopic($params["name"]);
+				break;				
+			case 'delete_topic': // doesnt work because of settings in database
+				return $this->delTopic($params["sqms_topic_id"]);
+				break;				
+			case 'update_topic':
+				return $this->updateTopic($params);
+				break;
+			
+			//-------- Questions
+			
+			case 'questions':
+				return $this->getQuestionList();
+				break;	
+			case 'create_question':
+				return $this->addQuestion($params);
+				break;						
+			case 'update_question':
+				return $this->updateQuestion($params);
+				break;
+			
+			//-------- Reports for Dashboard
 				
 			case 'report_questionswithoutquestionmarks':
 				$return = $this->getReport_QuestionsWithoutQuestionmarks();
 				return $return;
-				break;
-				
-			case 'topics':
-				return $this->getTopicList();
-				break;
-			
-			case 'questions':
-				return $this->getQuestionList();
-				break;
+				break;							
 
 			// ====================================================
 /*				
@@ -147,14 +164,57 @@ class RequestHandler
 		if (!$result) $this->db->error;
 		return $result;
 	}
+	
 	private function addTopic($name){
+		$query = "INSERT INTO sqms_topic (name) VALUES (?);";
+		$stmt = $this->db->prepare($query); // prepare statement
+		$stmt->bind_param("s", $name); // bind params
+        $result = $stmt->execute(); // execute statement
+		return (!is_null($result) ? 1 : null);
+	}
+	private function delTopic($id){
+		// Deleten darf der user dann sowieso nicht
 		// TODO: Prepare statement
-		$query = "INSERT INTO sqms_topic (name) VALUES (".
-			"'".$name."');";
+		$query = "UPDATE sqms_topic SET name = 'XXXXXXX' WHERE sqms_topic_id = ".$id.";";
         $result = $this->db->query($query);
 		//if (!$result) $this->db->error;
 		return (!is_null($result) ? 1 : null);
 	}
+	private function updateTopic($params){
+		$query = "UPDATE sqms_topic SET name = ? WHERE sqms_topic_id = ?;";
+		$stmt = $this->db->prepare($query); // prepare statement
+		$stmt->bind_param("si", $name, $id); // bind params
+		
+		$name = $params["name"];
+		$id = $params["sqms_topic_id"];		
+        $result = $stmt->execute(); // execute statement
+		return (!is_null($result) ? 1 : null);
+	}
+	
+	private function addQuestion($params) {
+		/* TODO:
+		$query = "INSERT INTO sqms_question (name) VALUES (?);";
+		$stmt = $this->db->prepare($query); // prepare statement
+		$stmt->bind_param("s", $name); // bind params
+        $result = $stmt->execute(); // execute statement
+		return (!is_null($result) ? 1 : null);
+		*/
+		return null;
+	}
+	private function updateQuestion($params) {
+		/* TODO:
+		$query = "UPDATE sqms_question SET name = ? WHERE sqms_topic_id = ?;";
+		$stmt = $this->db->prepare($query); // prepare statement
+		$stmt->bind_param("si", $name, $id); // bind params
+		
+		$name = $params["name"];
+		$id = $params["sqms_topic_id"];		
+        $result = $stmt->execute(); // execute statement
+		return (!is_null($result) ? 1 : null);
+		*/
+		return null;
+	}
+	
 	
     private function getSyllabusElementsList(){
         $query = "SELECT * FROM sqms_syllabus_element;"; // TODO: Replace * -> column names
@@ -188,6 +248,9 @@ class RequestHandler
     }
 
 	
+	
+	
+	/*
     public function showStartPage(){
         $return['sidebar'] = array(array("text"=>"requ-handler>showStartpage()>Startpage>sidebar."));
         $return['content'] = array(array("text"=>"showStartpage()>Startpage>Content"));
@@ -200,8 +263,6 @@ class RequestHandler
         return ;//$return;
     }
 
-    /*Ein Topic ist eine Schulungsart. Entweder wurden keine Parameter übergeben dann soll die ganze verfügbare Liste ausgegeben werden
-    oder es wurde ein Parameter angegeben dann nur dieses Topic ausgeben.*/
     private function handleTopic($handle){
 
         $parameters = sizeof($handle); //wie viele Parameter wurden übergeben? sizeof=count
@@ -231,7 +292,8 @@ class RequestHandler
 
         //@TODO
     }
-
+	*/
+	
     /*Ein Package ist eine frei kofigurierbare Sammlung von von Schulungen und Kursen*/
     private function handlePackage($handle){
 
