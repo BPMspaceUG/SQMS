@@ -67,7 +67,6 @@
 		</tbody>
 	</table>
 </div>
-</div>
 <!-- AngularJS -->
 <script>
 	'use strict';

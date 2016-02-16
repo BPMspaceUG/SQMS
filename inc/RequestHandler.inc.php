@@ -11,8 +11,8 @@ class RequestHandler
     private $db;
     private $discount = 0;
 
-    private function getResultArray($query){
-        /*Zweck: Ausgabe einer Debugvariante der Seite*/
+    private function getResultArray($result){
+        /* Zweck: Ausgabe einer Debug */
         /*if(true){
             echo "<pre>";
             echo "<hr>Query:<br>";
@@ -20,7 +20,6 @@ class RequestHandler
             echo "</pre>";
         }*/
         $results_array = array();
-        $result = $this->db->query($query);
         while ($row = $result->fetch_assoc()) {
             $results_array[] = $row;
         }
@@ -51,10 +50,7 @@ class RequestHandler
         switch($command){
 
 			case 'syllabus':
-				$return = array_merge(
-					$this->getSyllabusList(),
-					$this->getTopicList()
-				);
+				$return = $this->getSyllabusList();
 				return $return;
                 break;
 				
@@ -65,6 +61,10 @@ class RequestHandler
 				
 			case 'create_syllabus':
 				return $this->addSyllabus($route);
+				break;
+				
+			case "getnextstates":
+				return $this->getSyllabusPossibleNextStates(1);
 				break;
 
 			//-------- Topics
@@ -93,13 +93,17 @@ class RequestHandler
 			case 'update_question':
 				return $this->updateQuestion($params);
 				break;
-			
+							
 			//-------- Reports for Dashboard
 				
 			case 'report_questionswithoutquestionmarks':
 				$return = $this->getReport_QuestionsWithoutQuestionmarks();
 				return $return;
-				break;							
+				break;	
+
+			case "test":
+				return "test".time();
+				break;
 
 			// ====================================================
 /*				
@@ -141,21 +145,40 @@ class RequestHandler
     ###################################################################################################################
     ####################### Definition der Handles
     ###################################################################################################################
-
+	
     private function getSyllabusList(){
-        $query = "SELECT * FROM sqms_syllabus;"; // TODO: Replace * -> column names
+		$query = "SELECT 
+    sqms_syllabus_id AS ID,
+    a.name AS name,
+    sqms_state_id,
+    version,
+    b.name AS topic,
+    owner,
+    validity_period_from,
+    validity_period_to,
+    description,
+    a.sqms_topic_id,
+    c.name AS state,
+	sqms_syllabus_id_predecessor,
+	sqms_syllabus_id_successor
+FROM
+    (sqms_syllabus AS a
+    LEFT JOIN sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id)
+        INNER JOIN
+    sqms_syllabus_state AS c ON a.sqms_state_id = c.sqms_syllabus_state_id;";
         $return = array();
-        $return['syllabus'] = $this->getResultArray($query);
+		$res = $this->db->query($query);
+        $return['syllabus'] = $this->getResultArray($res);
         return $return;
     }
 	private function addSyllabus($route){
 		// TODO: Prepare statement
 		$query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, validity_period_from, validity_period_to, description) VALUES (".
-			"'Swagetti Yolonese',".
+			"'Testtext',".
 			"1,". // StateID
 			"1,". // Version
 			"1,". // Topic
-			"'B. A. Troll',".
+			"'Herr man',".
 			"1,". // LangID
 			"'2015-06-01',".
 			"'2016-12-12',".
@@ -163,6 +186,26 @@ class RequestHandler
         $result = $this->db->query($query);
 		if (!$result) $this->db->error;
 		return $result;
+	}
+	private function updateSyllabus($params) {
+		// check state first, then decide which rights are possible on server side
+		
+	}
+	private function getSyllabusPossibleNextStates($actstate) {
+		settype($actstate, 'integer');
+		
+		$query = "SELECT 
+    a.sqms_state_id_TO,
+    b.name
+FROM
+    sqms_syllabus_state_rules AS a
+    INNER JOIN sqms_syllabus_state AS b ON a.sqms_state_id_TO = b.sqms_syllabus_state_id
+WHERE
+    sqms_state_id_FROM = $actstate;";
+		$return = array();
+		$res = $this->db->query($query);
+		$return['nextstates'] = $this->getResultArray($res);
+        return $return;
 	}
 	
 	private function addTopic($name){
@@ -219,7 +262,8 @@ class RequestHandler
     private function getSyllabusElementsList(){
         $query = "SELECT * FROM sqms_syllabus_element;"; // TODO: Replace * -> column names
         $return = array();
-        $return['syllabuselements'] = $this->getResultArray($query);
+		$res = $this->db->query($query);
+        $return['syllabuselements'] = $this->getResultArray($res);
         return $return;
     }
 	private function getTopicList($id=-1){
@@ -227,7 +271,8 @@ class RequestHandler
         if($id!=-1){
             $query .= " AND sqms_topic_id='$id'";
         }
-        $return['topiclist'] = $this->getResultArray($query);
+		$res = $this->db->query($query);
+        $return['topiclist'] = $this->getResultArray($res);
         return $return;
     }
 	private function getQuestionList($id=-1){
@@ -235,7 +280,8 @@ class RequestHandler
         if($id!=-1){
             $query .= " AND sqms_question_id='$id'";
         }
-        $return['questionlist'] = $this->getResultArray($query);
+		$res = $this->db->query($query);
+        $return['questionlist'] = $this->getResultArray($res);
         return $return;
     }
 		
@@ -243,7 +289,8 @@ class RequestHandler
     private function getReport_QuestionsWithoutQuestionmarks(){
         $query = "SELECT COUNT(*) AS NrOfQuestionsWOQmarks FROM sqms_question WHERE question NOT LIKE '%?%';";
         $return = array();
-        $return['reports'] = $this->getResultArray($query);
+		$res = $this->db->query($query);
+        $return['reports'] = $this->getResultArray($res);
         return $return;
     }
 

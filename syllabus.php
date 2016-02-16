@@ -30,6 +30,108 @@
 -->
 <!--------------- END SUB MENU --------->
 <div class="container">
+
+	<!-- Vorlage
+	<div class="well">
+		<p>Actual Element:</p>
+		<form>
+			<b>ID: </b><br/>
+			<b>Name:</b>
+			<input type="text" name="f_name" data-ng-model="actTopic.name" placeholder="Name" required />
+			<br />
+			<br />
+			<input type="button" value="Create" data-ng-click="createTopic()" />
+			<input type="button" value="Update" data-ng-click="updateTopic()" />
+			<input type="button" value="Delete" data-ng-click="deleteTopic()" />
+			<br />
+			<p>Status: {{status}}</p>
+		</form>
+	</div>  -->
+
+	<div class="well">
+	
+<div class="panel panel-default">
+  <div class="panel-body">
+	<!-- Navigation-Syllabus -->
+	<ul class="nav nav-tabs">
+	  <li role="presentation" class="active"><a href="#" id="tab_general">General</a></li>
+	  <li role="presentation"><a href="#" id="tab_element">Element</a></li>
+	  <li role="presentation"><a href="#" id="tab_history">History</a></li>
+	</ul>
+	<br/>
+	<div id="tab_content">
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="col-sm-4">
+					<p>ID</p>
+					<p>Version</p>
+					<p>Name</p>
+					<p>Validity period</p>
+					<p>Topic</p>
+				</div>
+				<div class="col-sm-8">
+					<p>{{actSyllabus.ID}}</p>
+					<p>{{actSyllabus.version}}</p>
+					<p>{{actSyllabus.name}}</p>
+					<p>{{actSyllabus.validity_period_from}} to {{actSyllabus.validity_period_to}}</p>
+					<p>
+						<!-- TODO: default selection -->
+						<!-- Help: https://docs.angularjs.org/api/ng/directive/ngOptions -->
+						<select class="form-control" ng-options="topic as topic.name for topic in topics track by topic.sqms_topic_id" ng-model="selected_topic"></select>
+					</p>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="col-sm-4">
+					<p>Owner</p>
+					<p>Group</p>
+					<p>Predecessor</p>
+					<p>Successor</p>
+				</div>
+				<div class="col-sm-8">
+					<p><select class="form-control">
+					  <option>{{actSyllabus.owner}}</option>
+					  <option>2</option>
+					  <option>3</option>
+					  <option>4</option>
+					  <option>5</option>
+					</select></p>
+					<p><select class="form-control">
+					  <option>1</option>
+					  <option>2</option>
+					  <option>3</option>
+					  <option>4</option>
+					  <option>5</option>
+					</select></p>
+					<p>{{actSyllabus.sqms_syllabus_id_predecessor}}</p>
+					<p>{{actSyllabus.sqms_syllabus_id_successor}}</p>
+				</div>
+			</div>
+			
+			<div class="col-sm-12">
+				<h5>Description</h5>
+				<textarea class="form-control" rows="3">{{actSyllabus.description}}</textarea>
+			</div>
+			<br/>
+			<div class="col-sm-4">
+				State:
+			</div>
+			<div class="col-sm-8">
+				<form class="form-inline">
+					<select class="form-control" ng-options="state as state.name for state in actSyllabus.NextStates" ng-model="actSyllabus.NextStates"></select>
+					<input class="btn btn-default" type="submit" value="Save & unblock">
+					<input class="btn btn-default" type="submit" value="Save">
+					<input class="btn btn-default" type="submit" value="Unblock w/o save">
+				</form>
+			</ul>
+			</div>
+		</div>
+	</div>
+</div>
+	
+		</div>
+	</div>
+
 	<div class="row">
 		<div class="col-sm-8">
 			<h2 style="margin:0;">Syllabi</h2>
@@ -43,6 +145,7 @@
 			<tr>
 				<th>&nbsp;</th>
 				<th>ID</th>
+				<th>Name</th>
 				<th>State</th>
 				<th>Version</th>
 				<th>Topic</th>
@@ -53,12 +156,13 @@
 		<tbody>
 			<tr ng-repeat="syllabus in syllabi | filter:filtertext"
 				ng-click="setSelected(syllabus)"
-				ng-class="{success: syllabus.sqms_syllabus_id === actSyllabus.sqms_syllabus_id}">
+				ng-class="{info: syllabus.ID === actSyllabus.ID}">
 				<td><checkbox>#</checkbox></td>
-				<td>{{syllabus.sqms_syllabus_id}}</td>
-				<td>{{syllabus.sqms_state_id}}</td>
+				<td>{{syllabus.ID}}</td>
+				<td>{{syllabus.name}}</td>
+				<td>{{syllabus.state}}</td>
 				<td>{{syllabus.version}}</td>
-				<td>{{syllabus.sqms_topic_id}}</td>
+				<td>{{syllabus.topic}}</td>
 				<td>{{syllabus.owner}}</td>
 				<td>{{syllabus.validity_period_from}} ?</td>
 			</tr>
@@ -77,8 +181,6 @@
 		$scope.getData = function () {
 			$http.get('getjson.php?c=syllabus').success(function(data) {
 				$scope.syllabi = data.syllabus;
-				$scope.topics = data.topiclist;
-				// TODO: owner
 			});
 		}
 		
@@ -106,12 +208,17 @@
 		
 		// initial selected data
 		$scope.actSyllabus = {
-			sqms_syllabus_id: 0,
+			ID: 0,
 			name: ''
 		};
 		
 		$scope.setSelected = function (selElement) {
 		   $scope.actSyllabus = selElement;
+		   
+			$http.get('getjson.php?c=getnextstates').success(function(data) {
+				$scope.actSyllabus.NextStates = data.nextstates;
+			});
+			
 		};
 		
 	}]);
