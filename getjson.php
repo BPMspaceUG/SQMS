@@ -18,13 +18,10 @@
 	// RequestHandler from EduMS
 	$handler = new RequestHandler(); // Maybe: DB-Connection parameter required
 	$content = $handler->handle($command, $params);
-	
-	// Convert data from database into JSON Format
-	$jsdata = json_encode($content);
-	
+		
 	// Return data
 	if ($content == "" || $content == "goaway")
 		http_response_code(400); // Bad Request
 	else
-		echo $jsdata;
+		echo $content;
 ?>

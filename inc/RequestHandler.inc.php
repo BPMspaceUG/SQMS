@@ -51,33 +51,41 @@ class RequestHandler
 
 			case 'syllabus':
 				$return = $this->getSyllabusList();
-				return $return;
+				return json_encode($return);
                 break;
 				
 			case 'syllabuselements':
                 $return = $this->getSyllabusElementsList();
-				return $return;
+				return json_encode($return);
                 break;
 				
 			case 'create_syllabus':
-				return $this->addSyllabus($route);
+				return $this->addSyllabus($params);
 				break;
 				
 			case "getnextstates":
 				return $this->getSyllabusPossibleNextStates(1);
 				break;
+				
+			case "update_syllabus":
+				return $this->updateSyllabus($params);
+				break;			
 
 			//-------- Topics
 				
 			case 'topics':
-				return $this->getTopicList();
-				break;				
+				$return = $this->getTopicList();
+				return json_encode($return);
+				break;	
+				
 			case 'create_topic':
 				return $this->addTopic($params["name"]);
-				break;				
+				break;
+				
 			case 'delete_topic': // doesnt work because of settings in database
 				return $this->delTopic($params["sqms_topic_id"]);
-				break;				
+				break;			
+				
 			case 'update_topic':
 				return $this->updateTopic($params);
 				break;
@@ -85,11 +93,14 @@ class RequestHandler
 			//-------- Questions
 			
 			case 'questions':
-				return $this->getQuestionList();
+				$return = $this->getQuestionList();
+				return json_encode($return);
 				break;	
+				
 			case 'create_question':
 				return $this->addQuestion($params);
-				break;						
+				break;		
+				
 			case 'update_question':
 				return $this->updateQuestion($params);
 				break;
@@ -98,13 +109,17 @@ class RequestHandler
 				
 			case 'report_questionswithoutquestionmarks':
 				$return = $this->getReport_QuestionsWithoutQuestionmarks();
-				return $return;
-				break;	
+				return json_encode($return);
+				break;		
 
 			case "test":
 				return "test".time();
 				break;
-
+				
+			case "getformdata":
+				return $this->getFormDataByState(1);
+				break;
+			
 			// ====================================================
 /*				
             case 'boot':
@@ -187,10 +202,6 @@ FROM
 		if (!$result) $this->db->error;
 		return $result;
 	}
-	private function updateSyllabus($params) {
-		// check state first, then decide which rights are possible on server side
-		
-	}
 	private function getSyllabusPossibleNextStates($actstate) {
 		settype($actstate, 'integer');
 		
@@ -206,6 +217,33 @@ WHERE
 		$res = $this->db->query($query);
 		$return['nextstates'] = $this->getResultArray($res);
         return $return;
+	}
+	private function updateSyllabus($params) {
+		// check state first, then decide which rights are possible on server side
+		$actstate = $params["sqms_state_id"];
+		$id = $params ["ID"];		
+		// update
+		$this->setSyllabusState($id, $actstate);
+		$this->setSyllabusName($id, $params ["name"]);
+		
+		return time();
+	}
+	private function setSyllabusName($syllabid, $newname){
+		$query = "UPDATE sqms_syllabus SET name = ? WHERE sqms_syllabus_id = ?;";
+		$stmt = $this->db->prepare($query); // prepare statement
+		$stmt->bind_param("si", $newname, $syllabid); // bind params
+        $result = $stmt->execute(); // execute statement
+		return (!is_null($result) ? 1 : null);
+	}
+	private function setSyllabusState($syllabid, $stateid) {
+		// check if params are possible
+		//$possiblestates = $this->getSyllabusPossibleNextStates();
+		settype($syllabid, 'integer');
+		settype($stateid, 'integer');
+		// write in DB
+		$query = "UPDATE sqms_syllabus SET sqms_state_id = $stateid WHERE sqms_syllabus_id = $syllabid;";
+		$res = $this->db->query($query);
+        return (!is_null($res) ? 1 : null);
 	}
 	
 	private function addTopic($name){
@@ -257,8 +295,6 @@ WHERE
 		*/
 		return null;
 	}
-	
-	
     private function getSyllabusElementsList(){
         $query = "SELECT * FROM sqms_syllabus_element;"; // TODO: Replace * -> column names
         $return = array();
@@ -266,6 +302,15 @@ WHERE
         $return['syllabuselements'] = $this->getResultArray($res);
         return $return;
     }
+	private function getFormDataByState($state) {
+		settype($state, 'integer');
+		$query = "SELECT form_data FROM sqms_syllabus_state WHERE sqms_syllabus_state_id = $state;";
+		$res = $this->db->query($query);
+		$return = array();
+        $return['test'] = $this->getResultArray($res);
+		//var_dump($return);
+		return $return['test'][0]['form_data'];
+	}
 	private function getTopicList($id=-1){
         $query = "SELECT * FROM `sqms_topic`";
         if($id!=-1){
@@ -284,7 +329,6 @@ WHERE
         $return['questionlist'] = $this->getResultArray($res);
         return $return;
     }
-		
 	// ----------------------------------- Reports
     private function getReport_QuestionsWithoutQuestionmarks(){
         $query = "SELECT COUNT(*) AS NrOfQuestionsWOQmarks FROM sqms_question WHERE question NOT LIKE '%?%';";
@@ -293,10 +337,6 @@ WHERE
         $return['reports'] = $this->getResultArray($res);
         return $return;
     }
-
-	
-	
-	
 	/*
     public function showStartPage(){
         $return['sidebar'] = array(array("text"=>"requ-handler>showStartpage()>Startpage>sidebar."));

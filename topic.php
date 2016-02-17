@@ -35,7 +35,6 @@
 			<b>Name:</b>
 			<input type="text" name="f_name" data-ng-model="actTopic.name" placeholder="Name" required />
 			<br />
-			<br />
 			<input type="button" value="Create" data-ng-click="createTopic()" />
 			<input type="button" value="Update" data-ng-click="updateTopic()" />
 			<input type="button" value="Delete" data-ng-click="deleteTopic()" />

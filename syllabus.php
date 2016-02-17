@@ -31,105 +31,8 @@
 <!--------------- END SUB MENU --------->
 <div class="container">
 
-	<!-- Vorlage
 	<div class="well">
-		<p>Actual Element:</p>
-		<form>
-			<b>ID: </b><br/>
-			<b>Name:</b>
-			<input type="text" name="f_name" data-ng-model="actTopic.name" placeholder="Name" required />
-			<br />
-			<br />
-			<input type="button" value="Create" data-ng-click="createTopic()" />
-			<input type="button" value="Update" data-ng-click="updateTopic()" />
-			<input type="button" value="Delete" data-ng-click="deleteTopic()" />
-			<br />
-			<p>Status: {{status}}</p>
-		</form>
-	</div>  -->
-
-	<div class="well">
-	
-<div class="panel panel-default">
-  <div class="panel-body">
-	<!-- Navigation-Syllabus -->
-	<ul class="nav nav-tabs">
-	  <li role="presentation" class="active"><a href="#" id="tab_general">General</a></li>
-	  <li role="presentation"><a href="#" id="tab_element">Element</a></li>
-	  <li role="presentation"><a href="#" id="tab_history">History</a></li>
-	</ul>
-	<br/>
-	<div id="tab_content">
-		<div class="row">
-			<div class="col-sm-6">
-				<div class="col-sm-4">
-					<p>ID</p>
-					<p>Version</p>
-					<p>Name</p>
-					<p>Validity period</p>
-					<p>Topic</p>
-				</div>
-				<div class="col-sm-8">
-					<p>{{actSyllabus.ID}}</p>
-					<p>{{actSyllabus.version}}</p>
-					<p>{{actSyllabus.name}}</p>
-					<p>{{actSyllabus.validity_period_from}} to {{actSyllabus.validity_period_to}}</p>
-					<p>
-						<!-- TODO: default selection -->
-						<!-- Help: https://docs.angularjs.org/api/ng/directive/ngOptions -->
-						<select class="form-control" ng-options="topic as topic.name for topic in topics track by topic.sqms_topic_id" ng-model="selected_topic"></select>
-					</p>
-				</div>
-			</div>
-			<div class="col-sm-6">
-				<div class="col-sm-4">
-					<p>Owner</p>
-					<p>Group</p>
-					<p>Predecessor</p>
-					<p>Successor</p>
-				</div>
-				<div class="col-sm-8">
-					<p><select class="form-control">
-					  <option>{{actSyllabus.owner}}</option>
-					  <option>2</option>
-					  <option>3</option>
-					  <option>4</option>
-					  <option>5</option>
-					</select></p>
-					<p><select class="form-control">
-					  <option>1</option>
-					  <option>2</option>
-					  <option>3</option>
-					  <option>4</option>
-					  <option>5</option>
-					</select></p>
-					<p>{{actSyllabus.sqms_syllabus_id_predecessor}}</p>
-					<p>{{actSyllabus.sqms_syllabus_id_successor}}</p>
-				</div>
-			</div>
-			
-			<div class="col-sm-12">
-				<h5>Description</h5>
-				<textarea class="form-control" rows="3">{{actSyllabus.description}}</textarea>
-			</div>
-			<br/>
-			<div class="col-sm-4">
-				State:
-			</div>
-			<div class="col-sm-8">
-				<form class="form-inline">
-					<select class="form-control" ng-options="state as state.name for state in actSyllabus.NextStates" ng-model="actSyllabus.NextStates"></select>
-					<input class="btn btn-default" type="submit" value="Save & unblock">
-					<input class="btn btn-default" type="submit" value="Save">
-					<input class="btn btn-default" type="submit" value="Unblock w/o save">
-				</form>
-			</ul>
-			</div>
-		</div>
-	</div>
-</div>
-	
-		</div>
+		<div ng-bind-html-unsafe="formdata"></div>		
 	</div>
 
 	<div class="row">
@@ -168,19 +71,26 @@
 			</tr>
 		</tbody>
 	</table>
+	<!-- Debugging -->
+	<pre>{{actSyllabus}}</pre>
 </div>
 <!-- AngularJS -->
 <script>
 	'use strict';
 	/* Controllers */
-	var phonecatApp = angular.module('phonecatApp', []);
-
-	phonecatApp.controller('PhoneListCtrl', ['$scope', '$http', function($scope, $http) {
+	var phonecatApp = angular.module('phonecatApp', ['ngSanitize']);
 		
+	phonecatApp.controller('PhoneListCtrl', ['$scope', '$http', function($scope, $http) {
+			
 		// READ
 		$scope.getData = function () {
 			$http.get('getjson.php?c=syllabus').success(function(data) {
 				$scope.syllabi = data.syllabus;
+			});
+		}
+		$scope.getData2 = function () {
+			$http.get('getjson.php?c=getformdata').success(function(data) {
+				$scope.formdata = data;
 			});
 		}
 		
@@ -205,22 +115,24 @@
 		$scope.deleteSyllabus = function () { $scope.writeData('delete_syllabus'); } // DELETE
 		
 		$scope.getData(); // Load data at start
+		$scope.getData2(); // Load data at start
 		
 		// initial selected data
 		$scope.actSyllabus = {
 			ID: 0,
-			name: ''
+			name: '',
+			availableOptions: [],
+			selectedOption: {sqms_state_id_TO: '1', name: 'unknown'}
 		};
 		
 		$scope.setSelected = function (selElement) {
 		   $scope.actSyllabus = selElement;
-		   
+			// get next state
 			$http.get('getjson.php?c=getnextstates').success(function(data) {
-				$scope.actSyllabus.NextStates = data.nextstates;
+				$scope.actSyllabus.availableOptions = data.nextstates;
+				$scope.actSyllabus.selectedOption = {sqms_state_id_TO: $scope.actSyllabus.ID, name: $scope.actSyllabus.state};
 			});
-			
-		};
-		
+		};	
 	}]);
 </script>
 <?php
