@@ -32,7 +32,7 @@
 <div class="container">
 
 	<div class="well">
-		<div ng-bind-html-unsafe="formdata"></div>		
+		<div ng-bind-html-unsafe="formdata"></div>
 	</div>
 
 	<div class="row">
@@ -124,7 +124,7 @@
 			availableOptions: [],
 			selectedOption: {sqms_state_id_TO: '1', name: 'unknown'}
 		};
-		
+
 		$scope.setSelected = function (selElement) {
 		   $scope.actSyllabus = selElement;
 			// get next state

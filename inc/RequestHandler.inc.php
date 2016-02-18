@@ -110,45 +110,36 @@ class RequestHandler
 			case 'report_questionswithoutquestionmarks':
 				$return = $this->getReport_QuestionsWithoutQuestionmarks();
 				return json_encode($return);
-				break;		
+				break;
 
 			case "test":
-				return "test".time();
+				// Transistion test
+				$return = $this->setSyllabusState(107, 2);
+				if ($return) {
+					// execute transition codes
+					foreach ($return as $script) {
+						$scr = $script["transistionScript"];
+						if (!is_null($scr)) {
+							$fname = "functions/" . $scr;
+							if (file_exists($fname)) {
+								echo "$fname";
+								include_once($fname);
+							}
+						}
+					}
+				} else echo "invalid transition";
+				return "<br/>time=".time();
 				break;
 				
+				
+				
+			//-------- State machine
+			
+			// At State
 			case "getformdata":
 				return $this->getFormDataByState(1);
 				break;
 			
-			// ====================================================
-/*				
-            case 'boot':
-                $return['sidebar'] = array(array("text"=>"requ-handler>handleBoot()>sidebar."));
-                $return['content'] = file_get_contents('../../EduMS-client/boot.html');
-                $return['topics'] = $this->handleTopic(3);
-                return $return;
-                break;
-
-            case 'getTopics':                
-                return $this->getTopicList();
-                break;
-
-            case 'monitor':
-                return $this->handleMonitor($handle);
-                break;
-
-            case 'events':
-                
-                /events = Liste aller Events die freigegben sind
-                /events/id = Daten des Events
-                
-                return $this->handleEvents($handle);
-                break;
-
-            case 'package':
-                return $this->handlePackage($handle);
-                break;              
-*/
             default:
                 return "goaway";
                 exit;
@@ -160,6 +151,8 @@ class RequestHandler
     ###################################################################################################################
     ####################### Definition der Handles
     ###################################################################################################################
+	
+	// TODO: Make class for state machine
 	
     private function getSyllabusList(){
 		$query = "SELECT 
@@ -221,30 +214,72 @@ WHERE
 	private function updateSyllabus($params) {
 		// check state first, then decide which rights are possible on server side
 		$actstate = $params["sqms_state_id"];
-		$id = $params ["ID"];		
+		$id = $params ["ID"];
 		// update
 		$this->setSyllabusState($id, $actstate);
-		$this->setSyllabusName($id, $params ["name"]);
+		$this->setSyllabusName($id, $params["name"]);
 		
 		return time();
 	}
-	private function setSyllabusName($syllabid, $newname){
+	private function setSyllabusName($syllabid, $newname) {
 		$query = "UPDATE sqms_syllabus SET name = ? WHERE sqms_syllabus_id = ?;";
 		$stmt = $this->db->prepare($query); // prepare statement
 		$stmt->bind_param("si", $newname, $syllabid); // bind params
         $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
 	}
-	private function setSyllabusState($syllabid, $stateid) {
-		// check if params are possible
-		//$possiblestates = $this->getSyllabusPossibleNextStates();
-		settype($syllabid, 'integer');
-		settype($stateid, 'integer');
-		// write in DB
-		$query = "UPDATE sqms_syllabus SET sqms_state_id = $stateid WHERE sqms_syllabus_id = $syllabid;";
+	private function checkTransition($from, $to) {
+		settype($from, 'integer');
+		settype($to, 'integer');
+		
+		$query = "SELECT * FROM sqms_syllabus_state_rules WHERE ".
+		"sqms_state_id_FROM = $from AND sqms_state_id_TO = $to;";
+		$return = array();
 		$res = $this->db->query($query);
-        return (!is_null($res) ? 1 : null);
+		$cnt = $res->num_rows;
+        return ($cnt > 0);
 	}
+	private function getSyllabusState($syllabid) {
+		settype($syllabid, 'integer');
+		$query = "SELECT sqms_state_id FROM sqms_syllabus WHERE sqms_syllabus_id = $syllabid;";
+		$res = $this->db->query($query);
+		$return = array();
+        $return['test'] = $this->getResultArray($res);
+		return $return['test'][0]['sqms_state_id'];
+	}
+	private function setSyllabusState($syllabid, $stateid) {
+		// params
+		settype($syllabid, 'integer');
+		settype($stateid, 'integer');		
+		// get actual state from syllabus
+		$actstate = $this->getSyllabusState($syllabid);
+		echo "ID: ".$syllabid."<br/>";
+		echo "Trans: " . $actstate." -> " . $stateid . "<br/>";
+		// check transition
+		$trans = $this->checkTransition($actstate, $stateid);
+		// check if transition is possible
+		if ($trans) {
+			// update state in DB
+			$query = "UPDATE sqms_syllabus SET sqms_state_id = $stateid WHERE sqms_syllabus_id = $syllabid;";
+			$res = $this->db->query($query);
+			$scripts = $this->getTransitionScripts($actstate, $stateid);
+			return $scripts;
+		} else
+			return false;
+	}
+	private function getTransitionScripts($from, $to) {
+		settype($from, 'integer');
+		settype($to, 'integer');
+		
+		$query = "SELECT transistionScript FROM sqms_syllabus_state_rules WHERE ".
+		"sqms_state_id_FROM = $from AND sqms_state_id_TO = $to;";
+		$return = array();
+		$res = $this->db->query($query);
+		$return = $this->getResultArray($res);
+        return $return;
+	}
+	
+	
 	
 	private function addTopic($name){
 		$query = "INSERT INTO sqms_topic (name) VALUES (?);";
