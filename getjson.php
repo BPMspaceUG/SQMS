@@ -18,7 +18,7 @@
 	// RequestHandler from EduMS
 	$handler = new RequestHandler(); // Maybe: DB-Connection parameter required
 	$content = $handler->handle($command, $params);
-		
+	
 	// Return data
 	if ($content == "" || $content == "goaway")
 		http_response_code(400); // Bad Request

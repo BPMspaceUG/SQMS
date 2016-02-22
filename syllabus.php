@@ -31,10 +31,17 @@
 <!--------------- END SUB MENU --------->
 <div class="container">
 
-	<div class="well">
-		<div ng-bind-html-unsafe="formdata"></div>
+	<div class="well" style="padding: 0;">
+		<div compile="formdata"></div>
+		<nav>
+		  <ul class="pager">
+			<li>{{status}}</li>
+			<li ng-repeat="state in actSyllabus.availableOptions" ng-click="setState(state);"><a href="#">&rarr; {{state.name}}</a></li>
+			<li><a href="#" class="pagerbtn" ng-click="updateSyllabus();"><span class="glyphicon glyphicon-floppy-disk"></span> Save</a></li>
+		  </ul>
+		</nav>
 	</div>
-
+		
 	<div class="row">
 		<div class="col-sm-8">
 			<h2 style="margin:0;">Syllabi</h2>
@@ -72,28 +79,55 @@
 		</tbody>
 	</table>
 	<!-- Debugging -->
-	<pre>{{actSyllabus}}</pre>
+	<!-- <pre>{{actSyllabus}}</pre> -->
 </div>
 <!-- AngularJS -->
 <script>
 	'use strict';
+	
 	/* Controllers */
-	var phonecatApp = angular.module('phonecatApp', ['ngSanitize']);
-		
+	var phonecatApp = angular.module('phonecatApp', [], function($compileProvider) {
+		$compileProvider.directive('compile', function($compile) {
+			return function(scope, element, attrs) {
+				scope.$watch(
+				  function(scope) {
+					return scope.$eval(attrs.compile);
+				  },
+				  function(value) {
+					element.html(value);
+					$compile(element.contents())(scope);
+				  }
+				);
+			};
+		});
+	});
 	phonecatApp.controller('PhoneListCtrl', ['$scope', '$http', function($scope, $http) {
 			
-		// READ
-		$scope.getData = function () {
+		// read all syllabi
+		$scope.getAllSyllabus = function () {
 			$http.get('getjson.php?c=syllabus').success(function(data) {
 				$scope.syllabi = data.syllabus;
 			});
 		}
-		$scope.getData2 = function () {
-			$http.get('getjson.php?c=getformdata').success(function(data) {
-				$scope.formdata = data;
+		$scope.getSyllabusDetails = function () {
+			$http({
+				url: 'getjson.php?c=getsyllabusdetails',
+				method: "POST",
+				data: JSON.stringify($scope.actSyllabus) // params actSyllabus
+			}).
+			success(function(data){
+				// next possible states
+				$scope.actSyllabus.availableOptions = data.nextstates;
+				$scope.formdata = data.formdata;
 			});
 		}
+		$scope.formdata = "";
 		
+		$scope.setState = function(newstate) {
+			//alert(newstate);
+			$scope.actSyllabus.selectedOption = newstate;
+		}
+
 		// WRITE
 		$scope.writeData = function (command) {
 			$scope.status = "Sending command...";
@@ -104,19 +138,14 @@
 			}).
 			success(function(data){
 				$scope.status = "Executed command successfully! Return: " + data;
-				$scope.getData(); // Refresh data
+				$scope.getAllSyllabus(); // Refresh data
 			}).
 			error(function(error){
 				$scope.status = "Error! " + error.message;
 			});
 		}
-		$scope.createSyllabus = function () { $scope.writeData('create_syllabus'); } // CREATE		
 		$scope.updateSyllabus = function () { $scope.writeData('update_syllabus'); } // UPDATE		
-		$scope.deleteSyllabus = function () { $scope.writeData('delete_syllabus'); } // DELETE
-		
-		$scope.getData(); // Load data at start
-		$scope.getData2(); // Load data at start
-		
+
 		// initial selected data
 		$scope.actSyllabus = {
 			ID: 0,
@@ -124,15 +153,14 @@
 			availableOptions: [],
 			selectedOption: {sqms_state_id_TO: '1', name: 'unknown'}
 		};
-
 		$scope.setSelected = function (selElement) {
-		   $scope.actSyllabus = selElement;
-			// get next state
-			$http.get('getjson.php?c=getnextstates').success(function(data) {
-				$scope.actSyllabus.availableOptions = data.nextstates;
-				$scope.actSyllabus.selectedOption = {sqms_state_id_TO: $scope.actSyllabus.ID, name: $scope.actSyllabus.state};
-			});
-		};	
+			$scope.actSyllabus = selElement;
+			$scope.formdata = "<p>Loading...</p>";
+			$scope.getSyllabusDetails();
+		};
+		
+		// Initial functions
+		$scope.getAllSyllabus();		
 	}]);
 </script>
 <?php

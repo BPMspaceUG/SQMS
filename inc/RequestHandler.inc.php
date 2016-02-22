@@ -50,9 +50,21 @@ class RequestHandler
         switch($command){
 
 			case 'syllabus':
-				$return = $this->getSyllabusList();
-				return json_encode($return);
+				// All data from syllabus
+				$arr1 = $this->getSyllabusList();
+				return json_encode($arr1);
                 break;
+				
+			case 'getsyllabusdetails':
+				$actstate = $params["sqms_state_id"];
+				// Possible next states
+				$arr1 = $this->getSyllabusPossibleNextStates($actstate);
+				// Form data for actual state
+				$arr2 = $this->getFormDataByState($actstate);
+				// Merge data
+				$return = array_merge_recursive($arr1, $arr2);
+				return json_encode($return);
+				break;
 				
 			case 'syllabuselements':
                 $return = $this->getSyllabusElementsList();
@@ -62,11 +74,7 @@ class RequestHandler
 			case 'create_syllabus':
 				return $this->addSyllabus($params);
 				break;
-				
-			case "getnextstates":
-				return $this->getSyllabusPossibleNextStates(1);
-				break;
-				
+
 			case "update_syllabus":
 				return $this->updateSyllabus($params);
 				break;			
@@ -115,6 +123,7 @@ class RequestHandler
 				break;
 
 			case "test":
+				/*************************************/
 				// Transistion test
 				$return = $this->setSyllabusState(107, 2);
 				if ($return) {
@@ -131,15 +140,11 @@ class RequestHandler
 					}
 				} else echo "invalid transition";
 				return "<br/>time=".time();
-				break;		
-				
+				break;	
+				/*************************************/				
+								
 			//-------- State machine
-			
-			// At State
-			case "getformdata":
-				return $this->getFormDataByState(1);
-				break;
-			
+
             default:
                 return "goaway";
                 exit;
@@ -214,12 +219,13 @@ WHERE
 	private function updateSyllabus($params) {
 		// check state first, then decide which rights are possible on server side
 		$actstate = $params["sqms_state_id"];
-		$id = $params ["ID"];
+		$newstate = $params["selectedOption"]["sqms_state_id_TO"];
+		$id = $params["ID"];
 		// update
-		$this->setSyllabusState($id, $actstate);
+		$this->setSyllabusState($id, $newstate);
 		$this->setSyllabusName($id, $params["name"]);
 		
-		return time();
+		return "Updated! ($newstate) ".time();
 	}
 	private function setSyllabusName($syllabid, $newname) {
 		$query = "UPDATE sqms_syllabus SET name = ? WHERE sqms_syllabus_id = ?;";
@@ -238,7 +244,7 @@ WHERE
 		$res = $this->db->query($query);
 		$cnt = $res->num_rows;
         return ($cnt > 0);
-	}
+	}	
 	private function getSyllabusState($syllabid) {
 		settype($syllabid, 'integer');
 		$query = "SELECT sqms_state_id FROM sqms_syllabus WHERE sqms_syllabus_id = $syllabid;";
@@ -246,15 +252,13 @@ WHERE
 		$return = array();
         $return['test'] = $this->getResultArray($res);
 		return $return['test'][0]['sqms_state_id'];
-	}
+	}	
 	private function setSyllabusState($syllabid, $stateid) {
 		// params
 		settype($syllabid, 'integer');
-		settype($stateid, 'integer');		
+		settype($stateid, 'integer');
 		// get actual state from syllabus
 		$actstate = $this->getSyllabusState($syllabid);
-		echo "ID: ".$syllabid."<br/>";
-		echo "Trans: " . $actstate." -> " . $stateid . "<br/>";
 		// check transition
 		$trans = $this->checkTransition($actstate, $stateid);
 		// check if transition is possible
@@ -336,13 +340,14 @@ WHERE
         return $return;
     }
 	private function getFormDataByState($state) {
+		if (!isset($state)) $state = 1;
 		settype($state, 'integer');
 		$query = "SELECT form_data FROM sqms_syllabus_state WHERE sqms_syllabus_state_id = $state;";
 		$res = $this->db->query($query);
 		$return = array();
-        $return['test'] = $this->getResultArray($res);
-		//var_dump($return);
-		return $return['test'][0]['form_data'];
+        $tmp = $this->getResultArray($res);
+		$return['formdata'] = $tmp[0]['form_data'];
+		return $return;
 	}
 	private function getTopicList($id=-1){
         $query = "SELECT * FROM `sqms_topic`";
