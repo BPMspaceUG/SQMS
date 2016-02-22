@@ -67,3 +67,8 @@ display: inline-block;
   height: 60px;
   padding: 10px;
 }
+
+/***********************************************/
+.huge {
+	font-size: 2em;
+}
