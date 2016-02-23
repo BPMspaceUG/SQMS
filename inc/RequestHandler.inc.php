@@ -112,13 +112,14 @@ class RequestHandler
 			case 'update_question':
 				return $this->updateQuestion($params);
 				break;
-							
+			
 			//-------- Reports for Dashboard
 			
 			case 'getreports':
 				$arr1 = $this->getReport_QuestionsWithoutQuestionmarks();
 				$arr2 = $this->getReport_QuestionsTotal();
-				$return = array_merge_recursive($arr1, $arr2);
+				$arr3 = $this->getReport_AnswersWhitoutMarks();
+				$return = array_merge_recursive($arr1, $arr2, $arr3);
 				return json_encode($return);
 				break;
 
@@ -369,14 +370,24 @@ WHERE
     }
 	// ----------------------------------- Reports
     private function getReport_QuestionsWithoutQuestionmarks(){
-        $query = "SELECT 'Questions without Questionmarks' as attr, COUNT(*) AS value FROM sqms_question WHERE question NOT LIKE '%?%';";
+        $query = "SELECT 'Questions without Questionmarks' as attr, COUNT(*) AS value, 'fa-question' AS icon FROM sqms_question WHERE question NOT LIKE '%?%';";
         $return = array();
 		$res = $this->db->query($query);
         $return['reports'] = $this->getResultArray($res);
         return $return;
     }
     private function getReport_QuestionsTotal(){
-        $query = "SELECT 'Questions total' as attr, COUNT(*) AS value FROM sqms_question;";
+        $query = "SELECT 'Questions total' as attr, COUNT(*) AS value, 'fa-question' AS icon FROM sqms_question;";
+        $return = array();
+		$res = $this->db->query($query);
+        $return['reports'] = $this->getResultArray($res);
+        return $return;
+    }
+    private function getReport_AnswersWhitoutMarks(){
+        $query = "SELECT 'Answers without Marks' as attr, ".
+		"COUNT(*) AS value, 'fa-exclamation' AS icon FROM sqms_answer ".
+		"WHERE answer NOT LIKE '%.%' ".
+		"OR answer NOT LIKE '%?%'";
         $return = array();
 		$res = $this->db->query($query);
         $return['reports'] = $this->getResultArray($res);

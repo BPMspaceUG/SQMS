@@ -8,12 +8,12 @@
 	<div class="row">
 	
 		<!-- Report -->
-		<div class="col-lg-3 col-md-6"  ng-repeat="report in reports">
+		<div class="col-lg-3 col-md-6" ng-repeat="report in reports">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-xs-3">
-							<i class="fa fa-comments fa-5x"></i>
+							<i class="fa {{report.icon}} fa-5x"></i>
 						</div>
 						<div class="col-xs-9 text-right">
 							<div class="huge">{{report.value}}</div>
@@ -21,6 +21,7 @@
 						</div>
 					</div>
 				</div>
+				<!-- TODO: Link to Elements
 				<a href="#">
 					<div class="panel-footer">
 						<span class="pull-left">View Details</span>
@@ -28,6 +29,7 @@
 						<div class="clearfix"></div>
 					</div>
 				</a>
+				-->
 			</div>
 		</div>
 
