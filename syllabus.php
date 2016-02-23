@@ -14,12 +14,10 @@
 	}
 ?>
 <!--------------- SUB MENU --------->
-<!--
 <div class="clearfix"></div>
 <div class="container 90_percent" >
-	<a href="#" onclick="test();" class="btn btn-success" title='Add new Syllabus'><i class="fa fa-plus"></i>&nbsp;New</a>
-	<a href="#" class="btn btn-success" title='Add new Event'><i class="fa fa-plus"></i>&nbsp;Copy</a>  
-	<a href="#" class="btn btn-danger" title='Add new Organization'><i class="fa fa-minus"></i>&nbsp;Delete</a>  
+	<a href="#" onclick="test();" class="btn btn-large btn-success" title='Add new Syllabus'><i class="fa fa-plus"></i>&nbsp;Create</a>
+	<!--<a href="#" class="btn btn-success" title='Add new Event'><i class="fa fa-plus"></i>&nbsp;Copy</a>--> 
 	<a href="#" title='switch help on/off' class="btn btn-large btn-default navbar-right">
 		<span class="fa-stack">
 			<i class="fa fa-question fa-stack-1x"></i>
@@ -27,15 +25,15 @@
 		</span>Help</a>
 </div>
 <div class="clearfix"></br></div>
--->
 <!--------------- END SUB MENU --------->
 <div class="container">
 
 	<div class="well" style="padding: 0;">
 		<div compile="formdata"></div>
-		<nav>
+		<nav ng-show="showNav">
 		  <ul class="pager">
 			<li>{{status}}</li>
+			<li>Goto state</li>
 			<li ng-repeat="state in actSyllabus.availableOptions" ng-click="setState(state);"><a href="#">&rarr; {{state.name}}</a></li>
 			<li><a href="#" class="pagerbtn" ng-click="updateSyllabus();"><span class="glyphicon glyphicon-floppy-disk"></span> Save</a></li>
 		  </ul>
@@ -79,7 +77,7 @@
 		</tbody>
 	</table>
 	<!-- Debugging -->
-	<!-- <pre>{{actSyllabus}}</pre> -->
+	<pre>{{actSyllabus}}</pre>
 </div>
 <!-- AngularJS -->
 <script>
@@ -119,12 +117,17 @@
 				// next possible states
 				$scope.actSyllabus.availableOptions = data.nextstates;
 				$scope.formdata = data.formdata;
+				$scope.actSyllabus.syllabelements = data.syllabuselements;
+				//console.log($scope.actSyllabus.syllabelements);
+				if ($scope.actSyllabus.availableOptions.length > 0)
+					$scope.showNav = true;
 			});
 		}
 		$scope.formdata = "";
+		$scope.showNav = false;
 		
+		// Set State
 		$scope.setState = function(newstate) {
-			//alert(newstate);
 			$scope.actSyllabus.selectedOption = newstate;
 		}
 
@@ -150,12 +153,14 @@
 		$scope.actSyllabus = {
 			ID: 0,
 			name: '',
+			syllabelements: [],
 			availableOptions: [],
 			selectedOption: {sqms_state_id_TO: '1', name: 'unknown'}
 		};
 		$scope.setSelected = function (selElement) {
 			$scope.actSyllabus = selElement;
 			$scope.formdata = "<p>Loading...</p>";
+			$scope.showNav = false;
 			$scope.getSyllabusDetails();
 		};
 		

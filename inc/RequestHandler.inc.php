@@ -49,20 +49,19 @@ class RequestHandler
 
         switch($command){
 
-			case 'syllabus':
-				// All data from syllabus
-				$arr1 = $this->getSyllabusList();
+			case 'syllabus':				
+				$arr1 = $this->getSyllabusList(); // All data from syllabus
 				return json_encode($arr1);
                 break;
 				
 			case 'getsyllabusdetails':
+				$syllabid = $params["ID"];
 				$actstate = $params["sqms_state_id"];
-				// Possible next states
-				$arr1 = $this->getSyllabusPossibleNextStates($actstate);
-				// Form data for actual state
-				$arr2 = $this->getFormDataByState($actstate);
+				$arr1 = $this->getSyllabusPossibleNextStates($actstate); // Possible next states
+				$arr2 = $this->getFormDataByState($actstate); // Form data for actual state
+				$arr3 = $this->getSyllabusElementsList($syllabid);
 				// Merge data
-				$return = array_merge_recursive($arr1, $arr2);
+				$return = array_merge_recursive($arr1, $arr2, $arr3);
 				return json_encode($return);
 				break;
 				
@@ -333,8 +332,12 @@ WHERE
 		*/
 		return null;
 	}
-    private function getSyllabusElementsList(){
-        $query = "SELECT * FROM sqms_syllabus_element;"; // TODO: Replace * -> column names
+    private function getSyllabusElementsList($id=-1){
+		settype($state, 'integer');
+        $query = "SELECT * FROM sqms_syllabus_element"; // TODO: Replace * -> column names
+		if($id!=-1){
+			$query .= " WHERE sqms_syllabus_id = $id;";
+        }
         $return = array();
 		$res = $this->db->query($query);
         $return['syllabuselements'] = $this->getResultArray($res);
