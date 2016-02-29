@@ -28,16 +28,30 @@
 <!--------------- END SUB MENU --------->
 <div class="container">
 
-	<div class="well" style="padding: 0;">
-		<div compile="formdata"></div>
-		<nav ng-show="showNav">
-		  <ul class="pager">
-			<li>{{status}}</li>
-			<li>Goto state</li>
-			<li ng-repeat="state in actSyllabus.availableOptions" ng-click="setState(state);"><a href="#">&rarr; {{state.name}}</a></li>
-			<li><a href="#" class="pagerbtn" ng-click="updateSyllabus();"><span class="glyphicon glyphicon-floppy-disk"></span> Save</a></li>
-		  </ul>
-		</nav>
+	<div id="test" class="modal" role="dialog" >
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Edit syllabus</h4>
+				</div>
+				<div class="modal-body">
+					<div compile="formdata"></div>
+				</div>
+				<div class="modal-footer">
+					<nav ng-show="showNav">
+					  <ul class="pager">
+						<li>{{status}}</li>
+						<li>Goto state</li>
+						<li ng-repeat="state in actSyllabus.availableOptions" ng-click="setState(state);"><a href="#">&rarr; {{state.name}}</a></li>
+						<li><a href="#" class="pagerbtn" ng-click="updateSyllabus();"><span class="glyphicon glyphicon-floppy-disk"></span> Save</a></li>
+					  </ul>
+					</nav>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Save changes</button>
+				</div>
+			</div>
+		</div>
 	</div>
 		
 	<div class="row">
@@ -65,19 +79,19 @@
 			<tr ng-repeat="syllabus in syllabi | filter:filtertext"
 				ng-click="setSelected(syllabus)"
 				ng-class="{info: syllabus.ID === actSyllabus.ID}">
-				<td><checkbox>#</checkbox></td>
+				<td><a href="" data-toggle="modal" data-target="#test">EDIT</a></td>
 				<td>{{syllabus.ID}}</td>
 				<td>{{syllabus.name}}</td>
 				<td>{{syllabus.state}}</td>
 				<td>{{syllabus.version}}</td>
 				<td>{{syllabus.topic}}</td>
 				<td>{{syllabus.owner}}</td>
-				<td>{{syllabus.validity_period_from}} ?</td>
+				<td>{{syllabus.validity_period_from}} - {{syllabus.validity_period_to}}</td>
 			</tr>
 		</tbody>
 	</table>
 	<!-- Debugging -->
-	<pre>{{actSyllabus}}</pre>
+	<!-- <pre>{{actSyllabus}}</pre>-->
 </div>
 <!-- AngularJS -->
 <script>

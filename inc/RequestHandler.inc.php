@@ -370,7 +370,7 @@ WHERE
 		$res = $this->db->query($query);
         $return['questionlist'] = $this->getResultArray($res);
         return $return;
-    }
+    }	
 	// ----------------------------------- Reports
     private function getReport_QuestionsWithoutQuestionmarks(){
         $query = "SELECT 'Questions without Questionmarks' as attr, COUNT(*) AS value, 'fa-question' AS icon FROM sqms_question WHERE question NOT LIKE '%?%';";
