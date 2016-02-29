@@ -41,25 +41,27 @@
 	<!--------------- MAIN MENU --------->
 	<div class="container">
 		<nav class="navbar navbar-light bg-faded">
-			<ul class="nav navbar-nav">
+			<ul class="nav nav-tabs">
 				<li class="active">
-					<a href="dashboard.php" title='Dashboard'><i class="fa fa-tachometer"></i>&nbsp;Dashboard</a>
+					<a title='Dashboard' href="#pagedashboard" data-toggle="tab"><i class="fa fa-tachometer"></i>&nbsp;Dashboard</a>
 				</li>
 				<li>
-					<a title='Show Syllabus' href="syllabus.php"><i class="fa fa-table"></i>&nbsp;Syllabus</a>
+					<a title='Show Syllabus' href="#pagesyllabus" data-toggle="tab"><i class="fa fa-table"></i>&nbsp;Syllabus</a>
 				</li>
+				<!--
 				<li>
-					<a title='Show Syllabus Elemtents' href="syllabuselement.php">
+					<a title='Show Syllabus Elemtents' href="syllabuselement.php" data-toggle="tab">
 						<i class="fa fa-table"></i>&nbsp;Syllabus-Element
 					</a>
 				</li>
+				-->
 				<li>
-					<a title='Show all questions' href="question.php">
+					<a title='Show all questions' href="#pagequestion" data-toggle="tab">
 						<i class="fa fa-question"></i>&nbsp;Question</span>
 					</a>
 				</li>
 				<li>
-					<a href="topic.php" title='Show all Topics'><i class="fa fa-table"></i>&nbsp;Topic</a>
+					<a title='Show all Topics' href="#pagetopic" data-toggle="tab"><i class="fa fa-table"></i>&nbsp;Topic</a>
 				</li>
 				<li class="dropdown">
 					<a title='Admin' class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
