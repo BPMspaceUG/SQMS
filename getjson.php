@@ -23,10 +23,4 @@
 		http_response_code(400); // Bad Request
 	else
 		echo $content;
-	
-	/****************************************************/
-	// TODO:
-	
-	// Implement datevis in client (only read out min-date until now)
-	// --- More info: http://cal-heatmap.com/
 ?>

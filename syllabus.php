@@ -33,27 +33,28 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="myModalLabel">Edit syllabus</h4>
+					<h4 class="modal-title" id="myModalLabel"><i class="fa fa-pencil"></i> Edit syllabus</h4>
 				</div>
 				<div class="modal-body">
 					<div compile="formdata"></div>
 				</div>
 				<div class="modal-footer">
-					<nav ng-show="showNav">
-					  <ul class="pager">
-						<li>{{status}}</li>
-						<li>Goto state</li>
-						<li ng-repeat="state in actSyllabus.availableOptions" ng-click="setState(state);"><a href="#">&rarr; {{state.name}}</a></li>
-						<li><a href="#" class="pagerbtn" ng-click="updateSyllabus();"><span class="glyphicon glyphicon-floppy-disk"></span> Save</a></li>
-					  </ul>
-					</nav>
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
+					<div class="row">
+					<div class="col-xs-8">
+						<button type="button" class="btn btn-default"
+							ng-repeat="state in actSyllabus.availableOptions"
+							ng-click="setState(state);">&rarr; {{state.name}}</button>
+					</div>
+					<div class="col-xs-4">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" ng-click="updateSyllabus();" class="btn btn-primary">Save changes</button>
+					</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-		
+	
 	<div class="row">
 		<div class="col-sm-8">
 			<h2 style="margin:0;">Syllabi</h2>
@@ -79,7 +80,7 @@
 			<tr ng-repeat="syllabus in syllabi | filter:filtertext"
 				ng-click="setSelected(syllabus)"
 				ng-class="{info: syllabus.ID === actSyllabus.ID}">
-				<td><a href="" data-toggle="modal" data-target="#test">EDIT</a></td>
+				<td><a class="btn" data-toggle="modal" data-target="#test"><i class="fa fa-pencil"></i></a></td>
 				<td>{{syllabus.ID}}</td>
 				<td>{{syllabus.name}}</td>
 				<td>{{syllabus.state}}</td>
