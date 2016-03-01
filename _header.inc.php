@@ -48,13 +48,6 @@
 				<li>
 					<a title='Show Syllabus' href="#pagesyllabus" data-toggle="tab"><i class="fa fa-table"></i>&nbsp;Syllabus</a>
 				</li>
-				<!--
-				<li>
-					<a title='Show Syllabus Elemtents' href="syllabuselement.php" data-toggle="tab">
-						<i class="fa fa-table"></i>&nbsp;Syllabus-Element
-					</a>
-				</li>
-				-->
 				<li>
 					<a title='Show all questions' href="#pagequestion" data-toggle="tab">
 						<i class="fa fa-question"></i>&nbsp;Question</span>

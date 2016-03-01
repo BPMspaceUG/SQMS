@@ -130,6 +130,7 @@
 					</tr>
 				</thead>
 				<tbody>
+					<div >
 					<tr ng-repeat="syllabus in syllabi | filter:filtertext"
 						ng-click="setSelected(syllabus)"
 						ng-class="{info: syllabus.ID === actSyllabus.ID}">
@@ -144,6 +145,9 @@
 						<td>{{syllabus.topic}}</td>
 						<td>{{syllabus.owner}}</td>
 						<td>{{syllabus.validity_period_from}} - {{syllabus.validity_period_to}}</td>
+					</tr>
+					<tr ng-repeat="syllabus in syllabi | filter:filtertext">
+						<td colspan="8" ></td>
 					</tr>
 				</tbody>
 			</table>
@@ -263,7 +267,9 @@
 	'use strict';
 	
 	/* Controllers */
-	var phonecatApp = angular.module('phonecatApp', [], function($compileProvider) {
+	angular.module('phonecatApp', [], function($compileProvider) {
+		
+		// for loading HTML from Database
 		$compileProvider.directive('compile', function($compile) {
 			return function(scope, element, attrs) {
 				scope.$watch(
@@ -277,8 +283,9 @@
 				);
 			};
 		});
-	});
-	phonecatApp.controller('PhoneListCtrl', ['$scope', '$http', function($scope, $http) {
+		
+	})
+	.controller('PhoneListCtrl', ['$scope', '$http', function($scope, $http) {
 		
 		//------------------------------- Dashboard
 		$http.get('getjson.php?c=getreports').success(function(data) {
@@ -288,8 +295,7 @@
 		//------------------------------- Question
 		$http.get('getjson.php?c=questions').success(function(data) {
 			$scope.questions = data.questionlist;
-		});
-		
+		});		
 		
 		//------------------------------- Topic
 		$http.get('getjson.php?c=topics').success(function(data) {
@@ -360,11 +366,16 @@
 			$scope.showNav = false;
 			$scope.getSyllabusDetails();
 			$scope.SelNavDisabled = false;
-		};
-		
+		};		
 		// Initial functions
-		$scope.getAllSyllabus();		
-	}]);
+		$scope.getAllSyllabus();
+		
+	}]) // http://www.angularjshub.com/examples/customdirectives/template/
+	.directive("nghTemplateDir", function () {
+		return {
+			template: 'This is <strong>nghTemplateDir</strong> directive printing <em>{{myScopeVar}}</em>'
+		};
+	});
 </script>
 <?php
 	include_once '_footer.inc.php';
