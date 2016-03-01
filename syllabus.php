@@ -18,43 +18,51 @@
 <div class="clearfix"></br></div>
 <!--------------- END SUB MENU --------->
 
-
 <!-- Modal window -->
-<div id="test" class="modal" role="dialog" >
-	<div class="modal-dialog">
+<div class="modal" id="test" tabindex="-1" role="dialog" >
+	<div class="modal-dialog" role="document">
 		<div class="modal-content">
+			<!-- Header -->
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel"><i class="fa fa-pencil"></i> Edit syllabus</h4>
 			</div>
+			<!-- Body -->
 			<div class="modal-body">
+				<!-- <pre>{{actSyllabus}}</pre> -->
 				<div compile="formdata"></div>
 			</div>
+			<!-- Footer -->
 			<div class="modal-footer">
 				<div class="row">
-				<div class="col-xs-8">
-					<button type="button" class="btn btn-default"
-						ng-repeat="state in actSyllabus.availableOptions"
-						ng-click="setState(state);">&rarr; {{state.name}}</button>
-				</div>
-				<div class="col-xs-4">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" ng-click="updateSyllabus();" class="btn btn-primary">Save changes</button>
-				</div>
+					<div class="col-xs-8">
+						<div class="pull-left">
+							<span class="text-success">{{actSyllabus.state}}</span>
+							&rarr;
+							<button type="button" class="btn btn-default"
+								ng-repeat="state in actSyllabus.availableOptions"
+								ng-click="setState(state);"
+								ng-class="{active actSyllabus.selectedOption.sqms_state_id_TO === state.sqms_state_id_TO}">{{state.name}}</button>
+						</div>
+					</div>
+					<div class="col-xs-4">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" ng-click="updateSyllabus();" data-dismiss="modal" class="btn btn-primary">Save changes</button>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
-
+<!-- Page -->
 <div class="container">
 	
 	<div class="tab-content">
 	
 		<!-- Page: Dashboard -->
 		<div id="pagedashboard" class="tab-pane active">
-			<p>example <a href="http://bootstrapmaster.com/live/perfectum/">Dashboard Example</a></p>
+			<!-- <p>example <a href="http://bootstrapmaster.com/live/perfectum/">Dashboard Example</a></p>-->
 			<div class="row">
 			
 				<!-- Report -->
@@ -90,9 +98,9 @@
 		<div id="pagesyllabus" class="tab-pane">
 		
 			<!-- Sub menu -->
-			<div class="container 90_percent" >
-				<a href="#" class="btn btn-large btn-success" title='Add new Syllabus'><i class="fa fa-plus"></i>&nbsp;Create new</a>
-				<a href="#" class="btn btn-large btn-success" title='Add new Syllabus'><i class="fa fa-plus"></i>&nbsp;Copy</a>
+			<div>
+				<a href="#" class="btn btn-large btn-success"><i class="fa fa-plus"></i>&nbsp;Create new</a>
+				<a href="#" ng-disabled="SelNavDisabled" class="btn btn-large btn-success"><i class="fa fa-plus"></i>&nbsp;Copy</a>
 				<a href="#" title='switch help on/off' class="btn btn-large btn-default pull-right">
 					<span class="fa-stack">
 						<i class="fa fa-question fa-stack-1x"></i>
@@ -140,9 +148,7 @@
 				</tbody>
 			</table>
 		</div>
-		
-		
-		
+
 		<!-- Page: Question -->
 		<div id="pagequestion" class="tab-pane">
 			<div class="row">
@@ -344,13 +350,16 @@
 			name: '',
 			syllabelements: [],
 			availableOptions: [],
-			selectedOption: {sqms_state_id_TO: '1', name: 'unknown'}
+			selectedOption: null
 		};
+		$scope.SelNavDisabled = true;
 		$scope.setSelected = function (selElement) {
 			$scope.actSyllabus = selElement;
+			$scope.actSyllabus.selectedOption = null;
 			$scope.formdata = "<p>Loading...</p>";
 			$scope.showNav = false;
 			$scope.getSyllabusDetails();
+			$scope.SelNavDisabled = false;
 		};
 		
 		// Initial functions
