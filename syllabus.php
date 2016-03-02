@@ -107,7 +107,8 @@
 						<i class="fa fa-ban fa-stack-1x text-danger"></i>
 					</span>Help</a>
 			</div>
-
+			<br/>
+			
 			<div class="row">
 				<div class="col-sm-8">
 					<h2 style="margin:0;">Syllabi</h2>
@@ -129,25 +130,43 @@
 						<th>block</th>
 					</tr>
 				</thead>
-				<tbody>
-					<div >
-					<tr ng-repeat="syllabus in syllabi | filter:filtertext"
-						ng-click="setSelected(syllabus)"
-						ng-class="{info: syllabus.ID === actSyllabus.ID}">
+				<tbody ng-repeat="s in syllabi">
+					<tr ng-click="setSelected(s)" ng-class="{info: s.ID === actSyllabus.ID}">
 						<td>
-							<a class="btn"><i class="fa fa-plus"></i></a>
+							<a class="btn" ng-hide="s.HasNoChilds" ng-click="displ(s)">
+								<i class="fa fa-plus" ng-show="!s.showKids"></i>
+								<i class="fa fa-minus" ng-hide="!s.showKids"></i>
+							</a>
 							<a class="btn" data-toggle="modal" data-target="#test"><i class="fa fa-pencil"></i></a>
-						</td>
-						<td>{{syllabus.ID}}</td>
-						<td>{{syllabus.name}}</td>
-						<td>{{syllabus.state}}</td>
-						<td>{{syllabus.version}}</td>
-						<td>{{syllabus.topic}}</td>
-						<td>{{syllabus.owner}}</td>
-						<td>{{syllabus.validity_period_from}} - {{syllabus.validity_period_to}}</td>
+						</td>						
+						<td>{{s.ID}}</td>
+						<td>{{s.name}}</td>
+						<td>{{s.state}}</td>
+						<td>{{s.version}}</td>
+						<td>{{s.topic}}</td>
+						<td>{{s.owner}}</td>
+						<td>{{s.validity_period_from}} - {{s.validity_period_to}}</td>
 					</tr>
-					<tr ng-repeat="syllabus in syllabi | filter:filtertext">
-						<td colspan="8" ></td>
+					<tr ng-hide="s.HasNoChilds || !s.showKids">
+						<td colspan="8" style="padding:0; background-color: #ddd;">
+							<table class="table table-hover table-condensed" style="margin:0;">
+								<thead>
+									<tr>
+										<th>Order</th>
+										<th>Name</th>
+										<th>Description</th>
+										<th>Severity</th>
+									</tr>
+								</thead>
+								<tbody >
+								<tr ng-repeat="se in s.syllabuselements">
+									<td>{{se.element_order}}</td>
+									<td>{{se.name}}</td>
+									<td>{{se.description}}</td>
+									<td>{{se.severity}}%</td>
+								</tr>
+							</table>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -302,27 +321,63 @@
 			$scope.topics = data.topiclist;
 		});
 		
-		//------------------------------- Syllabus
+		//------------------------------- Syllabus	
 		$scope.getAllSyllabus = function () {
-			$http.get('getjson.php?c=syllabus').success(function(data) {
-				$scope.syllabi = data.syllabus;
+			$http.get('getjson.php?c=syllabus')
+			.success(function(data) {
+				$scope.syllabi = data.syllabus;				
+				// get under-elements for each syllabus
+				for (var i=0;i<$scope.syllabi.length;i++){					
+					$scope.syllabi[i].HasNoChilds = true; // default = no children					
+					$http({
+						url: 'getjson.php?c=getsyllabusdetails',
+						method: "POST",
+						data: JSON.stringify($scope.syllabi[i])
+					})
+					.success(function(a){
+						// if has children
+						if (a.syllabuselements.length > 0) {							
+							// for all children
+							for (var j=0;j<a.syllabuselements.length;j++){
+								// find parent
+								for (var k=0;k<$scope.syllabi.length;k++){
+									// if parent ID = childrens parent ID
+									if ($scope.syllabi[k].ID == a.syllabuselements[j].sqms_syllabus_id) {
+										$scope.syllabi[k].syllabuselements = a.syllabuselements;
+										$scope.syllabi[k].HasNoChilds = false; // has children
+									}									
+								}
+							}
+						}
+					})
+				}						
 			});
 		}
-		$scope.getSyllabusDetails = function () {
-			$http({
+		
+		// Toggle function
+		$scope.displ = function(s){
+			s.showKids = !s.showKids;
+		}
+		
+		// TODO: obsolete
+		$scope.getSyllabusDetails = function (syllab) {
+			var  ergebnis = $http({
 				url: 'getjson.php?c=getsyllabusdetails',
 				method: "POST",
-				data: JSON.stringify($scope.actSyllabus) // params actSyllabus
+				data: JSON.stringify(syllab)
 			}).
 			success(function(data){
 				// next possible states
-				$scope.actSyllabus.availableOptions = data.nextstates;
-				$scope.formdata = data.formdata;
-				$scope.actSyllabus.syllabelements = data.syllabuselements;
+				//$scope.actSyllabus.availableOptions = data.nextstates;
+				//$scope.formdata = data.formdata;
+				//$scope.actSyllabus.syllabelements = data.syllabuselements;
 				//console.log($scope.actSyllabus.syllabelements);
-				if ($scope.actSyllabus.availableOptions.length > 0)
-					$scope.showNav = true;
+				/*if ($scope.actSyllabus.availableOptions.length > 0)
+					$scope.showNav = true;*/
+				//console.log(data);
+				//return data.syllabuselements;
 			});
+			return ergebnis
 		}
 		$scope.formdata = "";
 		$scope.showNav = false;
@@ -370,12 +425,7 @@
 		// Initial functions
 		$scope.getAllSyllabus();
 		
-	}]) // http://www.angularjshub.com/examples/customdirectives/template/
-	.directive("nghTemplateDir", function () {
-		return {
-			template: 'This is <strong>nghTemplateDir</strong> directive printing <em>{{myScopeVar}}</em>'
-		};
-	});
+	}]);
 </script>
 <?php
 	include_once '_footer.inc.php';

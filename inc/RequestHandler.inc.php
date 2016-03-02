@@ -336,8 +336,9 @@ WHERE
 		settype($state, 'integer');
         $query = "SELECT * FROM sqms_syllabus_element"; // TODO: Replace * -> column names
 		if($id!=-1){
-			$query .= " WHERE sqms_syllabus_id = $id;";
+			$query .= " WHERE sqms_syllabus_id = $id";
         }
+		$query .= " ORDER BY element_order;";
         $return = array();
 		$res = $this->db->query($query);
         $return['syllabuselements'] = $this->getResultArray($res);
