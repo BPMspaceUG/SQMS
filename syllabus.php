@@ -52,13 +52,31 @@
 	</div>
 </div>
 
+
+<div class="modal" id="copysyllab" tabindex="-1" role="dialog" >
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<!-- Header -->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel"><i class="fa fa-plus"></i> Copy syllabus</h4>
+			</div>
+			<!-- Body -->
+			<div class="modal-body">
+				<div>Do you really want to copy this syllabus?</div>
+				<h2>{{actSyllabus.name}}</h2>
+			</div>
+			<!-- Footer -->
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-dismiss="modal">Dont copy</button>
+				<button type="button" ng-click="copySyllabus();" data-dismiss="modal" class="btn btn-success">Copy</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <!-- Page -->
 <div class="container">
-	
-	<!-- Debugging -->
-	<!--
-	<pre>{{actSyllabus}}</pre>
-	-->
 	
 	<div class="tab-content">
 	
@@ -114,7 +132,7 @@
 				<div class="col-sm-4">
 					<span>
 						<a href="#" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Create new</a>
-						<a href="#" ng-disabled="SelNavDisabled" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Copy</a>
+						<a data-target="#copysyllab" data-toggle="modal" ng-disabled="SelNavDisabled" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Copy</a>
 						<a href="#" title='switch help on/off' class="btn btn-default pull-right">
 							<span class="fa-stack">
 								<i class="fa fa-question fa-stack-1x"></i>
@@ -271,15 +289,19 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th>&nbsp;</th>
-						<th>ID</th>
+						<th style="width:95px;">&nbsp;</th>
+						<th class="text-muted"><small>ID</small></th>
 						<th>Name</th>
 					</tr>
 				</thead>
-				<tbody>
-					<tr ng-repeat="topic in topics | filter:filtertext" ng-click="setSelected(topic)" ng-class="{success: topic.sqms_topic_id === actTopic.sqms_topic_id}">
-						<td><checkbox>#</checkbox></td>
-						<td>{{topic.sqms_topic_id}}</td>
+				<tbody ng-repeat="topic in topics | filter:filtertext"
+					ng-click="setSelected(topic)"
+					ng-class="{success: topic.sqms_topic_id === actTopic.sqms_topic_id}">
+					<tr>
+						<td>
+							<a class="btn pull-left" data-toggle="modal" data-target="#test"><i class="fa fa-pencil"></i></a>
+						</td>
+						<td class="text-muted"><small>{{topic.sqms_topic_id}}</small></td>
 						<td>{{topic.name}}</td>
 					</tr>
 				</tbody>

@@ -27,7 +27,6 @@ angular.module('phonecatApp', [], function($compileProvider) {
 	});
 	
 	//------------------------------- Question
-	// TODO: too much nested for loops -> Improve!
 	$scope.getAllQuestions = function () {$http.get('getjson.php?c=questions')
 		.success(function(data) {
 			$scope.questions = data.questionlist;
@@ -40,17 +39,18 @@ angular.module('phonecatApp', [], function($compileProvider) {
 					data: JSON.stringify($scope.questions[i])
 				})
 				.success(function(a) {
-					// if has children
-					if (a.answers.length > 0) {
-						// for all children
-						for (var j=0;j<a.answers.length;j++) {
-							// find parent
-							for (var k=0;k<$scope.questions.length;k++) {
-								// if parent ID = childrens parent ID
-								if ($scope.questions[k].sqms_question_id == a.answers[j].sqms_question_id) {
-									$scope.questions[k].answers = a.answers;
-									$scope.questions[k].HasNoChilds = false; // has children
-								}
+					// find parent
+					for (var k=0;k<$scope.questions.length;k++) {
+						if ($scope.questions[k].sqms_question_id == a.parentID) {
+							
+							// save all data in the element
+							//$scope.questions[k].availableOptions = a.nextstates; // next states
+							//$scope.questions[k].formdata = a.formdata; // formular data
+
+							// if has children
+							if (a.answers.length > 0) {
+								$scope.questions[k].HasNoChilds = false; // has now children
+								$scope.questions[k].answers = a.answers;
 							}
 						}
 					}
@@ -83,6 +83,7 @@ angular.module('phonecatApp', [], function($compileProvider) {
 					data: JSON.stringify($scope.syllabi[i])
 				})
 				.success(function(a){
+					
 					// find parent
 					for (var k=0;k<$scope.syllabi.length;k++) {
 						if ($scope.syllabi[k].ID == a.parentID) {
@@ -115,10 +116,15 @@ angular.module('phonecatApp', [], function($compileProvider) {
 	$scope.setState = function(newstate) {
 		$scope.actSyllabus.selectedOption = newstate;
 	}
-
+	$scope.copySyllabus = function () { console.log("copying syllabus..."); $scope.writeData('copy_syllabus'); }
+	$scope.updateSyllabus = function () { $scope.writeData('update_syllabus'); }
+	
+	$scope.actSyllabus = {};
+	
 	// WRITE
 	$scope.writeData = function (command) {
 		$scope.status = "Sending command...";
+		console.log("Sending command...");
 		$http({
 			url: 'getjson.php?c=' + command,
 			method: "POST",
@@ -126,14 +132,15 @@ angular.module('phonecatApp', [], function($compileProvider) {
 		}).
 		success(function(data){
 			$scope.status = "Executed command successfully! Return: " + data;
+			console.log("Executed command successfully! Return: " + data);
 			$scope.getAllSyllabus(); // Refresh data
 		}).
 		error(function(error){
 			$scope.status = "Error! " + error.message;
+			console.log("Error! " + error.message);
 		});
 	}
-	$scope.updateSyllabus = function () { $scope.writeData('update_syllabus'); } // UPDATE
-	
+
 	//---- Initial functions
 	$scope.getAllSyllabus();
 	$scope.getAllQuestions();

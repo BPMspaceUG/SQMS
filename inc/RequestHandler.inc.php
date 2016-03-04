@@ -46,7 +46,7 @@ class RequestHandler
 		
         switch($command) {
 			
-			case 'syllabus':				
+			case 'syllabus':
 				$arr1 = $this->getSyllabusList(); // All data from syllabus
 				return json_encode($arr1);
                 break;
@@ -73,10 +73,15 @@ class RequestHandler
 			case 'create_syllabus':
 				return $this->addSyllabus($params);
 				break;
-
+				
 			case "update_syllabus":
 				return $this->updateSyllabus($params);
-				break;			
+				break;
+				
+			case "copy_syllabus":
+				$this->copySyllabus($params);
+				return "1"; // TODO
+				break;
 
 			//-------- Topics
 			
@@ -113,7 +118,13 @@ class RequestHandler
 				break;
 				
 			case 'getanswers':
-				$return = $this->getAnswers($params);
+				$questionid = $params['sqms_question_id'];
+				
+				$arr0 = array("parentID" => $questionid);
+				$arr1 = $this->getAnswers($questionid);
+				
+				// Merge data
+				$return = array_merge_recursive($arr0, $arr1);
 				return json_encode($return);
 				break;
 			
@@ -180,27 +191,33 @@ FROM
     (sqms_syllabus AS a
     LEFT JOIN sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id)
         INNER JOIN
-    sqms_syllabus_state AS c ON a.sqms_state_id = c.sqms_syllabus_state_id;";
+    sqms_syllabus_state AS c ON a.sqms_state_id = c.sqms_syllabus_state_id ORDER BY ID;";
         $return = array();
 		$res = $this->db->query($query);
         $return['syllabus'] = $this->getResultArray($res);
         return $return;
     }
-	private function addSyllabus($route) {
+	private function addSyllabus($params) {
+		
 		// TODO: Prepare statement
-		$query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, validity_period_from, validity_period_to, description) VALUES (".
-			"'Testtext',".
-			"1,". // StateID
+		$query = "INSERT INTO sqms_syllabus ".
+			"(name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
+			"validity_period_from, validity_period_to, description) VALUES (".
+			"'".$params["name"]."',".
+			"1,". // StateID (alwas 1 at creating)
 			"1,". // Version
 			"1,". // Topic
-			"'Herr man',".
+			"'".$params["owner"]."',".
 			"1,". // LangID
-			"'2015-06-01',".
-			"'2016-12-12',".
-			"'<p>This is a test, HTML should be possible!</p>');";
+			"CURDATE(),".
+			"DATE_ADD(CURDATE(), INTERVAL 1 YEAR),".
+			"'".$params["description"]."');";
         $result = $this->db->query($query);
 		if (!$result) $this->db->error;
 		return $result;
+	}
+	private function copySyllabus($oldSyllabus) {
+		$this->addSyllabus($oldSyllabus);
 	}
 	private function getSyllabusPossibleNextStates($actstate) {
 		settype($actstate, 'integer');
@@ -373,8 +390,7 @@ WHERE
         $return['questionlist'] = $this->getResultArray($res);
         return $return;
     }
-	private function getAnswers($params) {
-		$questionID = $params['sqms_question_id'];
+	private function getAnswers($questionID) {
 		settype($questionID , 'integer');
 
         $query = "SELECT * FROM `sqms_answer` WHERE sqms_question_id = $questionID;";

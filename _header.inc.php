@@ -61,10 +61,8 @@
 						<i class="fa fa-user-secret"></i>&nbsp;Admin<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a href="user.php" title='user'><i class="fa fa-user-plus"></i>&nbsp;Language</a></li>
-						<li><a href="topic.php" title='Topic'><i class="fa fa-folder-o"></i>&nbsp;Topic</a></li>
-						<li><a href="trainer.php" title='Trainer'><i class="fa fa-graduation-cap"></i>&nbsp;Trainer</a></li>
-						<li><a href="course.php" title='Course'><i class="fa fa-university"></i>&nbsp;Course</a></li>
+						<li><a href="user.php" title='user'><i class="fa fa-user-plus"></i>&nbsp;Language (future)</a></li>
+						<li><a href="topic.php" title='Topic'><i class="fa fa-folder-o"></i>&nbsp;Topic (under topic)</a></li>
 					</ul>
 				</li>
 			</ul>
