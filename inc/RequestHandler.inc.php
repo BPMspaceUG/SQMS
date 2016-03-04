@@ -11,7 +11,7 @@ class RequestHandler
     private $db;
     private $discount = 0;
 
-    private function getResultArray($result){
+    private function getResultArray($result) {
         /* Zweck: Ausgabe einer Debug */
         /*if(true){
             echo "<pre>";
@@ -25,9 +25,7 @@ class RequestHandler
         }
         return $results_array;
     }
-
-    public function __construct()
-    {
+    public function __construct() {
 		// Get global variables here
 		global $DB_host;
 		global $DB_user;
@@ -44,11 +42,10 @@ class RequestHandler
 		$db->query("SET NAMES utf8");
         $this->db = $db;
     }
-
-    public function handle($command, $params){
-
-        switch($command){
-
+    public function handle($command, $params) {
+		
+        switch($command) {
+			
 			case 'syllabus':				
 				$arr1 = $this->getSyllabusList(); // All data from syllabus
 				return json_encode($arr1);
@@ -91,7 +88,7 @@ class RequestHandler
 				
 			case 'delete_topic': // doesnt work because of settings in database
 				return $this->delTopic($params["sqms_topic_id"]);
-				break;			
+				break;
 				
 			case 'update_topic':
 				return $this->updateTopic($params);
@@ -102,18 +99,22 @@ class RequestHandler
 			case 'questions':
 				$return = $this->getQuestionList();
 				return json_encode($return);
-				break;	
+				break;
 				
 			case 'create_question':
 				return $this->addQuestion($params);
-				break;		
+				break;
 				
 			case 'update_question':
 				return $this->updateQuestion($params);
 				break;
+				
+			case 'getanswers':
+				$return = $this->getAnswers($params);
+				return json_encode($return);
+				break;
 			
-			//-------- Reports for Dashboard
-			
+			//-------- Reports for Dashboard			
 			case 'getreports':
 				$arr1 = $this->getReport_QuestionsWithoutQuestionmarks();
 				$arr2 = $this->getReport_QuestionsTotal();
@@ -140,16 +141,14 @@ class RequestHandler
 					}
 				} else echo "invalid transition";
 				return "<br/>time=".time();
-				break;	
+				break;
 				/*************************************/				
-								
+				
 			//-------- State machine
-
             default:
                 return "goaway";
                 exit;
                 break;
-
         }
     }
 
@@ -159,7 +158,7 @@ class RequestHandler
 	
 	// TODO: Make class for state machine
 	
-    private function getSyllabusList(){
+    private function getSyllabusList() {
 		$query = "SELECT 
     sqms_syllabus_id AS ID,
     a.name AS name,
@@ -184,7 +183,7 @@ FROM
         $return['syllabus'] = $this->getResultArray($res);
         return $return;
     }
-	private function addSyllabus($route){
+	private function addSyllabus($route) {
 		// TODO: Prepare statement
 		$query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, validity_period_from, validity_period_to, description) VALUES (".
 			"'Testtext',".
@@ -244,7 +243,7 @@ WHERE
 		$res = $this->db->query($query);
 		$cnt = $res->num_rows;
         return ($cnt > 0);
-	}	
+	}
 	private function getSyllabusState($syllabid) {
 		settype($syllabid, 'integer');
 		$query = "SELECT sqms_state_id FROM sqms_syllabus WHERE sqms_syllabus_id = $syllabid;";
@@ -252,7 +251,7 @@ WHERE
 		$return = array();
         $return['test'] = $this->getResultArray($res);
 		return $return['test'][0]['sqms_state_id'];
-	}	
+	}
 	private function setSyllabusState($syllabid, $stateid) {
 		// params
 		settype($syllabid, 'integer');
@@ -282,16 +281,14 @@ WHERE
 		$return = $this->getResultArray($res);
         return $return;
 	}
-	
-	
-	private function addTopic($name){
+	private function addTopic($name) {
 		$query = "INSERT INTO sqms_topic (name) VALUES (?);";
 		$stmt = $this->db->prepare($query); // prepare statement
 		$stmt->bind_param("s", $name); // bind params
         $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
 	}
-	private function delTopic($id){
+	private function delTopic($id) {
 		// Deleten darf der user dann sowieso nicht
 		// TODO: Prepare statement
 		$query = "UPDATE sqms_topic SET name = 'XXXXXXX' WHERE sqms_topic_id = ".$id.";";
@@ -299,7 +296,7 @@ WHERE
 		//if (!$result) $this->db->error;
 		return (!is_null($result) ? 1 : null);
 	}
-	private function updateTopic($params){
+	private function updateTopic($params) {
 		$query = "UPDATE sqms_topic SET name = ? WHERE sqms_topic_id = ?;";
 		$stmt = $this->db->prepare($query); // prepare statement
 		$stmt->bind_param("si", $name, $id); // bind params
@@ -332,7 +329,7 @@ WHERE
 		*/
 		return null;
 	}
-    private function getSyllabusElementsList($id=-1){
+    private function getSyllabusElementsList($id=-1) {
 		settype($state, 'integer');
         $query = "SELECT * FROM sqms_syllabus_element"; // TODO: Replace * -> column names
 		if($id!=-1){
@@ -354,7 +351,7 @@ WHERE
 		$return['formdata'] = $tmp[0]['form_data'];
 		return $return;
 	}
-	private function getTopicList($id=-1){
+	private function getTopicList($id=-1) {
         $query = "SELECT * FROM `sqms_topic`";
         if($id!=-1){
             $query .= " AND sqms_topic_id='$id'";
@@ -363,15 +360,25 @@ WHERE
         $return['topiclist'] = $this->getResultArray($res);
         return $return;
     }
-	private function getQuestionList($id=-1){
-        $query = "SELECT * FROM `sqms_question`";
+	// ------------------------------------- Questions
+	private function getQuestionList($id=-1) {
+        $query = "SELECT * FROM `sqms_question` AS a LEFT JOIN sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id";
         if($id!=-1){
             $query .= " AND sqms_question_id='$id'";
         }
 		$res = $this->db->query($query);
         $return['questionlist'] = $this->getResultArray($res);
         return $return;
-    }	
+    }
+	private function getAnswers($params) {
+		$questionID = $params['sqms_question_id'];
+		settype($questionID , 'integer');
+
+        $query = "SELECT * FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
+		$res = $this->db->query($query);
+        $return['answers'] = $this->getResultArray($res);
+        return $return;
+	}
 	// ----------------------------------- Reports
     private function getReport_QuestionsWithoutQuestionmarks(){
         $query = "SELECT 'Questions without Questionmarks' as attr, COUNT(*) AS value, 'fa-question' AS icon FROM sqms_question WHERE question NOT LIKE '%?%';";

@@ -62,6 +62,14 @@
 	
 		<!-- Page: Dashboard -->
 		<div id="pagedashboard" class="tab-pane active">
+		
+			<div class="row bg-primary">
+				<div class="col-sm-12">
+					<h2>Dashboard</h2>
+				</div>
+			</div>
+			<br>
+		
 			<!-- <p>example <a href="http://bootstrapmaster.com/live/perfectum/">Dashboard Example</a></p>-->
 			<div class="row">
 			
@@ -96,32 +104,33 @@
 	
 		<!-- Page: Syllabus -->
 		<div id="pagesyllabus" class="tab-pane">
-		
-			<!-- Sub menu -->
-			<div>
-				<a href="#" class="btn btn-large btn-success"><i class="fa fa-plus"></i>&nbsp;Create new</a>
-				<a href="#" ng-disabled="SelNavDisabled" class="btn btn-large btn-success"><i class="fa fa-plus"></i>&nbsp;Copy</a>
-				<a href="#" title='switch help on/off' class="btn btn-large btn-default pull-right">
-					<span class="fa-stack">
-						<i class="fa fa-question fa-stack-1x"></i>
-						<i class="fa fa-ban fa-stack-1x text-danger"></i>
-					</span>Help</a>
-			</div>
-			<br/>
 			
-			<div class="row">
-				<div class="col-sm-8">
-					<h2 style="margin:0;">Syllabi</h2>
+			<div class="row bg-primary">
+				<div class="col-sm-4">
+					<h2>Syllabus</h2>
+				</div>
+				<div class="col-sm-4">
+					<span>
+						<a href="#" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Create new</a>
+						<a href="#" ng-disabled="SelNavDisabled" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Copy</a>
+						<a href="#" title='switch help on/off' class="btn btn-default pull-right">
+							<span class="fa-stack">
+								<i class="fa fa-question fa-stack-1x"></i>
+								<i class="fa fa-ban fa-stack-1x text-danger"></i>
+							</span>Help</a>
+					</span>
 				</div>
 				<div class="col-sm-4">
 					<input type="text" ng-model="filtertext" class="form-control pull-right" style="width:200px;" placeholder="filter">
 				</div>
 			</div>
-			<table class="table table-hover">
+			<br/>
+			
+			<table class="table" style="width: 100%;">
 				<thead>
 					<tr>
-						<th>&nbsp;</th>
-						<th>ID</th>
+						<th style="min-width: 95px;">&nbsp;</th>
+						<th class="text-muted"><small>ID</small></th>
 						<th>Name</th>
 						<th>State</th>
 						<th>Version</th>
@@ -133,23 +142,23 @@
 				<tbody ng-repeat="s in syllabi">
 					<tr ng-click="setSelected(s)" ng-class="{info: s.ID === actSyllabus.ID}">
 						<td>
-							<a class="btn" ng-hide="s.HasNoChilds" ng-click="displ(s)">
+							<a class="btn pull-left" ng-hide="s.HasNoChilds" ng-click="displ(s)">
 								<i class="fa fa-plus" ng-show="!s.showKids"></i>
 								<i class="fa fa-minus" ng-hide="!s.showKids"></i>
 							</a>
-							<a class="btn" data-toggle="modal" data-target="#test"><i class="fa fa-pencil"></i></a>
-						</td>						
-						<td>{{s.ID}}</td>
+							<a class="btn pull-left" data-toggle="modal" data-target="#test"><i class="fa fa-pencil"></i></a>
+						</td>
+						<td class="text-muted"><small>{{s.ID}}</small></td>
 						<td>{{s.name}}</td>
 						<td>{{s.state}}</td>
 						<td>{{s.version}}</td>
 						<td>{{s.topic}}</td>
 						<td>{{s.owner}}</td>
-						<td>{{s.validity_period_from}} - {{s.validity_period_to}}</td>
+						<td><small>{{s.validity_period_from}} - {{s.validity_period_to}}</small></td>
 					</tr>
 					<tr ng-hide="s.HasNoChilds || !s.showKids">
-						<td colspan="8" style="padding:0; background-color: #ddd;">
-							<table class="table table-hover table-condensed" style="margin:0;">
+						<td colspan="8" style="padding:0; background-color: #ddd; border: 1px solid #ccc;">
+							<table class="table table-striped table-condensed" style="margin:0;">
 								<thead>
 									<tr>
 										<th>Order</th>
@@ -158,7 +167,7 @@
 										<th>Severity</th>
 									</tr>
 								</thead>
-								<tbody >
+								<tbody>
 								<tr ng-repeat="se in s.syllabuselements">
 									<td>{{se.element_order}}</td>
 									<td>{{se.name}}</td>
@@ -174,76 +183,89 @@
 
 		<!-- Page: Question -->
 		<div id="pagequestion" class="tab-pane">
-			<div class="row">
+			<!-- Header -->
+			<div class="row bg-primary">
 				<div class="col-sm-8">
-					<h2 style="margin:0;">Questions</h2>
+					<h2>Question</h2>
 				</div>
 				<div class="col-sm-4">
 					<input type="text" ng-model="filtertext" class="form-control pull-right" style="width:200px;" placeholder="filter">
 				</div>
 			</div>
+			<br/>
+			<!-- Content -->
 			<table class="table">
 				<thead>
 					<tr>
-						<th>&nbsp;</th>
-						<th>ID</th>
+						<th style="min-width: 95px;">&nbsp;</th>
+						<th class="text-muted"><small>ID</small></th>
 						<th>Question</th>
 						<th>Author</th>
-						<th>Version</th>
-						<th>External ID</th>
+						<th>Vers.</th>
+						<th>Ext. ID</th>
 						<th>Topic</th>
 						<th>?</th>
 						<th>?</th>
 						<th>Question Type</th>
 					</tr>
 				</thead>
-				<tbody>
-					<tr ng-repeat="question in questions | filter:filtertext"
-						ng-click="setSelected(question)"
-						ng-class="{success: question.sqms_question_id === actQuestion.sqms_question_id}">
-						<td><checkbox>#</checkbox></td>
-						<td>{{question.sqms_question_id}}</td>
-						<td>{{question.question}}</td>
-						<td>{{question.author}}</td>
-						<td>{{question.version}}</td>
-						<td>{{question.id_external}}</td>
-						<td>{{question.sqms_topic_id}}</td>
+				<tbody ng-repeat="q in questions | filter:filtertext"
+					ng-click="setSelected(q)"
+					ng-class="{success: q.sqms_question_id === actQuestion.sqms_question_id}">
+					<tr>
+						<td>
+							<a class="btn pull-left" ng-hide="q.HasNoChilds" ng-click="displ(q)">
+								<i class="fa fa-plus" ng-show="!q.showKids"></i>
+								<i class="fa fa-minus" ng-hide="!q.showKids"></i>
+							</a>
+							<a class="btn pull-left" data-toggle="modal" data-target="#test"><i class="fa fa-pencil"></i></a>
+						</td>
+						<td class="text-muted"><small>{{q.sqms_question_id}}</small></td>
+						<td>{{q.question}}</td>
+						<td>{{q.author}}</td>
+						<td>{{q.version}}</td>
+						<td>{{q.id_external}}</td>
+						<td>{{q.name}}</td>
 						<td>?</td>
 						<td>?</td>
-						<td>{{question.sqms_question_type_id}}</td>
+						<td>{{q.sqms_question_type_id}}</td>
+					</tr>
+					<tr ng-hide="q.HasNoChilds || !q.showKids">
+						<td colspan="10" style="padding:0; background-color: #ddd; border: 1px solid #ccc;">
+							<table class="table table-striped table-condensed" style="margin:0;">
+								<thead>
+									<tr>
+										<th style="width:95px;">ID</th>
+										<th style="width:75%;">Answer</th>
+										<th>Correct</th>
+									</tr>
+								</thead>
+								<tbody>
+								<tr ng-repeat="an in q.answers">
+									<td>{{an.sqms_answer_id}}</td>
+									<td>{{an.answer}}</td>
+									<td>{{an.correct}}</td>
+								</tr>
+							</table>
+						</td>
 					</tr>
 				</tbody>
 			</table>
-			<div class="well">
-				<p>Actual Element:</p>
-				<form>
-					<b>ID: {{actQuestion.sqms_question_id}}</b><br/>
-					<b>Version: {{actQuestion.version}}</b><br/>
-					<b>Author: {{actQuestion.author}}</b><br/>
-					<b>Question:</b>
-					<input type="text" name="f_name" data-ng-model="actQuestion.question" placeholder="Question" required />
-					<br />
-					<br />
-					<input type="button" value="Create" data-ng-click="createQuestion()" />
-					<input type="button" value="Update" data-ng-click="updateQuestion()" />
-					<input type="button" value="Delete" data-ng-click="deleteQuestion()" />
-					<br />
-					<p>Status: {{status}}</p>
-				</form>
-			</div>
 		</div>
-		
 		
 		<!-- Page: Topic -->
 		<div id="pagetopic" class="tab-pane">
-			<div class="row">
+			<!-- Header -->
+			<div class="row bg-primary">
 				<div class="col-sm-8">
-					<h2 style="margin:0;">Topics</h2>
+					<h2>Topic</h2>
 				</div>
 				<div class="col-sm-4">
 					<input type="text" ng-model="filtertext" class="form-control pull-right" style="width:200px;" placeholder="filter">
 				</div>
 			</div>
+			<br/>
+			<!-- Content -->
 			<table class="table">
 				<thead>
 					<tr>
@@ -260,173 +282,12 @@
 					</tr>
 				</tbody>
 			</table>
-			<div class="well">
-				<p>Actual Element:</p>
-				<form>
-					<b>ID: {{actTopic.sqms_topic_id}}</b><br/>
-					<b>Name:</b>
-					<input type="text" name="f_name" data-ng-model="actTopic.name" placeholder="Name" required />
-					<br />
-					<input type="button" value="Create" data-ng-click="createTopic()" />
-					<input type="button" value="Update" data-ng-click="updateTopic()" />
-					<input type="button" value="Delete" data-ng-click="deleteTopic()" />
-					<br />
-					<p>Status: {{status}}</p>
-				</form>
-			</div>
 		</div>
-	
+		
 	</div>
-
 </div>
 
-
-<!-- AngularJS -->
-<script>
-	'use strict';
-	
-	/* Controllers */
-	angular.module('phonecatApp', [], function($compileProvider) {
-		
-		// for loading HTML from Database
-		$compileProvider.directive('compile', function($compile) {
-			return function(scope, element, attrs) {
-				scope.$watch(
-				  function(scope) {
-					return scope.$eval(attrs.compile);
-				  },
-				  function(value) {
-					element.html(value);
-					$compile(element.contents())(scope);
-				  }
-				);
-			};
-		});
-		
-	})
-	.controller('PhoneListCtrl', ['$scope', '$http', function($scope, $http) {
-		
-		//------------------------------- Dashboard
-		$http.get('getjson.php?c=getreports').success(function(data) {
-			$scope.reports = data.reports;
-		});
-		
-		//------------------------------- Question
-		$http.get('getjson.php?c=questions').success(function(data) {
-			$scope.questions = data.questionlist;
-		});		
-		
-		//------------------------------- Topic
-		$http.get('getjson.php?c=topics').success(function(data) {
-			$scope.topics = data.topiclist;
-		});
-		
-		//------------------------------- Syllabus	
-		$scope.getAllSyllabus = function () {
-			$http.get('getjson.php?c=syllabus')
-			.success(function(data) {
-				$scope.syllabi = data.syllabus;				
-				// get under-elements for each syllabus
-				for (var i=0;i<$scope.syllabi.length;i++){					
-					$scope.syllabi[i].HasNoChilds = true; // default = no children					
-					$http({
-						url: 'getjson.php?c=getsyllabusdetails',
-						method: "POST",
-						data: JSON.stringify($scope.syllabi[i])
-					})
-					.success(function(a){
-						// if has children
-						if (a.syllabuselements.length > 0) {							
-							// for all children
-							for (var j=0;j<a.syllabuselements.length;j++){
-								// find parent
-								for (var k=0;k<$scope.syllabi.length;k++){
-									// if parent ID = childrens parent ID
-									if ($scope.syllabi[k].ID == a.syllabuselements[j].sqms_syllabus_id) {
-										$scope.syllabi[k].syllabuselements = a.syllabuselements;
-										$scope.syllabi[k].HasNoChilds = false; // has children
-									}									
-								}
-							}
-						}
-					})
-				}						
-			});
-		}
-		
-		// Toggle function
-		$scope.displ = function(s){
-			s.showKids = !s.showKids;
-		}
-		
-		// TODO: obsolete
-		$scope.getSyllabusDetails = function (syllab) {
-			var  ergebnis = $http({
-				url: 'getjson.php?c=getsyllabusdetails',
-				method: "POST",
-				data: JSON.stringify(syllab)
-			}).
-			success(function(data){
-				// next possible states
-				//$scope.actSyllabus.availableOptions = data.nextstates;
-				//$scope.formdata = data.formdata;
-				//$scope.actSyllabus.syllabelements = data.syllabuselements;
-				//console.log($scope.actSyllabus.syllabelements);
-				/*if ($scope.actSyllabus.availableOptions.length > 0)
-					$scope.showNav = true;*/
-				//console.log(data);
-				//return data.syllabuselements;
-			});
-			return ergebnis
-		}
-		$scope.formdata = "";
-		$scope.showNav = false;
-		
-		// Set State
-		$scope.setState = function(newstate) {
-			$scope.actSyllabus.selectedOption = newstate;
-		}
-
-		// WRITE
-		$scope.writeData = function (command) {
-			$scope.status = "Sending command...";
-			$http({
-				url: 'getjson.php?c=' + command,
-				method: "POST",
-				data: JSON.stringify($scope.actSyllabus)
-			}).
-			success(function(data){
-				$scope.status = "Executed command successfully! Return: " + data;
-				$scope.getAllSyllabus(); // Refresh data
-			}).
-			error(function(error){
-				$scope.status = "Error! " + error.message;
-			});
-		}
-		$scope.updateSyllabus = function () { $scope.writeData('update_syllabus'); } // UPDATE		
-
-		// initial selected data
-		$scope.actSyllabus = {
-			ID: 0,
-			name: '',
-			syllabelements: [],
-			availableOptions: [],
-			selectedOption: null
-		};
-		$scope.SelNavDisabled = true;
-		$scope.setSelected = function (selElement) {
-			$scope.actSyllabus = selElement;
-			$scope.actSyllabus.selectedOption = null;
-			$scope.formdata = "<p>Loading...</p>";
-			$scope.showNav = false;
-			$scope.getSyllabusDetails();
-			$scope.SelNavDisabled = false;
-		};		
-		// Initial functions
-		$scope.getAllSyllabus();
-		
-	}]);
-</script>
+<script src="custom/custom.js"></script>
 <?php
 	include_once '_footer.inc.php';
 ?>

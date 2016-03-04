@@ -66,11 +66,6 @@
 						<li><a href="trainer.php" title='Trainer'><i class="fa fa-graduation-cap"></i>&nbsp;Trainer</a></li>
 						<li><a href="course.php" title='Course'><i class="fa fa-university"></i>&nbsp;Course</a></li>
 					</ul>
-				</li> 		
-				<li>
-					<a href="../phpSecureLogin/includes/logout.php" title='Logout'>
-						<i class="fa fa-sign-out"></i>&nbsp;Logout
-					</a>
 				</li>
 			</ul>
 		</nav>
