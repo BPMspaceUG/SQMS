@@ -54,11 +54,14 @@ class RequestHandler
 			case 'getsyllabusdetails':
 				$syllabid = $params["ID"];
 				$actstate = $params["sqms_state_id"];
+				
+				$arr0 = array("parentID" => $syllabid);
 				$arr1 = $this->getSyllabusPossibleNextStates($actstate); // Possible next states
 				$arr2 = $this->getFormDataByState($actstate); // Form data for actual state
 				$arr3 = $this->getSyllabusElementsList($syllabid);
+				
 				// Merge data
-				$return = array_merge_recursive($arr1, $arr2, $arr3);
+				$return = array_merge_recursive($arr0, $arr1, $arr2, $arr3);
 				return json_encode($return);
 				break;
 				

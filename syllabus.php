@@ -29,8 +29,7 @@
 			</div>
 			<!-- Body -->
 			<div class="modal-body">
-				<!-- <pre>{{actSyllabus}}</pre> -->
-				<div compile="formdata"></div>
+				<div compile="actSyllabus.formdata"></div>
 			</div>
 			<!-- Footer -->
 			<div class="modal-footer">
@@ -38,11 +37,9 @@
 					<div class="col-xs-8">
 						<div class="pull-left">
 							<span class="text-success">{{actSyllabus.state}}</span>
-							&rarr;
 							<button type="button" class="btn btn-default"
 								ng-repeat="state in actSyllabus.availableOptions"
-								ng-click="setState(state);"
-								ng-class="{active actSyllabus.selectedOption.sqms_state_id_TO === state.sqms_state_id_TO}">{{state.name}}</button>
+								ng-click="setState(state);">{{state.name}}</button>
 						</div>
 					</div>
 					<div class="col-xs-4">
@@ -57,6 +54,11 @@
 
 <!-- Page -->
 <div class="container">
+	
+	<!-- Debugging -->
+	<!--
+	<pre>{{actSyllabus}}</pre>
+	-->
 	
 	<div class="tab-content">
 	
@@ -140,7 +142,7 @@
 					</tr>
 				</thead>
 				<tbody ng-repeat="s in syllabi">
-					<tr ng-click="setSelected(s)" ng-class="{info: s.ID === actSyllabus.ID}">
+					<tr ng-click="setSelectedSyllabus(s)" ng-class="{info: s.ID === actSyllabus.ID}">
 						<td>
 							<a class="btn pull-left" ng-hide="s.HasNoChilds" ng-click="displ(s)">
 								<i class="fa fa-plus" ng-show="!s.showKids"></i>

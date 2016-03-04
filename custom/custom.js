@@ -27,6 +27,7 @@ angular.module('phonecatApp', [], function($compileProvider) {
 	});
 	
 	//------------------------------- Question
+	// TODO: too much nested for loops -> Improve!
 	$scope.getAllQuestions = function () {$http.get('getjson.php?c=questions')
 		.success(function(data) {
 			$scope.questions = data.questionlist;
@@ -39,7 +40,6 @@ angular.module('phonecatApp', [], function($compileProvider) {
 					data: JSON.stringify($scope.questions[i])
 				})
 				.success(function(a) {
-					console.log(a);
 					// if has children
 					if (a.answers.length > 0) {
 						// for all children
@@ -68,27 +68,33 @@ angular.module('phonecatApp', [], function($compileProvider) {
 	$scope.getAllSyllabus = function () {
 		$http.get('getjson.php?c=syllabus')
 		.success(function(data) {
+			
 			$scope.syllabi = data.syllabus;
+			
 			// get under-elements for each syllabus
 			for (var i=0;i<$scope.syllabi.length;i++){
+				
 				$scope.syllabi[i].HasNoChilds = true; // default = no children
+				
+				// request details for each syllabus
 				$http({
 					url: 'getjson.php?c=getsyllabusdetails',
 					method: "POST",
 					data: JSON.stringify($scope.syllabi[i])
 				})
 				.success(function(a){
-					// if has children
-					if (a.syllabuselements.length > 0) {
-						// for all children
-						for (var j=0;j<a.syllabuselements.length;j++){
-							// find parent
-							for (var k=0;k<$scope.syllabi.length;k++){
-								// if parent ID = childrens parent ID
-								if ($scope.syllabi[k].ID == a.syllabuselements[j].sqms_syllabus_id) {
-									$scope.syllabi[k].syllabuselements = a.syllabuselements;
-									$scope.syllabi[k].HasNoChilds = false; // has children
-								}
+					// find parent
+					for (var k=0;k<$scope.syllabi.length;k++) {
+						if ($scope.syllabi[k].ID == a.parentID) {
+							
+							// save all data in the element
+							$scope.syllabi[k].availableOptions = a.nextstates; // next states
+							$scope.syllabi[k].formdata = a.formdata; // formular data
+
+							// if has children
+							if (a.syllabuselements.length > 0) {
+								$scope.syllabi[k].HasNoChilds = false; // has now children
+								$scope.syllabi[k].syllabuselements = a.syllabuselements;
 							}
 						}
 					}
@@ -101,31 +107,9 @@ angular.module('phonecatApp', [], function($compileProvider) {
 	$scope.displ = function(el){
 		el.showKids = !el.showKids;
 	}
-	
-	// TODO: obsolete
-	/*
-	$scope.getSyllabusDetails = function (syllab) {
-		var  ergebnis = $http({
-			url: 'getjson.php?c=getsyllabusdetails',
-			method: "POST",
-			data: JSON.stringify(syllab)
-		}).
-		success(function(data){
-			// next possible states
-			//$scope.actSyllabus.availableOptions = data.nextstates;
-			//$scope.formdata = data.formdata;
-			//$scope.actSyllabus.syllabelements = data.syllabuselements;
-			//console.log($scope.actSyllabus.syllabelements);
-			/*if ($scope.actSyllabus.availableOptions.length > 0)
-				$scope.showNav = true;
-			//console.log(data);
-			//return data.syllabuselements;
-		});
-		return ergebnis
-	}
-	*/
-	$scope.formdata = "";
-	$scope.showNav = false;
+	$scope.setSelectedSyllabus = function (el) {
+		$scope.actSyllabus = el;
+	};
 	
 	// Set State
 	$scope.setState = function(newstate) {
@@ -149,24 +133,6 @@ angular.module('phonecatApp', [], function($compileProvider) {
 		});
 	}
 	$scope.updateSyllabus = function () { $scope.writeData('update_syllabus'); } // UPDATE
-
-	// initial selected data
-	$scope.actSyllabus = {
-		ID: 0,
-		name: '',
-		syllabelements: [],
-		availableOptions: [],
-		selectedOption: null
-	};
-	$scope.SelNavDisabled = true;
-	$scope.setSelected = function (selElement) {
-		$scope.actSyllabus = selElement;
-		$scope.actSyllabus.selectedOption = null;
-		$scope.formdata = "<p>Loading...</p>";
-		$scope.showNav = false;
-		$scope.getSyllabusDetails();
-		$scope.SelNavDisabled = false;
-	};
 	
 	//---- Initial functions
 	$scope.getAllSyllabus();
