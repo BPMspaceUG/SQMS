@@ -21,6 +21,18 @@ angular.module('phonecatApp', [], function($compileProvider) {
 })
 .controller('PhoneListCtrl', ['$scope', '$http', function($scope, $http) {
 	
+	/************************************** General **************************/
+	
+	// Order
+	$scope.predicate = 'ID';
+	$scope.reverse = false;
+	
+	$scope.order = function(predicate) {
+		$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+		$scope.predicate = predicate;
+	  };
+	
+	
 	//------------------------------- Dashboard
 	$http.get('getjson.php?c=getreports').success(function(data) {
 		$scope.reports = data.reports;

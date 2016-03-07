@@ -146,20 +146,22 @@
 			</div>
 			<br/>
 			
+			<pre>Sorting predicate = {{predicate}}; reverse = {{reverse}}</pre>
 			<table class="table" style="width: 100%;">
 				<thead>
 					<tr>
 						<th style="min-width: 95px;">&nbsp;</th>
-						<th class="text-muted"><small>ID</small></th>
-						<th>Name</th>
-						<th>State</th>
-						<th>Version</th>
-						<th>Topic</th>
-						<th>Owner</th>
+						<!-- TODO: ng-repeat would be awesome here! -->
+						<th ng-click="order('ID')"class="text-muted sortable"><small>ID<span class="sortorder" ng-show="predicate === 'ID'" ng-class="{reverse:reverse}"></span></small></th>
+						<th ng-click="order('name')" class="sortable">Name<span class="sortorder" ng-show="predicate === 'name'" ng-class="{reverse:reverse}"></span></th>
+						<th ng-click="order('state')" class="sortable">State<span class="sortorder" ng-show="predicate === 'state'" ng-class="{reverse:reverse}"></span></th>
+						<th ng-click="order('version')" class="sortable">Version<span class="sortorder" ng-show="predicate === 'version'" ng-class="{reverse:reverse}"></span></th>
+						<th ng-click="order('sqms_topic_id')" class="sortable">Topic<span class="sortorder" ng-show="predicate === 'sqms_topic_id'" ng-class="{reverse:reverse}"></span></th>
+						<th ng-click="order('owner')" class="sortable">Owner<span class="sortorder" ng-show="predicate === 'owner'" ng-class="{reverse:reverse}"></span></th>
 						<th>block</th>
 					</tr>
 				</thead>
-				<tbody ng-repeat="s in syllabi">
+				<tbody ng-repeat="s in syllabi | orderBy:predicate:reverse">
 					<tr ng-click="setSelectedSyllabus(s)" ng-class="{info: s.ID === actSyllabus.ID}">
 						<td>
 							<a class="btn pull-left" ng-hide="s.HasNoChilds" ng-click="displ(s)">

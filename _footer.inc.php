@@ -8,7 +8,7 @@
 				<li><a href="#">jQuery</a></li>
 				<li><a href="#">AngularJS</a></li>
 				<li><a href="#">PHP</a></li>
-				<li><a href="#">fluel</a></li>
+				<li><a href="#">Fuel UX</a></li>
 			</ul>
 		</small>
 	</div>
