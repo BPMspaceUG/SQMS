@@ -24,14 +24,19 @@ angular.module('phonecatApp', [], function($compileProvider) {
 	/************************************** General **************************/
 	
 	// Order
-	$scope.predicate = 'ID';
-	$scope.reverse = false;
+	$scope.predicate_s = 'ID';
+	$scope.predicate_q = 'ID';
+	$scope.reverse_s = false;
+	$scope.reverse_q = false;
 	
-	$scope.order = function(predicate) {
-		$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
-		$scope.predicate = predicate;
-	  };
-	
+	$scope.order_s = function(predicate) {
+		$scope.reverse_s = ($scope.predicate_s === predicate) ? !$scope.reverse_s : false;
+		$scope.predicate_s = predicate;
+	};
+	$scope.order_q = function(predicate) {
+		$scope.reverse_q = ($scope.predicate_q === predicate) ? !$scope.reverse_q : false;
+		$scope.predicate_q = predicate;
+	};
 	
 	//------------------------------- Dashboard
 	$http.get('getjson.php?c=getreports').success(function(data) {
@@ -42,6 +47,7 @@ angular.module('phonecatApp', [], function($compileProvider) {
 	$scope.getAllQuestions = function () {$http.get('getjson.php?c=questions')
 		.success(function(data) {
 			$scope.questions = data.questionlist;
+			$scope.question_cols = Object.keys($scope.questions[0]); // get keys from first object
 			// get answers for each question
 			for (var i=0;i<$scope.questions.length;i++){
 				$scope.questions[i].HasNoChilds = true; // default = no children
@@ -53,12 +59,7 @@ angular.module('phonecatApp', [], function($compileProvider) {
 				.success(function(a) {
 					// find parent
 					for (var k=0;k<$scope.questions.length;k++) {
-						if ($scope.questions[k].sqms_question_id == a.parentID) {
-							
-							// save all data in the element
-							//$scope.questions[k].availableOptions = a.nextstates; // next states
-							//$scope.questions[k].formdata = a.formdata; // formular data
-
+						if ($scope.questions[k].ID == a.parentID) {
 							// if has children
 							if (a.answers.length > 0) {
 								$scope.questions[k].HasNoChilds = false; // has now children
@@ -82,6 +83,7 @@ angular.module('phonecatApp', [], function($compileProvider) {
 		.success(function(data) {
 			
 			$scope.syllabi = data.syllabus;
+			$scope.syllabi_cols = Object.keys($scope.syllabi[0]); // get keys from first object
 			
 			// get under-elements for each syllabus
 			for (var i=0;i<$scope.syllabi.length;i++){
@@ -116,19 +118,12 @@ angular.module('phonecatApp', [], function($compileProvider) {
 		});
 	}
 	
-	// Toggle function
-	$scope.displ = function(el){
-		el.showKids = !el.showKids;
-	}
-	$scope.setSelectedSyllabus = function (el) {
-		$scope.actSyllabus = el;
-	};
-	
-	// Set State
-	$scope.setState = function(newstate) {
-		$scope.actSyllabus.selectedOption = newstate;
-	}
-	$scope.copySyllabus = function () { console.log("copying syllabus..."); $scope.writeData('copy_syllabus'); }
+	// Selection function
+	$scope.displ = function(el){el.showKids = !el.showKids;}
+	$scope.setSelectedSyllabus = function (el) {$scope.actSyllabus = el;};
+	$scope.setSelectedQuestion = function (el) {$scope.actQuestion = el;};
+	$scope.setState = function(newstate) {$scope.actSyllabus.selectedOption = newstate;}
+	$scope.copySyllabus = function () { console.log("copying syllabus..."); $scope.writeData('copy_syllabus');}
 	$scope.updateSyllabus = function () { $scope.writeData('update_syllabus'); }
 	
 	$scope.actSyllabus = {};

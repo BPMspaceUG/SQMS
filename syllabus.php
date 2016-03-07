@@ -133,35 +133,27 @@
 					<span>
 						<a href="#" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Create new</a>
 						<a data-target="#copysyllab" data-toggle="modal" ng-disabled="SelNavDisabled" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Copy</a>
-						<a href="#" title='switch help on/off' class="btn btn-default pull-right">
+						<!--<a href="#" title='switch help on/off' class="btn btn-default pull-right">
 							<span class="fa-stack">
 								<i class="fa fa-question fa-stack-1x"></i>
 								<i class="fa fa-ban fa-stack-1x text-danger"></i>
-							</span>Help</a>
+							</span>Help</a>-->
 					</span>
 				</div>
 				<div class="col-sm-4">
-					<input type="text" ng-model="filtertext" class="form-control pull-right" style="width:200px;" placeholder="filter">
+					<input type="text" ng-model="filtertext_sy" class="form-control pull-right" style="width:200px;" placeholder="filter">
 				</div>
 			</div>
 			<br/>
-			
-			<pre>Sorting predicate = {{predicate}}; reverse = {{reverse}}</pre>
-			<table class="table" style="width: 100%;">
+
+			<table class="table">
 				<thead>
 					<tr>
 						<th style="min-width: 95px;">&nbsp;</th>
-						<!-- TODO: ng-repeat would be awesome here! -->
-						<th ng-click="order('ID')"class="text-muted sortable"><small>ID<span class="sortorder" ng-show="predicate === 'ID'" ng-class="{reverse:reverse}"></span></small></th>
-						<th ng-click="order('name')" class="sortable">Name<span class="sortorder" ng-show="predicate === 'name'" ng-class="{reverse:reverse}"></span></th>
-						<th ng-click="order('state')" class="sortable">State<span class="sortorder" ng-show="predicate === 'state'" ng-class="{reverse:reverse}"></span></th>
-						<th ng-click="order('version')" class="sortable">Version<span class="sortorder" ng-show="predicate === 'version'" ng-class="{reverse:reverse}"></span></th>
-						<th ng-click="order('sqms_topic_id')" class="sortable">Topic<span class="sortorder" ng-show="predicate === 'sqms_topic_id'" ng-class="{reverse:reverse}"></span></th>
-						<th ng-click="order('owner')" class="sortable">Owner<span class="sortorder" ng-show="predicate === 'owner'" ng-class="{reverse:reverse}"></span></th>
-						<th>block</th>
+						<th ng-repeat="sc in syllabi_cols" ng-click="order_s(sc)" class="sortable">{{sc}}<span class="sortorder" ng-show="predicate_s === sc" ng-class="{reverse:reverse_s}"></span></th>
 					</tr>
 				</thead>
-				<tbody ng-repeat="s in syllabi | orderBy:predicate:reverse">
+				<tbody ng-repeat="s in syllabi | filter:filtertext_sy | orderBy:predicate_s:reverse_s">
 					<tr ng-click="setSelectedSyllabus(s)" ng-class="{info: s.ID === actSyllabus.ID}">
 						<td>
 							<a class="btn pull-left" ng-hide="s.HasNoChilds" ng-click="displ(s)">
@@ -170,13 +162,7 @@
 							</a>
 							<a class="btn pull-left" data-toggle="modal" data-target="#test"><i class="fa fa-pencil"></i></a>
 						</td>
-						<td class="text-muted"><small>{{s.ID}}</small></td>
-						<td>{{s.name}}</td>
-						<td>{{s.state}}</td>
-						<td>{{s.version}}</td>
-						<td>{{s.topic}}</td>
-						<td>{{s.owner}}</td>
-						<td><small>{{s.validity_period_from}} - {{s.validity_period_to}}</small></td>
+						<td ng-repeat="sc in syllabi_cols">{{s[sc]}}</td>
 					</tr>
 					<tr ng-hide="s.HasNoChilds || !s.showKids">
 						<td colspan="8" style="padding:0; background-color: #ddd; border: 1px solid #ccc;">
@@ -211,7 +197,7 @@
 					<h2>Question</h2>
 				</div>
 				<div class="col-sm-4">
-					<input type="text" ng-model="filtertext" class="form-control pull-right" style="width:200px;" placeholder="filter">
+					<input type="text" ng-model="filtertext_qu" class="form-control pull-right" style="width:200px;" placeholder="filter">
 				</div>
 			</div>
 			<br/>
@@ -220,20 +206,14 @@
 				<thead>
 					<tr>
 						<th style="min-width: 95px;">&nbsp;</th>
-						<th class="text-muted"><small>ID</small></th>
-						<th>Question</th>
-						<th>Author</th>
-						<th>Vers.</th>
-						<th>Ext. ID</th>
-						<th>Topic</th>
-						<th>?</th>
-						<th>?</th>
-						<th>Question Type</th>
+						<th ng-repeat="qu in question_cols"
+							ng-click="order_q(qu)" class="sortable">{{qu}}<span class="sortorder"
+							ng-show="predicate_q === qu" ng-class="{reverse:reverse_q}"></span></th>
 					</tr>
 				</thead>
-				<tbody ng-repeat="q in questions | filter:filtertext"
+				<tbody ng-repeat="q in questions | filter:filtertext_qu | orderBy:predicate_q:reverse_q"
 					ng-click="setSelected(q)"
-					ng-class="{success: q.sqms_question_id === actQuestion.sqms_question_id}">
+					ng-class="{success: q.ID === actQuestion.ID}">
 					<tr>
 						<td>
 							<a class="btn pull-left" ng-hide="q.HasNoChilds" ng-click="displ(q)">
@@ -242,15 +222,7 @@
 							</a>
 							<a class="btn pull-left" data-toggle="modal" data-target="#test"><i class="fa fa-pencil"></i></a>
 						</td>
-						<td class="text-muted"><small>{{q.sqms_question_id}}</small></td>
-						<td>{{q.question}}</td>
-						<td>{{q.author}}</td>
-						<td>{{q.version}}</td>
-						<td>{{q.id_external}}</td>
-						<td>{{q.name}}</td>
-						<td>?</td>
-						<td>?</td>
-						<td>{{q.sqms_question_type_id}}</td>
+						<td ng-repeat="qu in question_cols">{{q[qu]}}</td>
 					</tr>
 					<tr ng-hide="q.HasNoChilds || !q.showKids">
 						<td colspan="10" style="padding:0; background-color: #ddd; border: 1px solid #ccc;">

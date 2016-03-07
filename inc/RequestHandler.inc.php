@@ -53,7 +53,7 @@ class RequestHandler
 				
 			case 'getsyllabusdetails':
 				$syllabid = $params["ID"];
-				$actstate = $params["sqms_state_id"];
+				$actstate = $this->getSyllabusState($syllabid);
 				
 				$arr0 = array("parentID" => $syllabid);
 				$arr1 = $this->getSyllabusPossibleNextStates($actstate); // Possible next states
@@ -118,7 +118,7 @@ class RequestHandler
 				break;
 				
 			case 'getanswers':
-				$questionid = $params['sqms_question_id'];
+				$questionid = $params['ID'];
 				
 				$arr0 = array("parentID" => $questionid);
 				$arr1 = $this->getAnswers($questionid);
@@ -128,7 +128,7 @@ class RequestHandler
 				return json_encode($return);
 				break;
 			
-			//-------- Reports for Dashboard			
+			//-------- Reports for Dashboard
 			case 'getreports':
 				$arr1 = $this->getReport_QuestionsWithoutQuestionmarks();
 				$arr2 = $this->getReport_QuestionsTotal();
@@ -138,7 +138,7 @@ class RequestHandler
 				break;
 
 			case "test":
-				/*************************************/
+				/************************************
 				// Transistion test
 				$return = $this->setSyllabusState(107, 2);
 				if ($return) {
@@ -156,7 +156,7 @@ class RequestHandler
 				} else echo "invalid transition";
 				return "<br/>time=".time();
 				break;
-				/*************************************/				
+				/*************************************/
 				
 			//-------- State machine
             default:
@@ -174,24 +174,18 @@ class RequestHandler
 	
     private function getSyllabusList() {
 		$query = "SELECT 
-    sqms_syllabus_id AS ID,
-    a.name AS name,
-    sqms_state_id,
-    version,
-    b.name AS topic,
-    owner,
-    validity_period_from,
-    validity_period_to,
-    description,
-    a.sqms_topic_id,
-    c.name AS state,
-	sqms_syllabus_id_predecessor,
-	sqms_syllabus_id_successor
+    sqms_syllabus_id AS 'ID',
+    a.name AS 'Name',
+    version AS 'Version',
+    b.name AS 'Topic',
+    owner AS 'Owner',
+    ". // description AS 'Description',
+    "c.name AS 'State'
 FROM
     (sqms_syllabus AS a
     LEFT JOIN sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id)
         INNER JOIN
-    sqms_syllabus_state AS c ON a.sqms_state_id = c.sqms_syllabus_state_id ORDER BY ID;";
+    sqms_syllabus_state AS c ON a.sqms_state_id = c.sqms_syllabus_state_id;";
         $return = array();
 		$res = $this->db->query($query);
         $return['syllabus'] = $this->getResultArray($res);
@@ -322,7 +316,7 @@ WHERE
 		$stmt->bind_param("si", $name, $id); // bind params
 		
 		$name = $params["name"];
-		$id = $params["sqms_topic_id"];		
+		$id = $params["sqms_topic_id"];
         $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
 	}
@@ -343,7 +337,7 @@ WHERE
 		$stmt->bind_param("si", $name, $id); // bind params
 		
 		$name = $params["name"];
-		$id = $params["sqms_topic_id"];		
+		$id = $params["sqms_topic_id"];
         $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
 		*/
@@ -364,7 +358,7 @@ WHERE
 	private function getFormDataByState($state) {
 		if (!isset($state)) $state = 1;
 		settype($state, 'integer');
-		$query = "SELECT form_data FROM sqms_syllabus_state WHERE sqms_syllabus_state_id = $state;";
+		$query = "SELECT * FROM sqms_syllabus_state WHERE sqms_syllabus_state_id = $state;";
 		$res = $this->db->query($query);
 		$return = array();
         $tmp = $this->getResultArray($res);
@@ -381,11 +375,15 @@ WHERE
         return $return;
     }
 	// ------------------------------------- Questions
-	private function getQuestionList($id=-1) {
-        $query = "SELECT * FROM `sqms_question` AS a LEFT JOIN sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id";
-        if($id!=-1){
-            $query .= " AND sqms_question_id='$id'";
-        }
+	private function getQuestionList() {
+        $query = "SELECT a.sqms_question_id AS 'ID',
+b.name AS 'Topic',
+a.question AS 'Question',
+a.author AS 'Author',
+a.version AS 'Vers',
+a.id_external AS 'ExtID',
+a.sqms_question_type_id AS 'Type'
+ FROM `sqms_question` AS a LEFT JOIN sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id";
 		$res = $this->db->query($query);
         $return['questionlist'] = $this->getResultArray($res);
         return $return;
