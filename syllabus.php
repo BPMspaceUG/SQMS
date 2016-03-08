@@ -52,7 +52,6 @@
 	</div>
 </div>
 
-
 <div class="modal" id="copysyllab" tabindex="-1" role="dialog" >
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
@@ -70,6 +69,45 @@
 			<div class="modal-footer">
 				<button type="button" class="btn btn-danger" data-dismiss="modal">Dont copy</button>
 				<button type="button" ng-click="copySyllabus();" data-dismiss="modal" class="btn btn-success">Copy</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal" id="createquestion" tabindex="-1" role="dialog" >
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<!-- Header -->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel"><i class="fa fa-plus"></i> Create question</h4>
+			</div>
+			<!-- Body -->
+			<div class="modal-body">
+
+<form class="form-horizontal" >
+<fieldset>
+
+<!-- Form Name -->
+<legend>Create question</legend>
+
+<!-- Text input-->
+<div class="control-group">
+  <label class="control-label" for="textinput-0">Question</label>
+  <div class="controls">
+    <input id="textinput-0" name="textinput-0" placeholder="What is the answer to life the universe and everything?" class="input-xxlarge" required="" type="text">
+    <p class="help-block">Question text (dont forget questionmark)</p>
+  </div>
+</div>
+
+</fieldset>
+</form>
+
+			</div>
+			<!-- Footer -->
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				<button type="button" ng-click="copySyllabus();" data-dismiss="modal" class="btn btn-success">Create new</button>
 			</div>
 		</div>
 	</div>
@@ -193,8 +231,19 @@
 		<div id="pagequestion" class="tab-pane">
 			<!-- Header -->
 			<div class="row bg-primary">
-				<div class="col-sm-8">
+				<div class="col-sm-4">
 					<h2>Question</h2>
+				</div>
+				<div class="col-sm-4">
+					<span>
+						<a data-target="#createquestion" data-toggle="modal" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Create new</a>
+						<!--<a data-target="#copysyllab" data-toggle="modal" ng-disabled="SelNavDisabled" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Copy</a>
+						<!--<a href="#" title='switch help on/off' class="btn btn-default pull-right">
+							<span class="fa-stack">
+								<i class="fa fa-question fa-stack-1x"></i>
+								<i class="fa fa-ban fa-stack-1x text-danger"></i>
+							</span>Help</a>-->
+					</span>
 				</div>
 				<div class="col-sm-4">
 					<input type="text" ng-model="filtertext_qu" class="form-control pull-right" style="width:200px;" placeholder="filter">
@@ -211,10 +260,8 @@
 							ng-show="predicate_q === qu" ng-class="{reverse:reverse_q}"></span></th>
 					</tr>
 				</thead>
-				<tbody ng-repeat="q in questions | filter:filtertext_qu | orderBy:predicate_q:reverse_q"
-					ng-click="setSelected(q)"
-					ng-class="{success: q.ID === actQuestion.ID}">
-					<tr>
+				<tbody ng-repeat="q in questions | filter:filtertext_qu | orderBy:predicate_q:reverse_q">
+					<tr ng-click="setSelectedQuestion(q)" ng-class="{info: q.ID === actQuestion.ID}">
 						<td>
 							<a class="btn pull-left" ng-hide="q.HasNoChilds" ng-click="displ(q)">
 								<i class="fa fa-plus" ng-show="!q.showKids"></i>
@@ -237,7 +284,7 @@
 								<tbody>
 								<tr ng-repeat="an in q.answers">
 									<td>{{an.sqms_answer_id}}</td>
-									<td>{{an.answer}}</td>
+									<td><a href="#" editable-text="an.answer">{{an.answer || "empty"}}</a></td>
 									<td>{{an.correct}}</td>
 								</tr>
 							</table>
@@ -264,18 +311,18 @@
 				<thead>
 					<tr>
 						<th style="width:95px;">&nbsp;</th>
-						<th class="text-muted"><small>ID</small></th>
+						<th>ID</th>
 						<th>Name</th>
 					</tr>
 				</thead>
 				<tbody ng-repeat="topic in topics | filter:filtertext"
-					ng-click="setSelected(topic)"
+					ng-click="setSelectedTopic(topic)"
 					ng-class="{success: topic.sqms_topic_id === actTopic.sqms_topic_id}">
 					<tr>
 						<td>
 							<a class="btn pull-left" data-toggle="modal" data-target="#test"><i class="fa fa-pencil"></i></a>
 						</td>
-						<td class="text-muted"><small>{{topic.sqms_topic_id}}</small></td>
+						<td>{{topic.sqms_topic_id}}</td>
 						<td>{{topic.name}}</td>
 					</tr>
 				</tbody>

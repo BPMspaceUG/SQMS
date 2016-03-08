@@ -1,23 +1,24 @@
 'use strict';
 
 /* Controllers */
-angular.module('phonecatApp', [], function($compileProvider) {
-	
+angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
 	// for loading HTML from Database
 	$compileProvider.directive('compile', function($compile) {
 		return function(scope, element, attrs) {
 			scope.$watch(
-			  function(scope) {
-				return scope.$eval(attrs.compile);
-			  },
-			  function(value) {
-				element.html(value);
-				$compile(element.contents())(scope);
-			  }
+				function(scope) {
+					return scope.$eval(attrs.compile);
+				},
+				function(value) {
+					element.html(value);
+					$compile(element.contents())(scope);
+				}
 			);
 		};
 	});
-	
+})
+.run(function(editableOptions) {
+	editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
 })
 .controller('PhoneListCtrl', ['$scope', '$http', function($scope, $http) {
 	
@@ -122,11 +123,15 @@ angular.module('phonecatApp', [], function($compileProvider) {
 	$scope.displ = function(el){el.showKids = !el.showKids;}
 	$scope.setSelectedSyllabus = function (el) {$scope.actSyllabus = el;};
 	$scope.setSelectedQuestion = function (el) {$scope.actQuestion = el;};
+	$scope.setSelectedTopic = function (el) {$scope.actTopic = el;};
+	
 	$scope.setState = function(newstate) {$scope.actSyllabus.selectedOption = newstate;}
 	$scope.copySyllabus = function () { console.log("copying syllabus..."); $scope.writeData('copy_syllabus');}
 	$scope.updateSyllabus = function () { $scope.writeData('update_syllabus'); }
 	
 	$scope.actSyllabus = {};
+	$scope.actQuestion = {};
+	$scope.actTopic = {};
 	
 	// WRITE
 	$scope.writeData = function (command) {

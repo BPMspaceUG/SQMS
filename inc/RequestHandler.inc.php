@@ -12,13 +12,6 @@ class RequestHandler
     private $discount = 0;
 
     private function getResultArray($result) {
-        /* Zweck: Ausgabe einer Debug */
-        /*if(true){
-            echo "<pre>";
-            echo "<hr>Query:<br>";
-            var_dump($query);
-            echo "</pre>";
-        }*/
         $results_array = array();
         while ($row = $result->fetch_assoc()) {
             $results_array[] = $row;
@@ -31,14 +24,12 @@ class RequestHandler
 		global $DB_user;
 		global $DB_pass;
 		global $DB_name;
-		// TODO: Initialize the connection only ONCE, like in EduMS API -> DB Config
 		$db = new mysqli($DB_host, $DB_user, $DB_pass, $DB_name);
 		/* check connection */
 		if($db->connect_errno){
 			printf("Connect failed: %s\n", mysqli_connect_error());
 			exit();
 		}
-		//$config['text']['defaultfooter'] = "powered by mITSM.de";
 		$db->query("SET NAMES utf8");
         $this->db = $db;
     }
@@ -54,12 +45,10 @@ class RequestHandler
 			case 'getsyllabusdetails':
 				$syllabid = $params["ID"];
 				$actstate = $this->getSyllabusState($syllabid);
-				
 				$arr0 = array("parentID" => $syllabid);
 				$arr1 = $this->getSyllabusPossibleNextStates($actstate); // Possible next states
 				$arr2 = $this->getFormDataByState($actstate); // Form data for actual state
 				$arr3 = $this->getSyllabusElementsList($syllabid);
-				
 				// Merge data
 				$return = array_merge_recursive($arr0, $arr1, $arr2, $arr3);
 				return json_encode($return);
@@ -119,10 +108,8 @@ class RequestHandler
 				
 			case 'getanswers':
 				$questionid = $params['ID'];
-				
 				$arr0 = array("parentID" => $questionid);
 				$arr1 = $this->getAnswers($questionid);
-				
 				// Merge data
 				$return = array_merge_recursive($arr0, $arr1);
 				return json_encode($return);
@@ -179,8 +166,7 @@ class RequestHandler
     version AS 'Version',
     b.name AS 'Topic',
     owner AS 'Owner',
-    ". // description AS 'Description',
-    "c.name AS 'State'
+    c.name AS 'State'
 FROM
     (sqms_syllabus AS a
     LEFT JOIN sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id)
@@ -188,8 +174,8 @@ FROM
     sqms_syllabus_state AS c ON a.sqms_state_id = c.sqms_syllabus_state_id;";
         $return = array();
 		$res = $this->db->query($query);
-        $return['syllabus'] = $this->getResultArray($res);
-        return $return;
+		$return['syllabus'] = $this->getResultArray($res);
+		return $return;
     }
 	private function addSyllabus($params) {
 		
@@ -215,15 +201,11 @@ FROM
 	}
 	private function getSyllabusPossibleNextStates($actstate) {
 		settype($actstate, 'integer');
-		
-		$query = "SELECT 
-    a.sqms_state_id_TO,
-    b.name
-FROM
-    sqms_syllabus_state_rules AS a
-    INNER JOIN sqms_syllabus_state AS b ON a.sqms_state_id_TO = b.sqms_syllabus_state_id
-WHERE
-    sqms_state_id_FROM = $actstate;";
+		$query = "SELECT a.sqms_state_id_TO, b.name 
+FROM sqms_syllabus_state_rules AS a
+INNER JOIN sqms_syllabus_state AS b
+ON a.sqms_state_id_TO = b.sqms_syllabus_state_id
+WHERE sqms_state_id_FROM = $actstate;";
 		$return = array();
 		$res = $this->db->query($query);
 		$return['nextstates'] = $this->getResultArray($res);
@@ -237,7 +219,6 @@ WHERE
 		// update
 		$this->setSyllabusState($id, $newstate);
 		$this->setSyllabusName($id, $params["name"]);
-		
 		return "Updated! ($newstate) ".time();
 	}
 	private function setSyllabusName($syllabid, $newname) {
@@ -250,7 +231,6 @@ WHERE
 	private function checkTransition($from, $to) {
 		settype($from, 'integer');
 		settype($to, 'integer');
-		
 		$query = "SELECT * FROM sqms_syllabus_state_rules WHERE ".
 		"sqms_state_id_FROM = $from AND sqms_state_id_TO = $to;";
 		$return = array();
@@ -287,7 +267,6 @@ WHERE
 	private function getTransitionScripts($from, $to) {
 		settype($from, 'integer');
 		settype($to, 'integer');
-		
 		$query = "SELECT transistionScript FROM sqms_syllabus_state_rules WHERE ".
 		"sqms_state_id_FROM = $from AND sqms_state_id_TO = $to;";
 		$return = array();
@@ -313,8 +292,7 @@ WHERE
 	private function updateTopic($params) {
 		$query = "UPDATE sqms_topic SET name = ? WHERE sqms_topic_id = ?;";
 		$stmt = $this->db->prepare($query); // prepare statement
-		$stmt->bind_param("si", $name, $id); // bind params
-		
+		$stmt->bind_param("si", $name, $id); // bind params		
 		$name = $params["name"];
 		$id = $params["sqms_topic_id"];
         $result = $stmt->execute(); // execute statement
@@ -346,9 +324,6 @@ WHERE
     private function getSyllabusElementsList($id=-1) {
 		settype($state, 'integer');
         $query = "SELECT * FROM sqms_syllabus_element"; // TODO: Replace * -> column names
-		if($id!=-1){
-			$query .= " WHERE sqms_syllabus_id = $id";
-        }
 		$query .= " ORDER BY element_order;";
         $return = array();
 		$res = $this->db->query($query);
@@ -365,11 +340,8 @@ WHERE
 		$return['formdata'] = $tmp[0]['form_data'];
 		return $return;
 	}
-	private function getTopicList($id=-1) {
+	private function getTopicList() {
         $query = "SELECT * FROM `sqms_topic`";
-        if($id!=-1){
-            $query .= " AND sqms_topic_id='$id'";
-        }
 		$res = $this->db->query($query);
         $return['topiclist'] = $this->getResultArray($res);
         return $return;
@@ -390,7 +362,6 @@ a.sqms_question_type_id AS 'Type'
     }
 	private function getAnswers($questionID) {
 		settype($questionID , 'integer');
-
         $query = "SELECT * FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
 		$res = $this->db->query($query);
         $return['answers'] = $this->getResultArray($res);
