@@ -24,7 +24,7 @@ angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
 	
 	/************************************** General **************************/
 	
-	// Order
+	// Sorting Tables, TODO: remove redundant code
 	$scope.predicate_s = 'ID';
 	$scope.predicate_q = 'ID';
 	$scope.reverse_s = false;
@@ -38,6 +38,8 @@ angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
 		$scope.reverse_q = ($scope.predicate_q === predicate) ? !$scope.reverse_q : false;
 		$scope.predicate_q = predicate;
 	};
+	
+	
 	
 	//------------------------------- Dashboard
 	$http.get('getjson.php?c=getreports').success(function(data) {
@@ -121,37 +123,45 @@ angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
 	
 	// Selection function
 	$scope.displ = function(el){el.showKids = !el.showKids;}
+	
+	// TODO: only one function for this
 	$scope.setSelectedSyllabus = function (el) {$scope.actSyllabus = el;};
 	$scope.setSelectedQuestion = function (el) {$scope.actQuestion = el;};
 	$scope.setSelectedTopic = function (el) {$scope.actTopic = el;};
 	
 	$scope.setState = function(newstate) {$scope.actSyllabus.selectedOption = newstate;}
-	$scope.copySyllabus = function () { console.log("copying syllabus..."); $scope.writeData('copy_syllabus');}
-	$scope.updateSyllabus = function () { $scope.writeData('update_syllabus'); }
+	$scope.copySyllabus = function () { console.log("copying syllabus..."); $scope.writeData('copy_syllabus', $scope.actSyllabus);}
+	$scope.updateSyllabus = function () { $scope.writeData('update_syllabus', $scope.actSyllabus); }
 	
-	$scope.actSyllabus = {};
-	$scope.actQuestion = {};
-	$scope.actTopic = {};
+	$scope.saveEl = function(actEl, data, cmd) {
+		console.log(actEl);
+		console.log(data);
+		console.log(cmd);
+		//$scope.writeData('update_question', data);
+	};
 	
-	// WRITE
-	$scope.writeData = function (command) {
-		$scope.status = "Sending command...";
+	// WRITE data to server
+	$scope.writeData = function (command, data) {
 		console.log("Sending command...");
 		$http({
 			url: 'getjson.php?c=' + command,
 			method: "POST",
-			data: JSON.stringify($scope.actSyllabus)
+			data: JSON.stringify(data)
 		}).
 		success(function(data){
-			$scope.status = "Executed command successfully! Return: " + data;
 			console.log("Executed command successfully! Return: " + data);
+			// TODO: Make this callback later
 			$scope.getAllSyllabus(); // Refresh data
 		}).
 		error(function(error){
-			$scope.status = "Error! " + error.message;
 			console.log("Error! " + error.message);
 		});
 	}
+	
+	//--- Initial values
+	$scope.actSyllabus = {};
+	$scope.actQuestion = {};
+	$scope.actTopic = {};
 
 	//---- Initial functions
 	$scope.getAllSyllabus();

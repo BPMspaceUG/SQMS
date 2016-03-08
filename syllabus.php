@@ -284,7 +284,7 @@
 								<tbody>
 								<tr ng-repeat="an in q.answers">
 									<td>{{an.sqms_answer_id}}</td>
-									<td><a href="#" editable-text="an.answer">{{an.answer || "empty"}}</a></td>
+									<td><a href="#" editable-text="an.answer" onbeforesave="saveEl(an, $data, 'u_answer')">{{an.answer || "empty"}}</a></td>
 									<td>{{an.correct}}</td>
 								</tr>
 							</table>
