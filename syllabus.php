@@ -285,7 +285,7 @@
 								<tr ng-repeat="an in q.answers">
 									<td>{{an.ID}}</td>
 									<td><a href="#" editable-text="an.answer" onbeforesave="saveEl(an, $data, 'u_answer_t')">{{an.answer || "empty"}}</a></td>
-									<td><a href="#" editable-checkbox="an.correct" e-title="Correct?"
+									<td><a href="#" editable-checkbox="an.correct" ng-true-value="1" ng-false-value="0" e-title="Correct?"
 										onbeforesave="saveEl(an, $data, 'u_answer_c')">{{an.correct && "☑ Correct" || "☐ Wrong" }}</a></td>
 								</tr>
 							</table>

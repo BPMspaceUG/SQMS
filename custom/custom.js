@@ -66,6 +66,10 @@ angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
 							// if has children
 							if (a.answers.length > 0) {
 								$scope.questions[k].HasNoChilds = false; // has now children
+								// Special function --> convert TinyInt to JSBoolean
+								for (var l=0;l<a.answers.length;l++) {
+									a.answers[l].correct = (a.answers[l].correct != 0);
+								}
 								$scope.questions[k].answers = a.answers;
 							}
 						}
