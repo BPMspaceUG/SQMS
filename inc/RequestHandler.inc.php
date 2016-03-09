@@ -1,11 +1,4 @@
 <?php
-
-/**
- * Created by PhpStorm.
- * User: cwalonka
- * Date: 30.09.15
- * Time: 09:08
- */
 class RequestHandler 
 {
     private $db;
@@ -34,7 +27,6 @@ class RequestHandler
         $this->db = $db;
     }
     public function handle($command, $params) {
-		
         switch($command) {
 			
 			case 'syllabus':
@@ -114,6 +106,16 @@ class RequestHandler
 				$return = array_merge_recursive($arr0, $arr1);
 				return json_encode($return);
 				break;
+				
+			case 'update_answer':
+				//var_dump($params);
+				$res = $this->updateAnswer(
+					$params["ID"],
+					$params["answer"],
+					$params["correct"]
+				);
+				if ($res != 1) return ''; else return $res;
+				break;
 			
 			//-------- Reports for Dashboard
 			case 'getreports':
@@ -124,30 +126,8 @@ class RequestHandler
 				return json_encode($return);
 				break;
 
-			case "test":
-				/************************************
-				// Transistion test
-				$return = $this->setSyllabusState(107, 2);
-				if ($return) {
-					// execute transition codes
-					foreach ($return as $script) {
-						$scr = $script["transistionScript"];
-						if (!is_null($scr)) {
-							$fname = "functions/" . $scr;
-							if (file_exists($fname)) {
-								echo $fname;
-								include_once($fname);
-							}
-						}
-					}
-				} else echo "invalid transition";
-				return "<br/>time=".time();
-				break;
-				/*************************************/
-				
-			//-------- State machine
             default:
-                return "goaway";
+                return ""; // empty string
                 exit;
                 break;
         }
@@ -220,6 +200,13 @@ WHERE sqms_state_id_FROM = $actstate;";
 		$this->setSyllabusState($id, $newstate);
 		$this->setSyllabusName($id, $params["name"]);
 		return "Updated! ($newstate) ".time();
+	}
+	private function updateAnswer($id, $answer, $correct) {
+		$query = "UPDATE sqms_answer SET answer = ?, correct = ? WHERE sqms_answer_id = ?;";
+		$stmt = $this->db->prepare($query); // prepare statement
+		$stmt->bind_param("sii", $answer, $correct, $id); // bind params
+        $result = $stmt->execute(); // execute statement
+		return (!is_null($result) ? 1 : null);
 	}
 	private function setSyllabusName($syllabid, $newname) {
 		$query = "UPDATE sqms_syllabus SET name = ? WHERE sqms_syllabus_id = ?;";
@@ -322,8 +309,10 @@ WHERE sqms_state_id_FROM = $actstate;";
 		return null;
 	}
     private function getSyllabusElementsList($id=-1) {
-		settype($state, 'integer');
+		settype($id, 'integer');
         $query = "SELECT * FROM sqms_syllabus_element"; // TODO: Replace * -> column names
+		if ($id > 0)
+			$query .= " WHERE sqms_syllabus_id = $id";
 		$query .= " ORDER BY element_order;";
         $return = array();
 		$res = $this->db->query($query);

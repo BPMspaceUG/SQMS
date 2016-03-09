@@ -94,9 +94,7 @@ angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
 			
 			// get under-elements for each syllabus
 			for (var i=0;i<$scope.syllabi.length;i++){
-				
 				$scope.syllabi[i].HasNoChilds = true; // default = no children
-				
 				// request details for each syllabus
 				$http({
 					url: 'getjson.php?c=getsyllabusdetails',
@@ -104,15 +102,12 @@ angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
 					data: JSON.stringify($scope.syllabi[i])
 				})
 				.success(function(a){
-					
 					// find parent
 					for (var k=0;k<$scope.syllabi.length;k++) {
 						if ($scope.syllabi[k].ID == a.parentID) {
-							
 							// save all data in the element
 							$scope.syllabi[k].availableOptions = a.nextstates; // next states
 							$scope.syllabi[k].formdata = a.formdata; // formular data
-
 							// if has children
 							if (a.syllabuselements.length > 0) {
 								$scope.syllabi[k].HasNoChilds = false; // has now children
@@ -138,11 +133,14 @@ angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
 	$scope.updateSyllabus = function () { $scope.writeData('update_syllabus', $scope.actSyllabus); }
 	
 	$scope.saveEl = function(actEl, data, cmd) {
-		console.log(actEl);
-		console.log(data);
-		console.log(cmd);
-		//$scope.writeData('update_question', data);
-	};
+		var c;
+		switch (cmd) {
+			case 'u_answer_t': c = 'update_answer'; actEl.answer = data; break;
+			case 'u_answer_c': c = 'update_answer'; actEl.correct = data; break;
+		}
+		// update client model
+		return $http.post('getjson.php?c='+c, JSON.stringify(actEl)); // send new model
+	}
 	
 	// WRITE data to server
 	$scope.writeData = function (command, data) {

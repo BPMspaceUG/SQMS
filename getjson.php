@@ -19,7 +19,7 @@
 	$content = $handler->handle($command, $params);
 	
 	// Return data
-	if ($content == "" || $content == "goaway")
+	if ($content == "")
 		http_response_code(400); // Bad Request
 	else
 		echo $content;
