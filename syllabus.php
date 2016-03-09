@@ -275,7 +275,7 @@
 						<td colspan="10" style="padding:0; background-color: #ddd; border: 1px solid #ccc;">
 							<table class="table table-striped table-condensed" style="margin:0;">
 								<thead>
-									<tr>
+									<tr style="font-size: .9em;">
 										<th style="width:95px;">ID</th>
 										<th style="width:75%;">Answer</th>
 										<th>Correct</th>
@@ -283,9 +283,10 @@
 								</thead>
 								<tbody>
 								<tr ng-repeat="an in q.answers">
-									<td>{{an.sqms_answer_id}}</td>
-									<td><a href="#" editable-text="an.answer" onbeforesave="saveEl(an, $data, 'u_answer')">{{an.answer || "empty"}}</a></td>
-									<td>{{an.correct}}</td>
+									<td>{{an.ID}}</td>
+									<td><a href="#" editable-text="an.answer" onbeforesave="saveEl(an, $data, 'u_answer_t')">{{an.answer || "empty"}}</a></td>
+									<td><a href="#" editable-checkbox="an.correct" e-title="Correct?"
+										onbeforesave="saveEl(an, $data, 'u_answer_c')">{{an.correct && "☑ Correct" || "☐ Wrong" }}</a></td>
 								</tr>
 							</table>
 						</td>

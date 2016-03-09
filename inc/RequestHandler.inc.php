@@ -362,7 +362,9 @@ a.sqms_question_type_id AS 'Type'
     }
 	private function getAnswers($questionID) {
 		settype($questionID , 'integer');
-        $query = "SELECT * FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
+		// Better solution: The If clause should be done with angular
+		// details: ng-true-value="'1'" ng-false-value="'0'"
+        $query = "SELECT sqms_answer_id AS 'ID', answer, IF(correct,TRUE,NULL) AS 'correct' FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
 		$res = $this->db->query($query);
         $return['answers'] = $this->getResultArray($res);
         return $return;
