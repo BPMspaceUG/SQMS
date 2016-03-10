@@ -23,6 +23,7 @@
 	<link rel="stylesheet" href="custom/custom.css">
 	<!-- AngularJS -->
 	<script type="text/javascript" src="js/angular.min.js"></script>
+	<script type="text/javascript" src="https://code.angularjs.org/1.4.9/angular-sanitize.min.js"></script>
 	<script type="text/javascript" src="js/xeditable.js"></script>
 	<!----- js scripts are loaded in the footer --------------------> 
 </head>

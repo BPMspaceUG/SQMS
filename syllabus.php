@@ -18,24 +18,22 @@
 <div class="clearfix"></br></div>
 <!--------------- END SUB MENU --------->
 
-<!-- Modal window -->
+<!-- Modal window 
 <div class="modal" id="test" tabindex="-1" role="dialog" >
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
-			<!-- Header -->
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel"><i class="fa fa-pencil"></i> Edit syllabus</h4>
 			</div>
-			<!-- Body -->
 			<div class="modal-body">
 				<div compile="actSyllabus.formdata"></div>
 			</div>
-			<!-- Footer -->
 			<div class="modal-footer">
 				<div class="row">
 					<div class="col-xs-8">
 						<div class="pull-left">
+							<div statemachine></div>
 							<span class="text-success">{{actSyllabus.state}}</span>
 							<button type="button" class="btn btn-default"
 								ng-repeat="state in actSyllabus.availableOptions"
@@ -51,21 +49,17 @@
 		</div>
 	</div>
 </div>
-
 <div class="modal" id="copysyllab" tabindex="-1" role="dialog" >
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
-			<!-- Header -->
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel"><i class="fa fa-plus"></i> Copy syllabus</h4>
 			</div>
-			<!-- Body -->
 			<div class="modal-body">
 				<div>Do you really want to copy this syllabus?</div>
 				<h2>{{actSyllabus.name}}</h2>
 			</div>
-			<!-- Footer -->
 			<div class="modal-footer">
 				<button type="button" class="btn btn-danger" data-dismiss="modal">Dont copy</button>
 				<button type="button" ng-click="copySyllabus();" data-dismiss="modal" class="btn btn-success">Copy</button>
@@ -73,49 +67,14 @@
 		</div>
 	</div>
 </div>
+-->
 
-<div class="modal" id="createquestion" tabindex="-1" role="dialog" >
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<!-- Header -->
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel"><i class="fa fa-plus"></i> Create question</h4>
-			</div>
-			<!-- Body -->
-			<div class="modal-body">
-
-<form class="form-horizontal" >
-<fieldset>
-
-<!-- Form Name -->
-<legend>Create question</legend>
-
-<!-- Text input-->
-<div class="control-group">
-  <label class="control-label" for="textinput-0">Question</label>
-  <div class="controls">
-    <input id="textinput-0" name="textinput-0" placeholder="What is the answer to life the universe and everything?" class="input-xxlarge" required="" type="text">
-    <p class="help-block">Question text (dont forget questionmark)</p>
-  </div>
-</div>
-
-</fieldset>
-</form>
-
-			</div>
-			<!-- Footer -->
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				<button type="button" ng-click="copySyllabus();" data-dismiss="modal" class="btn btn-success">Create new</button>
-			</div>
-		</div>
-	</div>
-</div>
+<modal visible="showModal">
+	<div ng-bind-html="modalcontent"></div>
+</modal>
 
 <!-- Page -->
 <div class="container">
-	
 	<div class="tab-content">
 	
 		<!-- Page: Dashboard -->
@@ -169,13 +128,8 @@
 				</div>
 				<div class="col-sm-4">
 					<span>
-						<a href="#" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Create new</a>
-						<a data-target="#copysyllab" data-toggle="modal" ng-disabled="SelNavDisabled" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Copy</a>
-						<!--<a href="#" title='switch help on/off' class="btn btn-default pull-right">
-							<span class="fa-stack">
-								<i class="fa fa-question fa-stack-1x"></i>
-								<i class="fa fa-ban fa-stack-1x text-danger"></i>
-							</span>Help</a>-->
+						<button class="btn btn-success" ng-click="m_createsyllabus()"><i class="fa fa-plus"></i>&nbsp;Create new</button>
+						<button class="btn btn-success" ng-click="m_copysyllabus()"><i class="fa fa-plus"></i>&nbsp;Copy</button>
 					</span>
 				</div>
 				<div class="col-sm-4">
@@ -198,7 +152,7 @@
 								<i class="fa fa-plus" ng-show="!s.showKids"></i>
 								<i class="fa fa-minus" ng-hide="!s.showKids"></i>
 							</a>
-							<a class="btn pull-left" data-toggle="modal" data-target="#test"><i class="fa fa-pencil"></i></a>
+							<button class="btn pull-left" ng-click="m_editsyllabus(s)"><i class="fa fa-pencil"></i></button>
 						</td>
 						<td ng-repeat="sc in syllabi_cols">{{s[sc]}}</td>
 					</tr>
@@ -236,13 +190,7 @@
 				</div>
 				<div class="col-sm-4">
 					<span>
-						<a data-target="#createquestion" data-toggle="modal" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Create new</a>
-						<!--<a data-target="#copysyllab" data-toggle="modal" ng-disabled="SelNavDisabled" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Copy</a>
-						<!--<a href="#" title='switch help on/off' class="btn btn-default pull-right">
-							<span class="fa-stack">
-								<i class="fa fa-question fa-stack-1x"></i>
-								<i class="fa fa-ban fa-stack-1x text-danger"></i>
-							</span>Help</a>-->
+						<button class="btn btn-success" ng-click="m_createquestion()"><i class="fa fa-plus"></i>&nbsp;Create new</button>
 					</span>
 				</div>
 				<div class="col-sm-4">
@@ -267,7 +215,7 @@
 								<i class="fa fa-plus" ng-show="!q.showKids"></i>
 								<i class="fa fa-minus" ng-hide="!q.showKids"></i>
 							</a>
-							<a class="btn pull-left" data-toggle="modal" data-target="#test"><i class="fa fa-pencil"></i></a>
+							<button ng-click="m_editquestion(q)" class="btn pull-left"><i class="fa fa-pencil"></i></button>
 						</td>
 						<td ng-repeat="qu in question_cols">{{q[qu]}}</td>
 					</tr>

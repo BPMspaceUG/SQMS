@@ -108,7 +108,6 @@ class RequestHandler
 				break;
 				
 			case 'update_answer':
-				//var_dump($params);
 				$res = $this->updateAnswer(
 					$params["ID"],
 					$params["answer"],
@@ -127,9 +126,9 @@ class RequestHandler
 				break;
 
             default:
-                return ""; // empty string
-                exit;
-                break;
+				return ""; // empty string
+				exit;
+				break;
         }
     }
 

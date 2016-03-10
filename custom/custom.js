@@ -1,9 +1,12 @@
 'use strict';
 
-/* Controllers */
-angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
+//angular.module('mySceApp', ['ngSanitize'])
+var module = angular.module('phonecatApp', ['ngSanitize', 'xeditable'])
+/*
+, function($compileProvider) {
+	
 	// for loading HTML from Database
-	$compileProvider.directive('compile', function($compile) {
+	/*$compileProvider.directive('compile', function($compile) {
 		return function(scope, element, attrs) {
 			scope.$watch(
 				function(scope) {
@@ -16,14 +19,16 @@ angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
 			);
 		};
 	});
-})
-.run(function(editableOptions) {
-	editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
-})
-.controller('PhoneListCtrl', ['$scope', '$http', function($scope, $http) {
-	
-	/************************************** General **************************/
-	
+});
+*/
+// Needed for inline editing
+module.run(function(editableOptions) {
+	editableOptions.theme = 'bs3'; // needed for inline editing
+});
+
+// Controller
+module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, $http, $sce) {
+
 	// Sorting Tables, TODO: remove redundant code
 	$scope.predicate_s = 'ID';
 	$scope.predicate_q = 'ID';
@@ -38,8 +43,6 @@ angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
 		$scope.reverse_q = ($scope.predicate_q === predicate) ? !$scope.reverse_q : false;
 		$scope.predicate_q = predicate;
 	};
-	
-	
 	
 	//------------------------------- Dashboard
 	$http.get('getjson.php?c=getreports').success(function(data) {
@@ -142,6 +145,61 @@ angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
 		return $http.post('getjson.php?c='+c, JSON.stringify(actEl)); // send new model
 	}
 	
+	$scope.m_createquestion = function() {
+		$scope.modaltitle = 'Create new Question';
+		$scope.modalcontent = $sce.trustAsHtml('<div><form class="form-horizontal"><fieldset><legend>Create question</legend><label class="control-label" for="textinput-0">Question</label><input id="textinput-0" name="textinput-0" placeholder="What is the answer to life the universe and everything?" class="form-control" required="" type="text"><label class="control-label" for="textinput-1">Topic</label><input id="textinput-1" name="textinput-1" placeholder="IT Sec" class="form-control" required="" type="text"><label class="control-label" for="textinput-2">Author</label><input id="textinput-2" name="textinput-2" placeholder="Max Mustermann" class="form-control" required="" type="text"><label class="control-label" for="textinput-3">Version</label><input id="textinput-2" name="textinput-3" placeholder="1" class="form-control" type="text" disabled></fieldset></form></div>');
+		$scope.modalfooter = 'Footer';
+		$scope.toggleModal();
+	};
+	$scope.m_createsyllabus = function() {
+		$scope.modaltitle = 'Create new Syllabus';
+		$scope.modalcontent = $sce.trustAsHtml('<div><form class="form-horizontal"> <fieldset> <legend>Create syllabus</legend> <label class="control-label" for="textinput-0">Syllabus name</label> <input id="textinput-0" name="textinput-0" placeholder="Blah blah" class="form-control" required="" type="text" /> <label class="control-label" for="textinput-1">Topic</label> <input id="textinput-1" name="textinput-1" placeholder="IT Sec" class="form-control" required="" type="text" /> <label class="control-label" for="textinput-2">Author</label> <input id="textinput-2" name="textinput-2" placeholder="Max Mustermann" class="form-control" required="" type="text" /> <label class="control-label" for="textinput-3">Version</label> <input id="textinput-3" name="textinput-3" placeholder="1" class="form-control" type="text" disabled/> <label class="control-label" for="textinput-4">Description</label> <textarea id="textinput-4" name="textinput-4" class="form-control"></textarea> </fieldset> </form></div>');
+		$scope.modalfooter = 'Footer';
+		$scope.toggleModal();
+	};
+	$scope.m_copysyllabus = function() {
+		$scope.modaltitle = 'Copy Syllabus';
+		$scope.modalcontent = $sce.trustAsHtml(
+'<div><p>Do you really want to copy this syllabus?</p>\
+<h2>OMG</h2>\
+<button type="button" ng-click="copySyllabus();" data-dismiss="modal" class="btn btn-lg btn-success">Copy</button>\
+</div>');
+		$scope.modalfooter = 'Footer';
+		$scope.toggleModal();
+	};
+	$scope.m_editsyllabus = function(syllab) {
+		$scope.modaltitle = 'Edit Syllabus';
+		var html = '<div>\
+	<p>ID: '+syllab.ID+'</p>\
+	<p>Version: '+syllab.Version+'</p>\
+	<p>Name: '+syllab.Name+'</p>\
+	<p>Topic: '+syllab.Topic+'</p>\
+	<p>Owner: '+syllab.Owner+'</p>\
+	<p>State: '+syllab.State+'</p>\
+</div>';
+		$scope.modalcontent = $sce.trustAsHtml(html);
+		$scope.modalfooter = 'Footer';
+		$scope.toggleModal();
+	};
+	$scope.m_editquestion = function(question) {
+		$scope.modaltitle = 'Edit Question';
+		var html = '<div>\
+	<p>ID: '+question.ID+'</p>\
+	<p>Version: '+question.Vers+'</p>\
+	<p>Name: '+question.Question+'</p>\
+	<p>Topic: '+question.Topic+'</p>\
+	<p>Author: '+question.Author+'</p>\
+	<p>State: '+question.State+'</p>\
+</div>';
+		$scope.modalcontent = $sce.trustAsHtml(html);
+		$scope.modalfooter = 'Footer';
+		$scope.toggleModal();
+	};
+	$scope.showModal = false;
+	$scope.toggleModal = function(){
+		$scope.showModal = !$scope.showModal;
+	};
+	
 	// WRITE data to server
 	$scope.writeData = function (command, data) {
 		console.log("Sending command...");
@@ -169,3 +227,55 @@ angular.module('phonecatApp', ["xeditable"], function($compileProvider) {
 	$scope.getAllSyllabus();
 	$scope.getAllQuestions();
 }]);
+
+// Directive
+module.directive('statemachine', function ($compile) {
+	return {
+		template: '<div class="entry-photo"><h2>&nbsp;</h2><div class="entry-img"><span><a href="{{rootDirectory}}{{content.data}}"><img ng-src="{{rootDirectory}}{{content.data}}" alt="entry photo"></a></span></div><div class="entry-text"><div class="entry-title">{{content.title}}</div><div class="entry-copy">{{content.description}}</div></div></div>'
+	};
+});
+
+module.directive('modal', function () {
+    return {
+      template: '<div class="modal">' + 
+          '<div class="modal-dialog">' + 
+            '<div class="modal-content">' + 
+              '<div class="modal-header">' + 
+                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' + 
+                '<h4 class="modal-title">{{ modaltitle }}</h4>' + 
+              '</div>' + 
+              '<div class="modal-body" ng-transclude></div>' + 
+			  '<div class="modal-footer">'+
+				'<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>'+
+				'</div>' +
+            '</div>' + 
+          '</div>' + 
+        '</div>',
+      restrict: 'E',
+      transclude: true,
+      replace:true,
+      scope:true,
+      link: function postLink(scope, element, attrs) {
+        scope.title = attrs.title;
+
+        scope.$watch(attrs.visible, function(value){
+          if(value == true)
+            $(element).modal('show');
+          else
+            $(element).modal('hide');
+        });
+
+        $(element).on('shown.bs.modal', function(){
+          scope.$apply(function(){
+            scope.$parent[attrs.visible] = true;
+          });
+        });
+
+        $(element).on('hidden.bs.modal', function(){
+          scope.$apply(function(){
+            scope.$parent[attrs.visible] = false;
+          });
+        });
+      }
+    };
+  });
