@@ -147,7 +147,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, 
 	
 	$scope.m_createquestion = function() {
 		$scope.modaltitle = 'Create new Question';
-		$scope.modalcontent = $sce.trustAsHtml('<div><form class="form-horizontal"><fieldset><legend>Create question</legend><label class="control-label" for="textinput-0">Question</label><input id="textinput-0" name="textinput-0" placeholder="What is the answer to life the universe and everything?" class="form-control" required="" type="text"><label class="control-label" for="textinput-1">Topic</label><input id="textinput-1" name="textinput-1" placeholder="IT Sec" class="form-control" required="" type="text"><label class="control-label" for="textinput-2">Author</label><input id="textinput-2" name="textinput-2" placeholder="Max Mustermann" class="form-control" required="" type="text"><label class="control-label" for="textinput-3">Version</label><input id="textinput-2" name="textinput-3" placeholder="1" class="form-control" type="text" disabled></fieldset></form></div>');
+		$scope.modalcontent = $sce.trustAsHtml('<div><form class="form-horizontal"><fieldset><legend>Create question</legend><label class="control-label" for="textinput-0">Question</label><input id="textinput-0" name="textinput-0" ng-model="actQuestion.question" placeholder="What is the answer to life the universe and everything?" class="form-control" required="" type="text"><label class="control-label" for="textinput-1">Topic</label><input id="textinput-1" name="textinput-1"  ng-model="actQuestion.topic" placeholder="IT Sec" class="form-control" required="" type="text"><label class="control-label" for="textinput-2">Author</label><input id="textinput-2" name="textinput-2"  ng-model="actQuestion.author" placeholder="Max Mustermann" class="form-control" required="" type="text"><label class="control-label" for="textinput-3">Version</label><input id="textinput-2" name="textinput-3" placeholder="1" class="form-control" type="text" disabled></fieldset></form></div>');
 		$scope.modalfooter = 'Footer';
 		$scope.toggleModal();
 	};
@@ -195,6 +195,15 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, 
 		$scope.modalfooter = 'Footer';
 		$scope.toggleModal();
 	};
+	$scope.m_btn_apply = function() {
+		//alert("swag");
+		// Here the action happens
+		console.log("Button apply clicked!");
+		console.log($scope.actQuestion);
+		$scope.writeData("create_question", $scope.actQuestion);
+		$scope.showModal = false;
+	}
+	
 	$scope.showModal = false;
 	$scope.toggleModal = function(){
 		$scope.showModal = !$scope.showModal;
@@ -210,8 +219,9 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, 
 		}).
 		success(function(data){
 			console.log("Executed command successfully! Return: " + data);
-			// TODO: Make this callback later
+			// TODO: ... Heavy data ... Make this callback later or at least faster
 			$scope.getAllSyllabus(); // Refresh data
+			$scope.getAllQuestions(); // Refresh data
 		}).
 		error(function(error){
 			console.log("Error! " + error.message);
@@ -246,6 +256,7 @@ module.directive('modal', function () {
               '</div>' + 
               '<div class="modal-body" ng-transclude></div>' + 
 			  '<div class="modal-footer">'+
+				'<button type="button" class="btn btn-primary" ng-click="m_btn_apply()">Apply</button>'+
 				'<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>'+
 				'</div>' +
             '</div>' + 

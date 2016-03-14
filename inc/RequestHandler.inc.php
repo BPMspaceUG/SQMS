@@ -91,7 +91,11 @@ class RequestHandler
 				break;
 				
 			case 'create_question':
-				return $this->addQuestion($params);
+				$question = $params['Question'];
+				$author = $params['Author'];
+				$topicID = 11; // $params['topic_id'];
+				$res = $this->addQuestion($question, $author, $topicID);
+				if ($res) echo 1; // return something, so its not bad request
 				break;
 				
 			case 'update_question':
@@ -278,21 +282,21 @@ WHERE sqms_state_id_FROM = $actstate;";
 	private function updateTopic($params) {
 		$query = "UPDATE sqms_topic SET name = ? WHERE sqms_topic_id = ?;";
 		$stmt = $this->db->prepare($query); // prepare statement
-		$stmt->bind_param("si", $name, $id); // bind params		
+		$stmt->bind_param("si", $name, $id); // bind params
 		$name = $params["name"];
 		$id = $params["sqms_topic_id"];
         $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
 	}
-	private function addQuestion($params) {
-		/* TODO:
-		$query = "INSERT INTO sqms_question (name) VALUES (?);";
+	private function addQuestion($question, $author, $topicID) {
+		$query = "INSERT INTO `sqms_question` (
+	`sqms_language_id`,`sqms_question_state_id`,`question`,`author`,`version`,`id_external`,
+	`sqms_question_id_predecessor`,`sqms_question_id_successor`,`sqms_question_type_id`,`sqms_topic_id`)
+VALUES (1,1,?,?,1,'',0,0,1,?);";
 		$stmt = $this->db->prepare($query); // prepare statement
-		$stmt->bind_param("s", $name); // bind params
+		$stmt->bind_param("ssi", $question, $author, $topicID); // bind params
         $result = $stmt->execute(); // execute statement
-		return (!is_null($result) ? 1 : null);
-		*/
-		return null;
+		return $result;
 	}
 	private function updateQuestion($params) {
 		/* TODO:
