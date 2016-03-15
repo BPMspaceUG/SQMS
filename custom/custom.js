@@ -57,6 +57,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, 
 			// get answers for each question
 			for (var i=0;i<$scope.questions.length;i++){
 				$scope.questions[i].HasNoChilds = true; // default = no children
+				$scope.questions[i].state = $scope.questions[i].state.name; // TODO: only display, not replace
 				$http({
 					url: 'getjson.php?c=getanswers',
 					method: "POST",

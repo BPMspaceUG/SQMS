@@ -163,16 +163,16 @@
 									<tr>
 										<th>Order</th>
 										<th>Name</th>
-										<th>Description</th>
+										<!--<th>Description</th>-->
 										<th>Severity</th>
 									</tr>
 								</thead>
 								<tbody>
 								<tr ng-repeat="se in s.syllabuselements">
 									<td>{{se.element_order}}</td>
-									<td>{{se.name}}</td>
-									<td>{{se.description}}</td>
-									<td>{{se.severity}}%</td>
+									<td><a href="#" editable-text="se.name" onbeforesave="saveEl(an, $data, 'u_syllabel_n')">{{se.name || "empty"}}</a></td>
+									<!--<td>{{se.description}}</td>-->
+									<td><a href="#" editable-range="se.severity" e-step="5">{{se.severity}}%</a></td>
 								</tr>
 							</table>
 						</td>
