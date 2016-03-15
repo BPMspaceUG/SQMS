@@ -1,16 +1,85 @@
 <?php
+function getResultArray($result) {
+	$results_array = array();
+	while ($row = $result->fetch_assoc()) {
+		$results_array[] = $row;
+	}
+	return $results_array;
+}
+
+/****************************
+  S T A T E     E N G I N E  
+****************************/
+class StateEngine {
+	private $actState = -1;
+	private $db;
+	// tables
+	private $table = 'sqms_syllabus'; // root element
+	private $table_states = 'sqms_syllabus_state'; // states
+	private $table_rules = 'sqms_syllabus_state_rules'; // rules
+	// columns
+	private $colname_rootID = 'sqms_syllabus_id';
+	private $colname_stateID = 'sqms_state_id';
+	private $colname_stateID_at_TblStates = 'sqms_syllabus_state_id';
+	private $colname_stateName = 'name'; // const
+	private $colname_from = 'sqms_state_id_FROM'; // const
+	private $colname_to = 'sqms_state_id_TO'; // const
+	
+	public function __construct($db, $tbl_root, $tbl_states, $tbl_rules, $col_rootID, $col_stateID, $colname_stateID_at_TblStates) {
+		// set initial variables
+		$this->db = $db;
+		$this->table = $tbl_root;
+		$this->table_states = $tbl_states;
+		$this->table_rules = $tbl_rules;
+		$this->colname_rootID = $col_rootID;
+		$this->colname_stateID = $col_stateID;
+		$this->colname_stateID_at_TblStates = $colname_stateID_at_TblStates;
+	}
+	public function getActState($id) {
+		settype($id, 'integer');
+		$query = "SELECT a.".$this->colname_stateID." AS 'id', b.".
+			$this->colname_stateName." AS 'name' FROM ".$this->table." AS a INNER JOIN ".
+			$this->table_states." AS b ON a.".$this->colname_stateID."=b.".$this->colname_stateID_at_TblStates.
+			" WHERE ".$this->colname_rootID." = $id;";
+		//echo $query;
+		$res = $this->db->query($query);
+		return getResultArray($res);
+	}
+	public function getNextStates($actstate) {
+		settype($actstate, 'integer');
+		$query = "SELECT a.".$this->colname_to." AS 'id', b.".
+			$this->colname_stateName." AS 'name' FROM ".$this->table_rules." AS a INNER JOIN ".
+			$this->table_states." AS b ON a.".$this->colname_to."=b.".$this->colname_stateID_at_TblStates.
+			" WHERE ".$this->colname_from." = $actstate;";
+		$res = $this->db->query($query);
+		return getResultArray($res);
+	}
+	public function setState($db, $stateID) {
+		// TODO: params: tablename
+		// return Transition Scripts
+		$trans_possible = $this->checkTransition($db, $actState, $stateID);
+		if ($trans_possible) {
+			// Write to DB
+		}
+	}
+	public function checkTransition($fromID, $toID) {
+		settype($fromID, 'integer');
+		settype($toID, 'integer');
+		$query = "SELECT * FROM ".$table." WHERE ".$this->$colname_from." = $fromID ".
+			"AND ".$this->colname_to." = $toID;";
+		$return = array();
+		$res = $this->db->query($query);
+		$cnt = $res->num_rows;
+        return ($cnt > 0);
+	}
+}
+
 class RequestHandler 
 {
     private $db;
     private $discount = 0;
+	private $SESy, $SEQu;
 
-    private function getResultArray($result) {
-        $results_array = array();
-        while ($row = $result->fetch_assoc()) {
-            $results_array[] = $row;
-        }
-        return $results_array;
-    }
     public function __construct() {
 		// Get global variables here
 		global $DB_host;
@@ -25,6 +94,14 @@ class RequestHandler
 		}
 		$db->query("SET NAMES utf8");
         $this->db = $db;
+		
+		// Create state engines
+		// Params: $db, $tbl_root, $tbl_states, $tbl_rules, $col_rootID, $col_stateID, $colname_stateID_at_TblStates
+		$this->SESy = new StateEngine($this->db, 'sqms_syllabus', 'sqms_syllabus_state', 'sqms_syllabus_state_rules',
+			'sqms_syllabus_id', 'sqms_state_id', 'sqms_syllabus_state_id');
+			
+		$this->SEQu = new StateEngine($this->db, 'sqms_question', 'sqms_question_state', 'sqms_question_state_rules',
+			'sqms_question_id', 'sqms_question_state_id', 'sqms_question_state_id');
     }
     public function handle($command, $params) {
         switch($command) {
@@ -63,6 +140,17 @@ class RequestHandler
 				$this->copySyllabus($params);
 				return "1"; // TODO
 				break;
+				
+			/************************/
+			case "swag":
+				$actState = $this->SEQu->getActState(104);
+				$nextStates = $this->SEQu->getNextStates($actState[0]["id"]);
+				$res = array_merge_recursive($actState, $nextStates);
+				echo '<pre>';
+				var_dump($res);
+				echo '</pre>';
+				break;
+			/**************************/
 
 			//-------- Topics
 			
@@ -148,16 +236,26 @@ class RequestHandler
     a.name AS 'Name',
     version AS 'Version',
     b.name AS 'Topic',
-    owner AS 'Owner',
-    c.name AS 'State'
+    owner AS 'Owner'
 FROM
-    (sqms_syllabus AS a
-    LEFT JOIN sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id)
-        INNER JOIN
-    sqms_syllabus_state AS c ON a.sqms_state_id = c.sqms_syllabus_state_id;";
+    sqms_syllabus AS a
+    LEFT JOIN sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id;";
         $return = array();
 		$res = $this->db->query($query);
-		$return['syllabus'] = $this->getResultArray($res);
+		$res = getResultArray($res);
+		$r = null;
+		foreach ($res as $el) {
+			//$state = array("state" => $this->SESy->getActState($el["ID"])[0]);
+			$acts = $this->SESy->getActState($el["ID"])[0];
+			$state = array("state" => $acts);
+			$x = array_merge_recursive($el, $state);
+			$r[] = $x;
+			/*
+			echo '<pre>';
+			var_dump($x);
+			echo '</pre>';*/
+		}
+		$return['syllabus'] = $r;
 		return $return;
     }
 	private function addSyllabus($params) {
@@ -191,7 +289,7 @@ ON a.sqms_state_id_TO = b.sqms_syllabus_state_id
 WHERE sqms_state_id_FROM = $actstate;";
 		$return = array();
 		$res = $this->db->query($query);
-		$return['nextstates'] = $this->getResultArray($res);
+		$return['nextstates'] = getResultArray($res);
         return $return;
 	}
 	private function updateSyllabus($params) {
@@ -218,9 +316,11 @@ WHERE sqms_state_id_FROM = $actstate;";
         $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
 	}
+	/*
 	private function checkTransition($from, $to) {
 		settype($from, 'integer');
 		settype($to, 'integer');
+		
 		$query = "SELECT * FROM sqms_syllabus_state_rules WHERE ".
 		"sqms_state_id_FROM = $from AND sqms_state_id_TO = $to;";
 		$return = array();
@@ -228,12 +328,13 @@ WHERE sqms_state_id_FROM = $actstate;";
 		$cnt = $res->num_rows;
         return ($cnt > 0);
 	}
+	*/
 	private function getSyllabusState($syllabid) {
 		settype($syllabid, 'integer');
 		$query = "SELECT sqms_state_id FROM sqms_syllabus WHERE sqms_syllabus_id = $syllabid;";
 		$res = $this->db->query($query);
 		$return = array();
-        $return['test'] = $this->getResultArray($res);
+        $return['test'] = getResultArray($res);
 		return $return['test'][0]['sqms_state_id'];
 	}
 	private function setSyllabusState($syllabid, $stateid) {
@@ -243,7 +344,7 @@ WHERE sqms_state_id_FROM = $actstate;";
 		// get actual state from syllabus
 		$actstate = $this->getSyllabusState($syllabid);
 		// check transition
-		$trans = $this->checkTransition($actstate, $stateid);
+		$trans = $this->SESy->checkTransition($this->db, $actstate, $stateid);
 		// check if transition is possible
 		if ($trans) {
 			// update state in DB
@@ -261,7 +362,7 @@ WHERE sqms_state_id_FROM = $actstate;";
 		"sqms_state_id_FROM = $from AND sqms_state_id_TO = $to;";
 		$return = array();
 		$res = $this->db->query($query);
-		$return = $this->getResultArray($res);
+		$return = getResultArray($res);
         return $return;
 	}
 	private function addTopic($name) {
@@ -319,7 +420,7 @@ VALUES (1,1,?,?,1,'',0,0,1,?);";
 		$query .= " ORDER BY element_order;";
         $return = array();
 		$res = $this->db->query($query);
-        $return['syllabuselements'] = $this->getResultArray($res);
+        $return['syllabuselements'] = getResultArray($res);
         return $return;
     }
 	private function getFormDataByState($state) {
@@ -328,14 +429,14 @@ VALUES (1,1,?,?,1,'',0,0,1,?);";
 		$query = "SELECT * FROM sqms_syllabus_state WHERE sqms_syllabus_state_id = $state;";
 		$res = $this->db->query($query);
 		$return = array();
-        $tmp = $this->getResultArray($res);
+        $tmp = getResultArray($res);
 		$return['formdata'] = $tmp[0]['form_data'];
 		return $return;
 	}
 	private function getTopicList() {
         $query = "SELECT * FROM `sqms_topic`";
 		$res = $this->db->query($query);
-        $return['topiclist'] = $this->getResultArray($res);
+        $return['topiclist'] = getResultArray($res);
         return $return;
     }
 	// ------------------------------------- Questions
@@ -349,14 +450,14 @@ a.id_external AS 'ExtID',
 a.sqms_question_type_id AS 'Type'
  FROM `sqms_question` AS a LEFT JOIN sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id";
 		$res = $this->db->query($query);
-        $return['questionlist'] = $this->getResultArray($res);
+        $return['questionlist'] = getResultArray($res);
         return $return;
     }
 	private function getAnswers($questionID) {
 		settype($questionID , 'integer');
         $query = "SELECT sqms_answer_id AS 'ID', answer, correct FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
 		$res = $this->db->query($query);
-        $return['answers'] = $this->getResultArray($res);
+        $return['answers'] = getResultArray($res);
         return $return;
 	}
 	// ----------------------------------- Reports
@@ -364,14 +465,14 @@ a.sqms_question_type_id AS 'Type'
         $query = "SELECT 'Questions without Questionmarks' as attr, COUNT(*) AS value, 'fa-question' AS icon FROM sqms_question WHERE question NOT LIKE '%?%';";
         $return = array();
 		$res = $this->db->query($query);
-        $return['reports'] = $this->getResultArray($res);
+        $return['reports'] = getResultArray($res);
         return $return;
     }
     private function getReport_QuestionsTotal(){
         $query = "SELECT 'Questions total' as attr, COUNT(*) AS value, 'fa-question' AS icon FROM sqms_question;";
         $return = array();
 		$res = $this->db->query($query);
-        $return['reports'] = $this->getResultArray($res);
+        $return['reports'] = getResultArray($res);
         return $return;
     }
     private function getReport_AnswersWhitoutMarks(){
@@ -381,7 +482,7 @@ a.sqms_question_type_id AS 'Type'
 		"OR answer NOT LIKE '%?%'";
         $return = array();
 		$res = $this->db->query($query);
-        $return['reports'] = $this->getResultArray($res);
+        $return['reports'] = getResultArray($res);
         return $return;
     }
 }

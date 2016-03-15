@@ -95,9 +95,12 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, 
 			$scope.syllabi = data.syllabus;
 			$scope.syllabi_cols = Object.keys($scope.syllabi[0]); // get keys from first object
 			
+			console.log($scope.syllabi_cols);
+			
 			// get under-elements for each syllabus
 			for (var i=0;i<$scope.syllabi.length;i++){
 				$scope.syllabi[i].HasNoChilds = true; // default = no children
+				$scope.syllabi[i].state = $scope.syllabi[i].state.name; // TODO: only display, not replace
 				// request details for each syllabus
 				$http({
 					url: 'getjson.php?c=getsyllabusdetails',
