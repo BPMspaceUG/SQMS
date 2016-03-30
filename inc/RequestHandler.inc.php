@@ -208,6 +208,16 @@ class RequestHandler
 				);
 				if ($res != 1) return ''; else return $res;
 				break;
+				
+			case 'update_syllabuselement':
+				$res = $this->updateSyllabusElement(
+					$params["ID"],
+					$params["name"],
+					$params["severity"]
+				);
+				if ($res != 1) return ''; else return $res;
+				break;
+				
 			
 			//-------- Reports for Dashboard
 			case 'getreports':
@@ -337,6 +347,13 @@ WHERE sqms_state_id_FROM = $actstate;";
         $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
 	}
+	private function updateSyllabusElement($id, $name, $severity) {
+		$query = "UPDATE sqms_syllabus_element SET name = ?, severity = ? WHERE sqms_syllabus_element_id = ?;";
+		$stmt = $this->db->prepare($query); // prepare statement
+		$stmt->bind_param("sii", $name, $severity, $id); // bind params
+        $result = $stmt->execute(); // execute statement
+		return (!is_null($result) ? 1 : null);
+	}	
 	private function setSyllabusName($syllabid, $newname) {
 		$query = "UPDATE sqms_syllabus SET name = ? WHERE sqms_syllabus_id = ?;";
 		$stmt = $this->db->prepare($query); // prepare statement

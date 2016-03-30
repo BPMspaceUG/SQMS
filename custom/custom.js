@@ -141,10 +141,15 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, 
 	
 	$scope.saveEl = function(actEl, data, cmd) {
 		var c;
+		console.log(actEl);
+		console.log(data);
 		switch (cmd) {
 			case 'u_answer_t': c = 'update_answer'; actEl.answer = data; break;
 			case 'u_answer_c': c = 'update_answer'; actEl.correct = data; break;
+			case 'u_syllabel_n': c = 'update_syllabuselement'; actEl.name = data; actEl.ID = actEl.sqms_syllabus_element_id; break;
+			case 'u_syllabel_s': c = 'update_syllabuselement'; actEl.severity = data; actEl.ID = actEl.sqms_syllabus_element_id; break;
 		}
+		console.log(actEl);
 		// update client model
 		return $http.post('getjson.php?c='+c, JSON.stringify(actEl)); // send new model
 	}
