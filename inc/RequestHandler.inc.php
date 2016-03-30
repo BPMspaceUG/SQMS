@@ -133,26 +133,11 @@ class RequestHandler
 				return $this->addSyllabus($params);
 				break;
 				
-			case "update_syllabus":
-				return $this->updateSyllabus($params);
-				break;
-				
 			case "copy_syllabus":
 				$this->copySyllabus($params);
 				return "1"; // TODO
 				break;
 				
-			/***********************
-			case "swag":
-				$actState = $this->SEQu->getActState(104);
-				$nextStates = $this->SEQu->getNextStates($actState[0]["id"]);
-				$res = array_merge_recursive($actState, $nextStates);
-				echo '<pre>';
-				var_dump($res);
-				echo '</pre>';
-				break;
-			*************************/
-
 			//-------- Topics
 			
 			case 'topics':
@@ -168,10 +153,6 @@ class RequestHandler
 				return $this->delTopic($params["sqms_topic_id"]);
 				break;
 				
-			case 'update_topic':
-				return $this->updateTopic($params);
-				break;
-			
 			//-------- Questions
 			
 			case 'questions':
@@ -200,6 +181,8 @@ class RequestHandler
 				return json_encode($return);
 				break;
 				
+				
+				
 			case 'update_answer':
 				$res = $this->updateAnswer(
 					$params["ID"],
@@ -218,7 +201,22 @@ class RequestHandler
 				if ($res != 1) return ''; else return $res;
 				break;
 				
-			
+			case 'update_topic':
+				$res = $this->updateTopic(
+					$params["ID"],
+					$params["name"]
+				);
+				if ($res != 1) return ''; else return $res;
+				break;
+				
+			case "update_syllabus":
+				$res = $this->setSyllabusName(
+					$params["ID"],
+					$params["name"]
+				);
+				if ($res != 1) return ''; else return $res;
+				break;
+
 			//-------- Reports for Dashboard
 			case 'getreports':
 				$arr1 = $this->getReport_QuestionsWithoutQuestionmarks();
@@ -330,16 +328,18 @@ WHERE sqms_state_id_FROM = $actstate;";
 		$return['nextstates'] = getResultArray($res);
         return $return;
 	}
-	private function updateSyllabus($params) {
+	
+	// TODO: 
+	private function updateSyllabus($id, $name) {
 		// check state first, then decide which rights are possible on server side
-		$actstate = $params["sqms_state_id"];
-		$newstate = $params["selectedOption"]["sqms_state_id_TO"];
-		$id = $params["ID"];
+		//$actstate = $params["sqms_state_id"];
+		//$newstate = $params["selectedOption"]["sqms_state_id_TO"];
 		// update
 		$this->setSyllabusState($id, $newstate);
-		$this->setSyllabusName($id, $params["name"]);
+		$this->setSyllabusName($id, $name);
 		return "Updated! ($newstate) ".time();
 	}
+	
 	private function updateAnswer($id, $answer, $correct) {
 		$query = "UPDATE sqms_answer SET answer = ?, correct = ? WHERE sqms_answer_id = ?;";
 		$stmt = $this->db->prepare($query); // prepare statement
@@ -353,7 +353,14 @@ WHERE sqms_state_id_FROM = $actstate;";
 		$stmt->bind_param("sii", $name, $severity, $id); // bind params
         $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
-	}	
+	}
+	private function updateTopic($id, $name) {
+		$query = "UPDATE sqms_topic SET name = ? WHERE sqms_topic_id = ?;";
+		$stmt = $this->db->prepare($query); // prepare statement
+		$stmt->bind_param("si", $name, $id); // bind params
+        $result = $stmt->execute(); // execute statement
+		return (!is_null($result) ? 1 : null);
+	}
 	private function setSyllabusName($syllabid, $newname) {
 		$query = "UPDATE sqms_syllabus SET name = ? WHERE sqms_syllabus_id = ?;";
 		$stmt = $this->db->prepare($query); // prepare statement
@@ -402,15 +409,6 @@ WHERE sqms_state_id_FROM = $actstate;";
 		$query = "UPDATE sqms_topic SET name = 'XXXXXXX' WHERE sqms_topic_id = ".$id.";";
         $result = $this->db->query($query);
 		//if (!$result) $this->db->error;
-		return (!is_null($result) ? 1 : null);
-	}
-	private function updateTopic($params) {
-		$query = "UPDATE sqms_topic SET name = ? WHERE sqms_topic_id = ?;";
-		$stmt = $this->db->prepare($query); // prepare statement
-		$stmt->bind_param("si", $name, $id); // bind params
-		$name = $params["name"];
-		$id = $params["sqms_topic_id"];
-        $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
 	}
 	private function addQuestion($question, $author, $topicID) {

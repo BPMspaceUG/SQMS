@@ -154,7 +154,12 @@
 							</a>
 							<button class="btn pull-left" ng-click="m_editsyllabus(s)"><i class="fa fa-pencil"></i></button>
 						</td>
-						<td ng-repeat="sc in syllabi_cols">{{s[sc]}}</td>
+						<td>{{s['ID']}}</td>
+						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_n')" editable-text="s['Name']">{{s['Name'] || "empty"}}</a></td>
+						<td>{{s['Version']}}</td>
+						<td>{{s['Topic']}}</td>
+						<td>{{s['Owner']}}</td>
+						<td>{{s['state']}}</td>
 					</tr>
 					<tr ng-hide="s.HasNoChilds || !s.showKids">
 						<td colspan="8" style="padding:0; background-color: #ddd; border: 1px solid #ccc;">
@@ -259,7 +264,6 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th style="width:95px;">&nbsp;</th>
 						<th>ID</th>
 						<th>Name</th>
 					</tr>
@@ -268,11 +272,8 @@
 					ng-click="setSelectedTopic(topic)"
 					ng-class="{success: topic.sqms_topic_id === actTopic.sqms_topic_id}">
 					<tr>
-						<td>
-							<a class="btn pull-left" data-toggle="modal" data-target="#test"><i class="fa fa-pencil"></i></a>
-						</td>
 						<td>{{topic.sqms_topic_id}}</td>
-						<td>{{topic.name}}</td>
+						<td><a href="#" editable-text="topic.name" onbeforesave="saveEl(topic, $data, 'u_topic_n')">{{topic.name || "empty"}}</a></td>
 					</tr>
 				</tbody>
 			</table>
