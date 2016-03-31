@@ -150,6 +150,8 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, 
 			case 'u_syllabel_s': c = 'update_syllabuselement'; actEl.severity = data; actEl.ID = actEl.sqms_syllabus_element_id; break;
 			case 'u_topic_n': c = 'update_topic'; actEl.name = data; actEl.ID = actEl.sqms_topic_id; break;
 			case 'u_syllab_n': c = 'update_syllabus'; actEl.name = data; break;
+			case 'u_syllab_tc': c = 'update_syllabus_topic'; actEl.TopicID = data; break;
+			case 'u_question_q': c = 'update_question'; actEl.Question = data; break;
 		}
 		console.log(actEl);
 		// update client model

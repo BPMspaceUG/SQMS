@@ -167,11 +167,11 @@ class RequestHandler
 				$res = $this->addQuestion($question, $author, $topicID);
 				if ($res) echo 1; // return something, so its not bad request
 				break;
-				
+			/*
 			case 'update_question':
 				return $this->updateQuestion($params);
 				break;
-				
+			*/
 			case 'getanswers':
 				$questionid = $params['ID'];
 				$arr0 = array("parentID" => $questionid);
@@ -180,9 +180,7 @@ class RequestHandler
 				$return = array_merge_recursive($arr0, $arr1);
 				return json_encode($return);
 				break;
-				
-				
-				
+
 			case 'update_answer':
 				$res = $this->updateAnswer(
 					$params["ID"],
@@ -213,6 +211,22 @@ class RequestHandler
 				$res = $this->setSyllabusName(
 					$params["ID"],
 					$params["name"]
+				);
+				if ($res != 1) return ''; else return $res;
+				break;
+				
+			case "update_syllabus_topic":
+				$res = $this->setSyllabusTopic(
+					$params["ID"],
+					$params["TopicID"]
+				);
+				if ($res != 1) return ''; else return $res;
+				break;
+				
+			case "update_question":
+				$res = $this->updateQuestion(
+					$params["ID"],
+					$params["Question"]
 				);
 				if ($res != 1) return ''; else return $res;
 				break;
@@ -311,8 +325,6 @@ a.sqms_question_type_id AS 'Type'
         $return['answers'] = getResultArray($res);
         return $return;
 	}
-	
-
 	private function copySyllabus($oldSyllabus) {
 		$this->addSyllabus($oldSyllabus);
 	}
@@ -361,10 +373,24 @@ WHERE sqms_state_id_FROM = $actstate;";
         $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
 	}
+	private function updateQuestion($id, $question) {
+		$query = "UPDATE sqms_question SET question = ? WHERE sqms_question_id = ?;";
+		$stmt = $this->db->prepare($query); // prepare statement
+		$stmt->bind_param("si", $question, $id); // bind params
+        $result = $stmt->execute(); // execute statement
+		return (!is_null($result) ? 1 : null);
+	}
 	private function setSyllabusName($syllabid, $newname) {
 		$query = "UPDATE sqms_syllabus SET name = ? WHERE sqms_syllabus_id = ?;";
 		$stmt = $this->db->prepare($query); // prepare statement
 		$stmt->bind_param("si", $newname, $syllabid); // bind params
+        $result = $stmt->execute(); // execute statement
+		return (!is_null($result) ? 1 : null);
+	}
+	private function setSyllabusTopic($syllabid, $topicID) {
+		$query = "UPDATE sqms_syllabus SET sqms_topic_id = ? WHERE sqms_syllabus_id = ?;";
+		$stmt = $this->db->prepare($query); // prepare statement
+		$stmt->bind_param("ii", $topicID, $syllabid); // bind params
         $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
 	}
@@ -420,19 +446,6 @@ VALUES (1,1,?,?,1,'',0,0,1,?);";
 		$stmt->bind_param("ssi", $question, $author, $topicID); // bind params
         $result = $stmt->execute(); // execute statement
 		return $result;
-	}
-	private function updateQuestion($params) {
-		/* TODO:
-		$query = "UPDATE sqms_question SET name = ? WHERE sqms_topic_id = ?;";
-		$stmt = $this->db->prepare($query); // prepare statement
-		$stmt->bind_param("si", $name, $id); // bind params
-		
-		$name = $params["name"];
-		$id = $params["sqms_topic_id"];
-        $result = $stmt->execute(); // execute statement
-		return (!is_null($result) ? 1 : null);
-		*/
-		return null;
 	}
     private function getSyllabusElementsList($id=-1) {
 		settype($id, 'integer');

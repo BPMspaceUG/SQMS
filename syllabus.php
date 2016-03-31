@@ -157,7 +157,7 @@
 						<td>{{s['ID']}}</td>
 						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_n')" editable-text="s['Name']">{{s['Name'] || "empty"}}</a></td>
 						<td>{{s['Version']}}</td>
-						<td>{{s['Topic']}}</td>
+						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" editable-number="s['Topic']">{{s['Topic' || "empty"]}}</a></td>
 						<td>{{s['Owner']}}</td>
 						<td>{{s['state']}}</td>
 					</tr>
@@ -222,7 +222,14 @@
 							</a>
 							<button ng-click="m_editquestion(q)" class="btn pull-left"><i class="fa fa-pencil"></i></button>
 						</td>
-						<td ng-repeat="qu in question_cols">{{q[qu]}}</td>
+						<td>{{q['ID']}}</td>
+						<td>{{q['Topic']}}</td>
+						<td><a href="#" onbeforesave="saveEl(q, $data, 'u_question_q')" editable-text="q['Question']">{{q['Question'] || "empty"}}</a></td>
+						<td>{{q['Author']}}</td>
+						<td>{{q['Vers']}}</td>
+						<td>{{q['ExtID']}}</td>
+						<td>{{q['Type']}}</td>
+						<td>{{q['state']}}</td>
 					</tr>
 					<tr ng-hide="q.HasNoChilds || !q.showKids">
 						<td colspan="10" style="padding:0; background-color: #ddd; border: 1px solid #ccc;">
