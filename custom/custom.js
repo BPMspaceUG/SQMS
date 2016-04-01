@@ -87,7 +87,22 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, 
 	$http.get('getjson.php?c=topics').success(function(data) {
 		$scope.topics = data.topiclist;
 	});
-	
+	  
+  $scope.getTopics = function() {
+    return $scope.topics.length ? null : $http.get('getjson.php?c=topics').success(function(data) {
+      $scope.topics = data;
+      console.log(data);
+    });
+  };
+  /* TODO
+  $scope.$watch('user.group', function(newVal, oldVal) {
+    if (newVal !== oldVal) {
+      var selected = $filter('filter')($scope.groups, {id: $scope.user.group});
+      $scope.user.groupName = selected.length ? selected[0].text : null;
+    }
+  });
+  */
+  
 	//------------------------------- Syllabus
 	$scope.getAllSyllabus = function () {
 		$http.get('getjson.php?c=syllabus')

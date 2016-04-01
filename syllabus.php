@@ -157,7 +157,7 @@
 						<td>{{s['ID']}}</td>
 						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_n')" editable-text="s['Name']">{{s['Name'] || "empty"}}</a></td>
 						<td>{{s['Version']}}</td>
-						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" editable-number="s['Topic']">{{s['Topic' || "empty"]}}</a></td>
+						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" e-ng-options="t.sqms_topic_id as t.name for t in topics" editable-select="s['Topic']">{{s['Topic' || "empty"]}}</a></td>
 						<td>{{s['Owner']}}</td>
 						<td>{{s['state']}}</td>
 					</tr>
