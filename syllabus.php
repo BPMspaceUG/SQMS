@@ -130,6 +130,7 @@
 					<span>
 						<button class="btn btn-success" ng-click="m_createsyllabus()"><i class="fa fa-plus"></i>&nbsp;Create new</button>
 						<button class="btn btn-success" ng-click="m_copysyllabus()"><i class="fa fa-plus"></i>&nbsp;Copy</button>
+            <button type="button" class="btn btn-default" ng-click="open('modalNewSyllabus.html')"><i class="fa fa-plus"></i> Create new Syllabus</button>
 					</span>
 				</div>
 				<div class="col-sm-4">
@@ -259,8 +260,11 @@
 		<div id="pagetopic" class="tab-pane">
 			<!-- Header -->
 			<div class="row bg-primary">
-				<div class="col-sm-8">
+				<div class="col-sm-4">
 					<h2>Topic</h2>
+				</div>
+				<div class="col-sm-4">
+          <button type="button" class="btn btn-default" ng-click="open('modalNewTopic.html')"><i class="fa fa-plus"></i> Create new Topic</button>
 				</div>
 				<div class="col-sm-4">
 					<input type="text" ng-model="filtertext" class="form-control pull-right" style="width:200px;" placeholder="filter">
@@ -271,7 +275,7 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th>ID</th>
+						<th style="width:100px;">ID</th>
 						<th>Name</th>
 					</tr>
 				</thead>
@@ -286,6 +290,55 @@
 			</table>
 		</div>
 		
+    <!-- Template Modal 1 -->
+    <script type="text/ng-template" id="modalNewTopic.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Create new topic</h3>
+        </div>
+        <div class="modal-body">
+            <!--<ul>
+                <li ng-repeat="item in items">
+                    <a href="#" ng-click="$event.preventDefault(); selected.item = item">{{ item }}</a>
+                </li>
+            </ul>
+            Selected: <b>{{ object }}</b>-->
+            <form>
+              <label>Topic name</label>
+              <input type="text" class="form-control" placeholder="Topicname" ng-model="object.data.name"/>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">Create</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+    <!-- END: Template -->
+    
+    <!-- Template Modal 1 -->
+    <script type="text/ng-template" id="modalNewSyllabus.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Create new syllabus</h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+          <fieldset>
+          <legend>Create syllabus</legend>
+          <label class="control-label" for="textinput-0">Syllabus name</label>
+          <input id="textinput-0" name="textinput-0" placeholder="Blah blah" class="form-control" required="" type="text" />
+          <label class="control-label" for="textinput-1">Topic</label> <input id="textinput-1" name="textinput-1" placeholder="IT Sec" class="form-control" required="" type="text" />
+          <label class="control-label" for="textinput-2">Author</label> <input id="textinput-2" name="textinput-2" placeholder="Max Mustermann" class="form-control" required="" type="text" />
+          <label class="control-label" for="textinput-3">Version</label> <input id="textinput-3" name="textinput-3" placeholder="1" class="form-control" type="text" disabled/>
+          <label class="control-label" for="textinput-4">Description</label> <textarea id="textinput-4" name="textinput-4" class="form-control"></textarea>
+          </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">Create</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+    <!-- END: Template -->
+    
 	</div>
 </div>
 

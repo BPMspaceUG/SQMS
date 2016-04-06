@@ -1,7 +1,6 @@
 'use strict';
 
-//angular.module('mySceApp', ['ngSanitize'])
-var module = angular.module('phonecatApp', ['ngSanitize', 'xeditable'])
+var module = angular.module('phonecatApp', ['ngSanitize', 'xeditable', 'ui.bootstrap'])
 /*
 , function($compileProvider) {
 	
@@ -26,8 +25,55 @@ module.run(function(editableOptions) {
 	editableOptions.theme = 'bs3'; // needed for inline editing
 });
 
-// Controller
-module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, $http, $sce) {
+// Controller of Modal Window
+module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items) {
+
+  // Initial settings  
+  $scope.object = {
+    command: 'create_topic',
+    data: {name: ''}
+  };
+  
+  $scope.items = items;
+  $scope.selected = {
+    item: $scope.items[0]
+  };
+
+  $scope.ok = function () {    
+    $uibModalInstance.close($scope.object); // Return result
+  };
+  
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss('cancel');
+  };
+});
+
+// Main Controller
+module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', function($scope, $http, $sce, $uibModal) {
+
+  $scope.items = ['item1', 'item2', 'item3'];
+
+  $scope.open = function (TemplateName) {
+    var modalInstance = $uibModal.open({
+      animation: false,
+      templateUrl: TemplateName,
+      controller: 'ModalInstanceCtrl',
+      resolve: {
+        items: function () {
+          return $scope.items;
+        }
+      }
+    });
+    modalInstance.result.then(function (result) {
+      // Send result to server
+      $scope.writeData(result.command, result.data);
+    }, function () {
+      //$log.info('Modal dismissed at: ' + new Date());
+    });
+  };
+
+
+
 
 	// Sorting Tables, TODO: remove redundant code
 	$scope.predicate_s = 'ID';
@@ -185,6 +231,19 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, 
 		$scope.modalfooter = 'Footer';
 		$scope.toggleModal();
 	};
+	$scope.m_createtopic = function() {
+		$scope.modaltitle = 'Create new Topic';
+		$scope.modalcontent = $sce.trustAsHtml('<div>\
+    <form class="form-horizontal"><fieldset>\
+    <legend>Create topic</legend>\
+    <label class="control-label" for="textinput-0">Topic name</label>\
+    <input id="textinput-0" name="textinput-0" placeholder="Topicname" class="form-control" required="" type="text" />\
+    </fieldset></form></div>');
+    $scope.modalElement = $scope.actTopic;
+    $scope.modalCommand = "create_topic";
+		$scope.modalfooter = 'Footer';
+		$scope.toggleModal();
+	};
 	$scope.m_copysyllabus = function() {
 		$scope.modaltitle = 'Copy Syllabus';
 		$scope.modalcontent = $sce.trustAsHtml(
@@ -223,11 +282,16 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, 
 		$scope.modalfooter = 'Footer';
 		$scope.toggleModal();
 	};
+  $scope.modalElement = undefined;
+  $scope.modalCommand = "";
+  
 	$scope.m_btn_apply = function() {
 		//alert("swag");
 		// Here the action happens
 		console.log("Button apply clicked!");
-		console.log($scope.actQuestion);
+		//console.log($scope.actQuestion);
+		console.log($scope.modalElement);
+		console.log($scope.modalCommand);
 		$scope.writeData("create_question", $scope.actQuestion);
 		$scope.showModal = false;
 	}
@@ -255,7 +319,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', function($scope, 
 			console.log("Error! " + error.message);
 		});
 	}
-	
+
 	//--- Initial values
 	$scope.actSyllabus = {};
 	$scope.actQuestion = {};
@@ -272,49 +336,3 @@ module.directive('statemachine', function ($compile) {
 		template: '<div class="entry-photo"><h2>&nbsp;</h2><div class="entry-img"><span><a href="{{rootDirectory}}{{content.data}}"><img ng-src="{{rootDirectory}}{{content.data}}" alt="entry photo"></a></span></div><div class="entry-text"><div class="entry-title">{{content.title}}</div><div class="entry-copy">{{content.description}}</div></div></div>'
 	};
 });
-
-module.directive('modal', function () {
-    return {
-      template: '<div class="modal">' + 
-          '<div class="modal-dialog">' + 
-            '<div class="modal-content">' + 
-              '<div class="modal-header">' + 
-                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' + 
-                '<h4 class="modal-title">{{ modaltitle }}</h4>' + 
-              '</div>' + 
-              '<div class="modal-body" ng-transclude></div>' + 
-			  '<div class="modal-footer">'+
-				'<button type="button" class="btn btn-primary" ng-click="m_btn_apply()">Apply</button>'+
-				'<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>'+
-				'</div>' +
-            '</div>' + 
-          '</div>' + 
-        '</div>',
-      restrict: 'E',
-      transclude: true,
-      replace:true,
-      scope:true,
-      link: function postLink(scope, element, attrs) {
-        scope.title = attrs.title;
-
-        scope.$watch(attrs.visible, function(value){
-          if(value == true)
-            $(element).modal('show');
-          else
-            $(element).modal('hide');
-        });
-
-        $(element).on('shown.bs.modal', function(){
-          scope.$apply(function(){
-            scope.$parent[attrs.visible] = true;
-          });
-        });
-
-        $(element).on('hidden.bs.modal', function(){
-          scope.$apply(function(){
-            scope.$parent[attrs.visible] = false;
-          });
-        });
-      }
-    };
-  });

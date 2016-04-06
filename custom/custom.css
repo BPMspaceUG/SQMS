@@ -1,6 +1,8 @@
 html {
+  /*
 	overflow: -moz-scrollbars-vertical;
 	overflow-y: scroll;
+  */
 }
 .centering {
   float: none;
