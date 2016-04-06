@@ -26,11 +26,11 @@ module.run(function(editableOptions) {
 });
 
 // Controller of Modal Window
-module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items) {
+module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items, cmd) {
 
   // Initial settings  
   $scope.object = {
-    command: 'create_topic',
+    command: cmd,
     data: {name: ''}
   };
   
@@ -53,12 +53,15 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 
   $scope.items = ['item1', 'item2', 'item3'];
 
-  $scope.open = function (TemplateName) {
+  $scope.open = function (TemplateName, command) {
     var modalInstance = $uibModal.open({
       animation: false,
       templateUrl: TemplateName,
       controller: 'ModalInstanceCtrl',
       resolve: {
+        cmd: function () {
+          return command;
+        },
         items: function () {
           return $scope.items;
         }
@@ -157,7 +160,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 			$scope.syllabi = data.syllabus;
 			$scope.syllabi_cols = Object.keys($scope.syllabi[0]); // get keys from first object
 			
-			console.log($scope.syllabi_cols);
+			//console.log($scope.syllabi_cols);
 			
 			// get under-elements for each syllabus
 			for (var i=0;i<$scope.syllabi.length;i++){
@@ -197,13 +200,12 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	$scope.setSelectedTopic = function (el) {$scope.actTopic = el;};
 	
 	$scope.setState = function(newstate) {$scope.actSyllabus.selectedOption = newstate;}
-	$scope.copySyllabus = function () { console.log("copying syllabus..."); $scope.writeData('copy_syllabus', $scope.actSyllabus);}
 	$scope.updateSyllabus = function () { $scope.writeData('update_syllabus', $scope.actSyllabus); }
 	
 	$scope.saveEl = function(actEl, data, cmd) {
 		var c;
-		console.log(actEl);
-		console.log(data);
+		//console.log(actEl);
+		//console.log(data);
 		switch (cmd) {
 			case 'u_answer_t': c = 'update_answer'; actEl.answer = data; break;
 			case 'u_answer_c': c = 'update_answer'; actEl.correct = data; break;
@@ -214,7 +216,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 			case 'u_syllab_tc': c = 'update_syllabus_topic'; actEl.TopicID = data; break;
 			case 'u_question_q': c = 'update_question'; actEl.Question = data; break;
 		}
-		console.log(actEl);
+		//console.log(actEl);
 		// update client model
 		return $http.post('getjson.php?c='+c, JSON.stringify(actEl)); // send new model
 	}
@@ -222,35 +224,6 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	$scope.m_createquestion = function() {
 		$scope.modaltitle = 'Create new Question';
 		$scope.modalcontent = $sce.trustAsHtml('<div><form class="form-horizontal"><fieldset><legend>Create question</legend><label class="control-label" for="textinput-0">Question</label><input id="textinput-0" name="textinput-0" ng-model="actQuestion.question" placeholder="What is the answer to life the universe and everything?" class="form-control" required="" type="text"><label class="control-label" for="textinput-1">Topic</label><input id="textinput-1" name="textinput-1"  ng-model="actQuestion.topic" placeholder="IT Sec" class="form-control" required="" type="text"><label class="control-label" for="textinput-2">Author</label><input id="textinput-2" name="textinput-2"  ng-model="actQuestion.author" placeholder="Max Mustermann" class="form-control" required="" type="text"><label class="control-label" for="textinput-3">Version</label><input id="textinput-2" name="textinput-3" placeholder="1" class="form-control" type="text" disabled></fieldset></form></div>');
-		$scope.modalfooter = 'Footer';
-		$scope.toggleModal();
-	};
-	$scope.m_createsyllabus = function() {
-		$scope.modaltitle = 'Create new Syllabus';
-		$scope.modalcontent = $sce.trustAsHtml('<div><form class="form-horizontal"> <fieldset> <legend>Create syllabus</legend> <label class="control-label" for="textinput-0">Syllabus name</label> <input id="textinput-0" name="textinput-0" placeholder="Blah blah" class="form-control" required="" type="text" /> <label class="control-label" for="textinput-1">Topic</label> <input id="textinput-1" name="textinput-1" placeholder="IT Sec" class="form-control" required="" type="text" /> <label class="control-label" for="textinput-2">Author</label> <input id="textinput-2" name="textinput-2" placeholder="Max Mustermann" class="form-control" required="" type="text" /> <label class="control-label" for="textinput-3">Version</label> <input id="textinput-3" name="textinput-3" placeholder="1" class="form-control" type="text" disabled/> <label class="control-label" for="textinput-4">Description</label> <textarea id="textinput-4" name="textinput-4" class="form-control"></textarea> </fieldset> </form></div>');
-		$scope.modalfooter = 'Footer';
-		$scope.toggleModal();
-	};
-	$scope.m_createtopic = function() {
-		$scope.modaltitle = 'Create new Topic';
-		$scope.modalcontent = $sce.trustAsHtml('<div>\
-    <form class="form-horizontal"><fieldset>\
-    <legend>Create topic</legend>\
-    <label class="control-label" for="textinput-0">Topic name</label>\
-    <input id="textinput-0" name="textinput-0" placeholder="Topicname" class="form-control" required="" type="text" />\
-    </fieldset></form></div>');
-    $scope.modalElement = $scope.actTopic;
-    $scope.modalCommand = "create_topic";
-		$scope.modalfooter = 'Footer';
-		$scope.toggleModal();
-	};
-	$scope.m_copysyllabus = function() {
-		$scope.modaltitle = 'Copy Syllabus';
-		$scope.modalcontent = $sce.trustAsHtml(
-'<div><p>Do you really want to copy this syllabus?</p>\
-<h2>OMG</h2>\
-<button type="button" ng-click="copySyllabus();" data-dismiss="modal" class="btn btn-lg btn-success">Copy</button>\
-</div>');
 		$scope.modalfooter = 'Footer';
 		$scope.toggleModal();
 	};
@@ -282,25 +255,6 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 		$scope.modalfooter = 'Footer';
 		$scope.toggleModal();
 	};
-  $scope.modalElement = undefined;
-  $scope.modalCommand = "";
-  
-	$scope.m_btn_apply = function() {
-		//alert("swag");
-		// Here the action happens
-		console.log("Button apply clicked!");
-		//console.log($scope.actQuestion);
-		console.log($scope.modalElement);
-		console.log($scope.modalCommand);
-		$scope.writeData("create_question", $scope.actQuestion);
-		$scope.showModal = false;
-	}
-	
-	$scope.showModal = false;
-	$scope.toggleModal = function(){
-		$scope.showModal = !$scope.showModal;
-	};
-	
 	// WRITE data to server
 	$scope.writeData = function (command, data) {
 		console.log("Sending command...");
@@ -310,8 +264,9 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 			data: JSON.stringify(data)
 		}).
 		success(function(data){
-			console.log("Executed command successfully! Return: " + data);
+			//console.log("Executed command successfully! Return: " + data);
 			// TODO: ... Heavy data ... Make this callback later or at least faster
+      // TODO: Only update at certain commands (create, update, ...)
 			$scope.getAllSyllabus(); // Refresh data
 			$scope.getAllQuestions(); // Refresh data
 		}).

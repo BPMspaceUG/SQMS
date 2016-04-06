@@ -125,12 +125,12 @@ class RequestHandler
 				break;
 				
 			case 'syllabuselements':
-                $return = $this->getSyllabusElementsList();
+        $return = $this->getSyllabusElementsList();
 				return json_encode($return);
-                break;
+        break;
 				
-			case 'create_syllabus':
-				return $this->addSyllabus($params);
+			case 'create_syllabus':        
+				return $this->addSyllabus($params["name"], $params["owner"], $params["description"]);
 				break;
 				
 			case "copy_syllabus":
@@ -250,9 +250,9 @@ class RequestHandler
     ###################################################################################################################
     ####################### Definition der Handles
     ###################################################################################################################
-	
+  
 	// TODO: Make class for state machine
-	
+  
     private function getSyllabusList() {
 		$query = "SELECT 
     sqms_syllabus_id AS 'ID',
@@ -277,21 +277,20 @@ FROM
 		$return['syllabus'] = $r;
 		return $return;
     }
-	private function addSyllabus($params) {
-		
+	private function addSyllabus($name, $owner, $description) {
 		// TODO: Prepare statement
 		$query = "INSERT INTO sqms_syllabus ".
 			"(name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
 			"validity_period_from, validity_period_to, description) VALUES (".
-			"'".$params["name"]."',".
+			"'".$name."',".
 			"1,". // StateID (alwas 1 at creating)
 			"1,". // Version
 			"1,". // Topic
-			"'".$params["owner"]."',".
+			"'".$owner."',".
 			"1,". // LangID
 			"CURDATE(),".
 			"DATE_ADD(CURDATE(), INTERVAL 1 YEAR),".
-			"'".$params["description"]."');";
+			"'".$description."');";
         $result = $this->db->query($query);
 		if (!$result) $this->db->error;
 		return $result;

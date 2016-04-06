@@ -128,9 +128,7 @@
 				</div>
 				<div class="col-sm-4">
 					<span>
-						<button class="btn btn-success" ng-click="m_createsyllabus()"><i class="fa fa-plus"></i>&nbsp;Create new</button>
-						<button class="btn btn-success" ng-click="m_copysyllabus()"><i class="fa fa-plus"></i>&nbsp;Copy</button>
-            <button type="button" class="btn btn-default" ng-click="open('modalNewSyllabus.html')"><i class="fa fa-plus"></i> Create new Syllabus</button>
+            <button type="button" class="btn btn-default" ng-click="open('modalNewSyllabus.html', 'create_syllabus')"><i class="fa fa-plus"></i> Create new Syllabus</button>
 					</span>
 				</div>
 				<div class="col-sm-4">
@@ -264,7 +262,7 @@
 					<h2>Topic</h2>
 				</div>
 				<div class="col-sm-4">
-          <button type="button" class="btn btn-default" ng-click="open('modalNewTopic.html')"><i class="fa fa-plus"></i> Create new Topic</button>
+          <button type="button" class="btn btn-default" ng-click="open('modalNewTopic.html', 'create_topic')"><i class="fa fa-plus"></i> Create new Topic</button>
 				</div>
 				<div class="col-sm-4">
 					<input type="text" ng-model="filtertext" class="form-control pull-right" style="width:200px;" placeholder="filter">
@@ -314,7 +312,7 @@
     </script>
     <!-- END: Template -->
     
-    <!-- Template Modal 1 -->
+    <!-- Template Modal Create Syllabus -->
     <script type="text/ng-template" id="modalNewSyllabus.html">
         <div class="modal-header">
             <h3 class="modal-title">Create new syllabus</h3>
@@ -323,12 +321,16 @@
           <form class="form-horizontal">
           <fieldset>
           <legend>Create syllabus</legend>
-          <label class="control-label" for="textinput-0">Syllabus name</label>
-          <input id="textinput-0" name="textinput-0" placeholder="Blah blah" class="form-control" required="" type="text" />
-          <label class="control-label" for="textinput-1">Topic</label> <input id="textinput-1" name="textinput-1" placeholder="IT Sec" class="form-control" required="" type="text" />
-          <label class="control-label" for="textinput-2">Author</label> <input id="textinput-2" name="textinput-2" placeholder="Max Mustermann" class="form-control" required="" type="text" />
-          <label class="control-label" for="textinput-3">Version</label> <input id="textinput-3" name="textinput-3" placeholder="1" class="form-control" type="text" disabled/>
-          <label class="control-label" for="textinput-4">Description</label> <textarea id="textinput-4" name="textinput-4" class="form-control"></textarea>
+          <label class="control-label">Syllabus name</label>
+          <input ng-model="object.data.name" placeholder="Syllabusname" class="form-control" type="text" />
+          <label class="control-label">Topic</label>
+          <input ng-model="object.data.topic" placeholder="IT Sec" class="form-control" type="text" />
+          <label class="control-label">Owner</label>
+          <input ng-model="object.data.owner" placeholder="Max Mustermann" class="form-control" type="text" />
+          <label class="control-label">Description</label>
+          <textarea ng-model="object.data.description" placeholder="A short text about the syllabus" class="form-control"></textarea>
+          <label class="control-label">Version</label>
+          <input placeholder="1" class="form-control" type="text" disabled/>
           </fieldset>
           </form>
         </div>
