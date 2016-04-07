@@ -1,25 +1,7 @@
 'use strict';
 
-var module = angular.module('phonecatApp', ['ngSanitize', 'xeditable', 'ui.bootstrap'])
-/*
-, function($compileProvider) {
-	
-	// for loading HTML from Database
-	/*$compileProvider.directive('compile', function($compile) {
-		return function(scope, element, attrs) {
-			scope.$watch(
-				function(scope) {
-					return scope.$eval(attrs.compile);
-				},
-				function(value) {
-					element.html(value);
-					$compile(element.contents())(scope);
-				}
-			);
-		};
-	});
-});
-*/
+var module = angular.module('phonecatApp', ['ngSanitize', 'xeditable', 'ui.bootstrap', 'ui.tinymce'])
+
 // Needed for inline editing
 module.run(function(editableOptions) {
 	editableOptions.theme = 'bs3'; // needed for inline editing
@@ -31,13 +13,12 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   // Initial settings  
   $scope.object = {
     command: cmd,
-    data: {name: ''}
+    data: {
+      name: '',
+      topic: items[0]
+    }
   };
-  
   $scope.items = items;
-  $scope.selected = {
-    item: $scope.items[0]
-  };
 
   $scope.ok = function () {    
     $uibModalInstance.close($scope.object); // Return result
@@ -51,7 +32,13 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
 // Main Controller
 module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', function($scope, $http, $sce, $uibModal) {
 
-  $scope.items = ['item1', 'item2', 'item3'];
+  $scope.items = [{
+    id: 1,
+    name: 'aLabel'
+  }, {
+    id: 2,
+    name: 'bLabel'
+  }];
 
   $scope.open = function (TemplateName, command) {
     var modalInstance = $uibModal.open({
@@ -63,7 +50,12 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
           return command;
         },
         items: function () {
-          return $scope.items;
+          if (command == "create_syllabus") {
+            $scope.getTopics(); // Refresh
+            return $scope.topics;
+          } else {
+            return $scope.items;
+          }
         }
       }
     });
@@ -133,14 +125,14 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	)};
 	
 	//------------------------------- Topic
-	$http.get('getjson.php?c=topics').success(function(data) {
+	
+  $http.get('getjson.php?c=topics').success(function(data) {
 		$scope.topics = data.topiclist;
 	});
-	  
+	
   $scope.getTopics = function() {
     return $scope.topics.length ? null : $http.get('getjson.php?c=topics').success(function(data) {
       $scope.topics = data;
-      console.log(data);
     });
   };
   /* TODO
@@ -211,13 +203,12 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 			case 'u_answer_c': c = 'update_answer'; actEl.correct = data; break;
 			case 'u_syllabel_n': c = 'update_syllabuselement'; actEl.name = data; actEl.ID = actEl.sqms_syllabus_element_id; break;
 			case 'u_syllabel_s': c = 'update_syllabuselement'; actEl.severity = data; actEl.ID = actEl.sqms_syllabus_element_id; break;
-			case 'u_topic_n': c = 'update_topic'; actEl.name = data; actEl.ID = actEl.sqms_topic_id; break;
+			case 'u_topic_n': c = 'update_topic'; actEl.name = data; actEl.ID = actEl.id; break;
 			case 'u_syllab_n': c = 'update_syllabus'; actEl.name = data; break;
 			case 'u_syllab_tc': c = 'update_syllabus_topic'; actEl.TopicID = data; break;
 			case 'u_question_q': c = 'update_question'; actEl.Question = data; break;
 		}
 		//console.log(actEl);
-		// update client model
 		return $http.post('getjson.php?c='+c, JSON.stringify(actEl)); // send new model
 	}
 	
@@ -227,34 +218,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 		$scope.modalfooter = 'Footer';
 		$scope.toggleModal();
 	};
-	$scope.m_editsyllabus = function(syllab) {
-		$scope.modaltitle = 'Edit Syllabus';
-		var html = '<div>\
-	<p>ID: '+syllab.ID+'</p>\
-	<p>Version: '+syllab.Version+'</p>\
-	<p>Name: '+syllab.Name+'</p>\
-	<p>Topic: '+syllab.Topic+'</p>\
-	<p>Owner: '+syllab.Owner+'</p>\
-	<p>State: '+syllab.State+'</p>\
-</div>';
-		$scope.modalcontent = $sce.trustAsHtml(html);
-		$scope.modalfooter = 'Footer';
-		$scope.toggleModal();
-	};
-	$scope.m_editquestion = function(question) {
-		$scope.modaltitle = 'Edit Question';
-		var html = '<div>\
-	<p>ID: '+question.ID+'</p>\
-	<p>Version: '+question.Vers+'</p>\
-	<p>Name: '+question.Question+'</p>\
-	<p>Topic: '+question.Topic+'</p>\
-	<p>Author: '+question.Author+'</p>\
-	<p>State: '+question.State+'</p>\
-</div>';
-		$scope.modalcontent = $sce.trustAsHtml(html);
-		$scope.modalfooter = 'Footer';
-		$scope.toggleModal();
-	};
+
 	// WRITE data to server
 	$scope.writeData = function (command, data) {
 		console.log("Sending command...");
@@ -264,7 +228,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 			data: JSON.stringify(data)
 		}).
 		success(function(data){
-			//console.log("Executed command successfully! Return: " + data);
+			console.log("Executed command successfully! Return: " + data);
 			// TODO: ... Heavy data ... Make this callback later or at least faster
       // TODO: Only update at certain commands (create, update, ...)
 			$scope.getAllSyllabus(); // Refresh data

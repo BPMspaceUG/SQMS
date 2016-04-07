@@ -18,61 +18,6 @@
 <div class="clearfix"></br></div>
 <!--------------- END SUB MENU --------->
 
-<!-- Modal window 
-<div class="modal" id="test" tabindex="-1" role="dialog" >
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel"><i class="fa fa-pencil"></i> Edit syllabus</h4>
-			</div>
-			<div class="modal-body">
-				<div compile="actSyllabus.formdata"></div>
-			</div>
-			<div class="modal-footer">
-				<div class="row">
-					<div class="col-xs-8">
-						<div class="pull-left">
-							<div statemachine></div>
-							<span class="text-success">{{actSyllabus.state}}</span>
-							<button type="button" class="btn btn-default"
-								ng-repeat="state in actSyllabus.availableOptions"
-								ng-click="setState(state);">{{state.name}}</button>
-						</div>
-					</div>
-					<div class="col-xs-4">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						<button type="button" ng-click="updateSyllabus();" data-dismiss="modal" class="btn btn-primary">Save changes</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="modal" id="copysyllab" tabindex="-1" role="dialog" >
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel"><i class="fa fa-plus"></i> Copy syllabus</h4>
-			</div>
-			<div class="modal-body">
-				<div>Do you really want to copy this syllabus?</div>
-				<h2>{{actSyllabus.name}}</h2>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-danger" data-dismiss="modal">Dont copy</button>
-				<button type="button" ng-click="copySyllabus();" data-dismiss="modal" class="btn btn-success">Copy</button>
-			</div>
-		</div>
-	</div>
-</div>
--->
-
-<modal visible="showModal">
-	<div ng-bind-html="modalcontent"></div>
-</modal>
-
 <!-- Page -->
 <div class="container">
 	<div class="tab-content">
@@ -156,7 +101,7 @@
 						<td>{{s['ID']}}</td>
 						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_n')" editable-text="s['Name']">{{s['Name'] || "empty"}}</a></td>
 						<td>{{s['Version']}}</td>
-						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" e-ng-options="t.sqms_topic_id as t.name for t in topics" editable-select="s['Topic']">{{s['Topic' || "empty"]}}</a></td>
+						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" e-ng-options="t.id as t.name for t in topics" editable-select="s['Topic']">{{s['Topic' || "empty"]}}</a></td>
 						<td>{{s['Owner']}}</td>
 						<td>{{s['state']}}</td>
 					</tr>
@@ -279,30 +224,27 @@
 				</thead>
 				<tbody ng-repeat="topic in topics | filter:filtertext"
 					ng-click="setSelectedTopic(topic)"
-					ng-class="{success: topic.sqms_topic_id === actTopic.sqms_topic_id}">
+					ng-class="{success: topic.id === actTopic.id}">
 					<tr>
-						<td>{{topic.sqms_topic_id}}</td>
+						<td>{{topic.id}}</td>
 						<td><a href="#" editable-text="topic.name" onbeforesave="saveEl(topic, $data, 'u_topic_n')">{{topic.name || "empty"}}</a></td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 		
-    <!-- Template Modal 1 -->
+    <!-- Template Modal "Create Topic" -->
     <script type="text/ng-template" id="modalNewTopic.html">
         <div class="modal-header">
             <h3 class="modal-title">Create new topic</h3>
         </div>
         <div class="modal-body">
-            <!--<ul>
-                <li ng-repeat="item in items">
-                    <a href="#" ng-click="$event.preventDefault(); selected.item = item">{{ item }}</a>
-                </li>
-            </ul>
-            Selected: <b>{{ object }}</b>-->
-            <form>
+            <form class="form-horizontal">
+            <fieldset>
+              <legend>Create syllabus</legend>
               <label>Topic name</label>
               <input type="text" class="form-control" placeholder="Topicname" ng-model="object.data.name"/>
+            </fieldset>
             </form>
         </div>
         <div class="modal-footer">
@@ -312,7 +254,7 @@
     </script>
     <!-- END: Template -->
     
-    <!-- Template Modal Create Syllabus -->
+    <!-- Template Modal "Create Syllabus" -->
     <script type="text/ng-template" id="modalNewSyllabus.html">
         <div class="modal-header">
             <h3 class="modal-title">Create new syllabus</h3>
@@ -324,11 +266,11 @@
           <label class="control-label">Syllabus name</label>
           <input ng-model="object.data.name" placeholder="Syllabusname" class="form-control" type="text" />
           <label class="control-label">Topic</label>
-          <input ng-model="object.data.topic" placeholder="IT Sec" class="form-control" type="text" />
+          <select class="form-control" ng-options="item as item.name for item in items track by item.id" ng-model="object.data.topic"></select>
           <label class="control-label">Owner</label>
           <input ng-model="object.data.owner" placeholder="Max Mustermann" class="form-control" type="text" />
           <label class="control-label">Description</label>
-          <textarea ng-model="object.data.description" placeholder="A short text about the syllabus" class="form-control"></textarea>
+          <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
           <label class="control-label">Version</label>
           <input placeholder="1" class="form-control" type="text" disabled/>
           </fieldset>
@@ -340,7 +282,7 @@
         </div>
     </script>
     <!-- END: Template -->
-    
+
 	</div>
 </div>
 

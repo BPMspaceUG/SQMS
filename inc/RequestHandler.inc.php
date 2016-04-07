@@ -129,8 +129,8 @@ class RequestHandler
 				return json_encode($return);
         break;
 				
-			case 'create_syllabus':        
-				return $this->addSyllabus($params["name"], $params["owner"], $params["description"]);
+			case 'create_syllabus':
+				return $this->addSyllabus($params["name"], $params["owner"], $params["topic"], $params["description"]);
 				break;
 				
 			case "copy_syllabus":
@@ -277,7 +277,7 @@ FROM
 		$return['syllabus'] = $r;
 		return $return;
     }
-	private function addSyllabus($name, $owner, $description) {
+	private function addSyllabus($name, $owner, $topic, $description) {
 		// TODO: Prepare statement
 		$query = "INSERT INTO sqms_syllabus ".
 			"(name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
@@ -285,7 +285,7 @@ FROM
 			"'".$name."',".
 			"1,". // StateID (alwas 1 at creating)
 			"1,". // Version
-			"1,". // Topic
+			$topic["id"].",". // Topic
 			"'".$owner."',".
 			"1,". // LangID
 			"CURDATE(),".
@@ -468,7 +468,7 @@ VALUES (1,1,?,?,1,'',0,0,1,?);";
 		return $return;
 	}
 	private function getTopicList() {
-        $query = "SELECT * FROM `sqms_topic`";
+        $query = "SELECT sqms_topic_id AS id, name FROM `sqms_topic`";
 		$res = $this->db->query($query);
         $return['topiclist'] = getResultArray($res);
         return $return;
