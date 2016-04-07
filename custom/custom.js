@@ -32,6 +32,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
 // Main Controller
 module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', function($scope, $http, $sce, $uibModal) {
 
+  // TODO: Remove
   $scope.items = [{
     id: 1,
     name: 'aLabel'
@@ -50,7 +51,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
           return command;
         },
         items: function () {
-          if (command == "create_syllabus") {
+          if (command == "create_syllabus" || command == "create_question") {
             $scope.getTopics(); // Refresh
             return $scope.topics;
           } else {
@@ -60,6 +61,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
       }
     });
     modalInstance.result.then(function (result) {
+      console.log(result);
       // Send result to server
       $scope.writeData(result.command, result.data);
     }, function () {

@@ -130,7 +130,7 @@ class RequestHandler
         break;
 				
 			case 'create_syllabus':
-				return $this->addSyllabus($params["name"], $params["owner"], $params["topic"], $params["description"]);
+				return $this->addSyllabus($params["name"], $params["owner"], $params["topic"]["id"], $params["description"]);
 				break;
 				
 			case "copy_syllabus":
@@ -160,12 +160,8 @@ class RequestHandler
 				return json_encode($return);
 				break;
 				
-			case 'create_question':
-				$question = $params['Question'];
-				$author = $params['Author'];
-				$topicID = 11; // $params['topic_id'];
-				$res = $this->addQuestion($question, $author, $topicID);
-				if ($res) echo 1; // return something, so its not bad request
+      case 'create_question':
+				return $this->addQuestion($params['question'], $params['author'], $params['topic']['id']);
 				break;
 			/*
 			case 'update_question':
@@ -285,7 +281,7 @@ FROM
 			"'".$name."',".
 			"1,". // StateID (alwas 1 at creating)
 			"1,". // Version
-			$topic["id"].",". // Topic
+			$topic.",". // Topic
 			"'".$owner."',".
 			"1,". // LangID
 			"CURDATE(),".

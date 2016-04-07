@@ -11,6 +11,8 @@
 				<li><a href="#">PHP</a></li>
 				<li><a href="#">MySQL</a></li>
 				<li><a href="#">FuelUX</a></li>
+				<li><a href="#">AngularUI</a></li>
+				<li><a href="#">TinyMCE</a></li>
 			</ul>
 		</div>
 		</small>

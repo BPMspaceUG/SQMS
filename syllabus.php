@@ -139,7 +139,7 @@
 				</div>
 				<div class="col-sm-4">
 					<span>
-						<button class="btn btn-success" ng-click="m_createquestion()"><i class="fa fa-plus"></i>&nbsp;Create new</button>
+            <button type="button" class="btn btn-default" ng-click="open('modalNewQuestion.html', 'create_question')"><i class="fa fa-plus"></i> Create new Question</button>
 					</span>
 				</div>
 				<div class="col-sm-4">
@@ -233,6 +233,7 @@
 			</table>
 		</div>
 		
+    
     <!-- Template Modal "Create Topic" -->
     <script type="text/ng-template" id="modalNewTopic.html">
         <div class="modal-header">
@@ -271,6 +272,33 @@
           <input ng-model="object.data.owner" placeholder="Max Mustermann" class="form-control" type="text" />
           <label class="control-label">Description</label>
           <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
+          <label class="control-label">Version</label>
+          <input placeholder="1" class="form-control" type="text" disabled/>
+          </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">Create</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+    <!-- END: Template -->
+    
+    <!-- Template Modal "Create Question" -->
+    <script type="text/ng-template" id="modalNewQuestion.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Create new Question</h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+          <fieldset>
+          <legend>Create question</legend>
+          <label class="control-label">Question text</label>
+          <input ng-model="object.data.question" placeholder="What is the answer to the universe and everything?" class="form-control" type="text" />
+          <label class="control-label">Topic</label>
+          <select class="form-control" ng-options="item as item.name for item in items track by item.id" ng-model="object.data.topic"></select>
+          <label class="control-label">Author</label>
+          <input ng-model="object.data.author" placeholder="Max Mustermann" class="form-control" type="text" />
           <label class="control-label">Version</label>
           <input placeholder="1" class="form-control" type="text" disabled/>
           </fieldset>
