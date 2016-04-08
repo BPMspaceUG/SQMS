@@ -196,6 +196,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	$scope.setState = function(newstate) {$scope.actSyllabus.selectedOption = newstate;}
 	$scope.updateSyllabus = function () { $scope.writeData('update_syllabus', $scope.actSyllabus); }
 	
+  //********************* Inline editing
 	$scope.saveEl = function(actEl, data, cmd) {
 		var c;
 		//console.log(actEl);
@@ -213,15 +214,8 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 		//console.log(actEl);
 		return $http.post('getjson.php?c='+c, JSON.stringify(actEl)); // send new model
 	}
-	
-	$scope.m_createquestion = function() {
-		$scope.modaltitle = 'Create new Question';
-		$scope.modalcontent = $sce.trustAsHtml('<div><form class="form-horizontal"><fieldset><legend>Create question</legend><label class="control-label" for="textinput-0">Question</label><input id="textinput-0" name="textinput-0" ng-model="actQuestion.question" placeholder="What is the answer to life the universe and everything?" class="form-control" required="" type="text"><label class="control-label" for="textinput-1">Topic</label><input id="textinput-1" name="textinput-1"  ng-model="actQuestion.topic" placeholder="IT Sec" class="form-control" required="" type="text"><label class="control-label" for="textinput-2">Author</label><input id="textinput-2" name="textinput-2"  ng-model="actQuestion.author" placeholder="Max Mustermann" class="form-control" required="" type="text"><label class="control-label" for="textinput-3">Version</label><input id="textinput-2" name="textinput-3" placeholder="1" class="form-control" type="text" disabled></fieldset></form></div>');
-		$scope.modalfooter = 'Footer';
-		$scope.toggleModal();
-	};
 
-	// WRITE data to server
+	//********************* WRITE data to server
 	$scope.writeData = function (command, data) {
 		console.log("Sending command...");
 		$http({
@@ -242,7 +236,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	}
 
 	//--- Initial values
-	$scope.actSyllabus = {};
+	$scope.actSyllabus = false;
 	$scope.actQuestion = {};
 	$scope.actTopic = {};
 
