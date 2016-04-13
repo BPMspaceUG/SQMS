@@ -75,7 +75,7 @@
 					<span>
             <button type="button" class="btn btn-default" ng-click="open('modalNewSyllabus.html', 'create_syllabus')">
               <i class="fa fa-plus"></i> Syllabus</button>
-            <button type="button" class="btn btn-default" ng-disabled="!actSyllabus" ng-click="open('modalNewSyllabus.html', 'create_syllabus')">
+            <button type="button" class="btn btn-default" ng-disabled="!actSyllabus" ng-click="open('modalNewSyllabusElement.html', 'create_syllabuselement')">
               <i class="fa fa-plus"></i> Syllabus-Element ({{actSyllabus.ID}})</button>
 					</span>
 				</div>
@@ -84,8 +84,10 @@
 				</div>
 			</div>
 			<br/>
-
-			<table class="table">
+      
+      <!-- <pre>{{actSyllabus}}</pre> -->
+			
+      <table class="table">
 				<thead>
 					<tr>
 						<th style="min-width: 95px;">&nbsp;</th>
@@ -144,6 +146,9 @@
 					<span>
             <button type="button" class="btn btn-default" ng-click="open('modalNewQuestion.html', 'create_question')">
               <i class="fa fa-plus"></i> Question</button>
+            <button type="button" class="btn btn-default" ng-disabled="!actQuestion" 
+            ng-click="open('modalNewAnswer.html', 'create_answer')">
+              <i class="fa fa-plus"></i> Answer ({{actQuestion.ID}})</button>
 					</span>
 				</div>
 				<div class="col-sm-4">
@@ -152,6 +157,7 @@
 			</div>
 			<br/>
 			<!-- Content -->
+      <pre>{{actQuestion}}</pre>
 			<table class="table">
 				<thead>
 					<tr>
@@ -306,6 +312,58 @@
           <input ng-model="object.data.author" placeholder="Max Mustermann" class="form-control" type="text" />
           <label class="control-label">Version</label>
           <input placeholder="1" class="form-control" type="text" disabled/>
+          </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">Create</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+    <!-- END: Template -->
+    
+    <!-- Template Modal "Create Answer" -->
+    <script type="text/ng-template" id="modalNewAnswer.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Create new Answer</h3>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal">
+            <fieldset>
+              <legend>Create answer</legend>
+              <label>Answertext</label>
+              <input type="text" class="form-control" placeholder="Answer is 42" ng-model="object.data.answer"/>
+              <label>Correct?</label>
+              <input type="text" class="form-control" placeholder="Answer is 42" ng-model="object.data.correct"/>
+            </fieldset>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">Create</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+    <!-- END: Template -->
+    
+    <!-- Template Modal "Create Syllabus Element" -->
+    <script type="text/ng-template" id="modalNewSyllabusElement.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Create new syllabuselement</h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+          <fieldset>
+          <legend>Create syllabuselement</legend>
+          <label class="control-label">Parent Syllabus</label>
+          <input class="form-control" ng-model="object.data.parentID" placeholder="105" type="text" />
+          <label class="control-label">Order</label>
+          <input class="form-control" ng-model="object.data.element_order" placeholder="1" type="text" />
+          <label class="control-label">Severity</label>
+          <input class="form-control" ng-model="object.data.severity" placeholder="105" type="text" />
+          <label class="control-label">Syllabus-Element name</label>
+          <input ng-model="object.data.name" placeholder="Syllabuselementname" class="form-control" type="text" />
+          <label class="control-label">Description</label>
+          <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
           </fieldset>
           </form>
         </div>

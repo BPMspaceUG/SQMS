@@ -8,19 +8,24 @@ module.run(function(editableOptions) {
 });
 
 // Controller of Modal Window
-module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items, cmd) {
+module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items, cmd, parentid) {
 
   // Initial settings  
   $scope.object = {
     command: cmd,
     data: {
       name: '',
+      parentID: parentid,
+      element_order: 1,
+      severity: 25,
+      answer: '',
+      correct: false,
       topic: items[0]
     }
   };
   $scope.items = items;
 
-  $scope.ok = function () {    
+  $scope.ok = function () {
     $uibModalInstance.close($scope.object); // Return result
   };
   
@@ -49,6 +54,9 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
       resolve: {
         cmd: function () {
           return command;
+        },
+        parentid: function() {
+          return $scope.actSyllabus.ID;
         },
         items: function () {
           if (command == "create_syllabus" || command == "create_question") {
@@ -237,7 +245,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 
 	//--- Initial values
 	$scope.actSyllabus = false;
-	$scope.actQuestion = {};
+	$scope.actQuestion = false;
 	$scope.actTopic = {};
 
 	//---- Initial functions

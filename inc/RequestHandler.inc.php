@@ -132,6 +132,16 @@ class RequestHandler
 			case 'create_syllabus':
 				return $this->addSyllabus($params["name"], $params["owner"], $params["topic"]["id"], $params["description"]);
 				break;
+        
+      case 'create_syllabuselement':
+        return $this->addSyllabusElement(
+          $params["element_order"],
+          $params["severity"],
+          $params["parentID"],
+          $params["name"],
+          $params["description"]
+        );
+        break;
 				
 			case "copy_syllabus":
 				$this->copySyllabus($params);
@@ -163,6 +173,15 @@ class RequestHandler
       case 'create_question':
 				return $this->addQuestion($params['question'], $params['author'], $params['topic']['id']);
 				break;
+        
+      case 'create_answer':
+				return $this->addAnswer(
+          $params["questionID"],
+          $params["correct"],
+          $params["answer"]
+        );
+				break;
+        
 			/*
 			case 'update_question':
 				return $this->updateQuestion($params);
@@ -236,7 +255,7 @@ class RequestHandler
 				return json_encode($return);
 				break;
 
-            default:
+      default:
 				return ""; // empty string
 				exit;
 				break;
@@ -291,6 +310,19 @@ FROM
 		if (!$result) $this->db->error;
 		return $result;
 	}
+  private function addSyllabusElement($element_order, $severity, $parentID, $name, $description) {
+		// TODO: Prepare statement
+		$query = "INSERT INTO sqms_syllabus_element ".
+			"(element_order, severity, sqms_syllabus_id, name, description) VALUES (".
+      $element_order.",".
+			$severity.",".
+			$parentID.",".
+			"'".$name."',".
+			"'".$description."');";
+        $result = $this->db->query($query);
+		if (!$result) $this->db->error;
+		return $result;
+  }
 	// ------------------------------------- Questions
 	private function getQuestionList() {
         $query = "SELECT a.sqms_question_id AS 'ID',
@@ -320,6 +352,13 @@ a.sqms_question_type_id AS 'Type'
         $return['answers'] = getResultArray($res);
         return $return;
 	}
+  private function addAnswer($questionID, $correct, $answer){
+    $query = "INSERT INTO sqms_answer (sqms_question_id, answer, correct) VALUES (?,?,?);";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("isi", $name); // bind params
+        $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
+  }
 	private function copySyllabus($oldSyllabus) {
 		$this->addSyllabus($oldSyllabus);
 	}
