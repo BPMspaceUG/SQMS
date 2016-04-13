@@ -45,7 +45,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
     id: 2,
     name: 'bLabel'
   }];
-
+   
   $scope.open = function (TemplateName, command) {
     var modalInstance = $uibModal.open({
       animation: false,
@@ -248,6 +248,20 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	$scope.actQuestion = false;
 	$scope.actTopic = {};
 
+  $scope.dynamicPopover = {
+      content: 'Hello, World!',
+      templateUrl: 'popoverStatemachineSyllabus.html',
+      title: 'Title'
+    };
+    
+  $scope.setstate = function(newstate) {
+    $scope.writeData('update_syllabus_state', {
+      syllabusid: $scope.actSyllabus.ID,
+      stateid: newstate
+    });
+    //console.log(newstate);
+  }
+  
 	//---- Initial functions
 	$scope.getAllSyllabus();
 	$scope.getAllQuestions();

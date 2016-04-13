@@ -85,7 +85,7 @@
 			</div>
 			<br/>
       
-      <!-- <pre>{{actSyllabus}}</pre> -->
+      <pre>{{actSyllabus}}</pre>
 			
       <table class="table">
 				<thead>
@@ -95,7 +95,7 @@
 					</tr>
 				</thead>
 				<tbody ng-repeat="s in syllabi | filter:filtertext_sy | orderBy:predicate_s:reverse_s">
-					<tr ng-click="setSelectedSyllabus(s)" ng-class="{info: s.ID === actSyllabus.ID}">
+					<tr ng-click="setSelectedSyllabus(s)" ng-class="{info: s.ID === actSyllabus.ID, success: s.state == 'new', danger: s.state == 'deprecated'}">
 						<td>
 							<a class="btn pull-left" ng-hide="s.HasNoChilds" ng-click="displ(s)">
 								<i class="fa fa-plus" ng-show="!s.showKids"></i>
@@ -108,7 +108,11 @@
 						<td>{{s['Version']}}</td>
 						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" e-ng-options="t.id as t.name for t in topics" editable-select="s['Topic']">{{s['Topic' || "empty"]}}</a></td>
 						<td>{{s['Owner']}}</td>
-						<td>{{s['state']}}</td>
+						<td>
+              <!-- StateMachine Popover -->
+              <button uib-popover-template="dynamicPopover.templateUrl" popover-trigger="focus" ng-disabled="s['state'] == 'deprecated'"
+                type="button" class="btn btn-default btn-sm">{{s['state']}}</button>                
+            </td>
 					</tr>
 					<tr ng-hide="s.HasNoChilds || !s.showKids">
 						<td colspan="8" style="padding:0; background-color: #ddd; border: 1px solid #ccc;">
@@ -168,7 +172,7 @@
 					</tr>
 				</thead>
 				<tbody ng-repeat="q in questions | filter:filtertext_qu | orderBy:predicate_q:reverse_q">
-					<tr ng-click="setSelectedQuestion(q)" ng-class="{info: q.ID === actQuestion.ID}">
+					<tr ng-click="setSelectedQuestion(q)" ng-class="{info: q.ID === actQuestion.ID, success: q.state == 'new', danger: q.state == 'deprecated'}">
 						<td>
 							<a class="btn pull-left" ng-hide="q.HasNoChilds" ng-click="displ(q)">
 								<i class="fa fa-plus" ng-show="!q.showKids"></i>
@@ -183,7 +187,10 @@
 						<td>{{q['Vers']}}</td>
 						<td>{{q['ExtID']}}</td>
 						<td>{{q['Type']}}</td>
-						<td>{{q['state']}}</td>
+						<td>
+              <button uib-popover-html="htmlPopover" popover-trigger="focus" ng-disabled="q['state'] == 'deprecated'"
+                type="button" class="btn btn-default btn-sm">{{q['state']}}</button>
+            </td>
 					</tr>
 					<tr ng-hide="q.HasNoChilds || !q.showKids">
 						<td colspan="10" style="padding:0; background-color: #ddd; border: 1px solid #ccc;">
@@ -209,6 +216,8 @@
 			</table>
 		</div>
 		
+    
+    
 		<!-- Page: Topic -->
 		<div id="pagetopic" class="tab-pane">
 			<!-- Header -->
@@ -374,6 +383,14 @@
     </script>
     <!-- END: Template -->
 
+    <!-- Template: StateMachine -->
+    <script type="text/ng-template" id="popoverStatemachineSyllabus.html">
+      <div><b>goto:</b>&nbsp;<span ng-repeat="state in actSyllabus.availableOptions">
+          <button type="button" ng-click="setstate(state.sqms_state_id_TO)" class="btn btn-default btn-sm">{{state.name}}</button>
+        </span>
+      </div>
+    </script>
+    
 	</div>
 </div>
 

@@ -57,7 +57,7 @@ class StateEngine {
 	public function setState($db, $stateID) {
 		// TODO: params: tablename
 		// return Transition Scripts
-		$trans_possible = $this->checkTransition($db, $actState, $stateID);
+		$trans_possible = $this->checkTransition($actState, $stateID);
 		if ($trans_possible) {
 			// Write to DB
 		}
@@ -65,12 +65,12 @@ class StateEngine {
 	public function checkTransition($fromID, $toID) {
 		settype($fromID, 'integer');
 		settype($toID, 'integer');
-		$query = "SELECT * FROM ".$table." WHERE ".$this->$colname_from." = $fromID ".
+		$query = "SELECT * FROM ".$this->table_rules." WHERE ".$this->colname_from." = $fromID ".
 			"AND ".$this->colname_to." = $toID;";
-		$return = array();
+    //echo '<pre>'.$query.'</pre>';
 		$res = $this->db->query($query);
 		$cnt = $res->num_rows;
-        return ($cnt > 0);
+    return ($cnt > 0);
 	}
 }
 
@@ -147,6 +147,10 @@ class RequestHandler
 				$this->copySyllabus($params);
 				return "1"; // TODO
 				break;
+        
+      case "update_syllabus_state":
+        return $this->setSyllabusState($params["syllabusid"], $params["stateid"]);
+        break;
 				
 			//-------- Topics
 			
@@ -182,11 +186,6 @@ class RequestHandler
         );
 				break;
         
-			/*
-			case 'update_question':
-				return $this->updateQuestion($params);
-				break;
-			*/
 			case 'getanswers':
 				$questionid = $params['ID'];
 				$arr0 = array("parentID" => $questionid);
@@ -433,16 +432,28 @@ WHERE sqms_state_id_FROM = $actstate;";
 		settype($syllabid, 'integer');
 		settype($stateid, 'integer');
 		// get actual state from syllabus
-		$actstate = $this->SESy->getActState($syllabid)[0]["id"];
+    $actstateObj = $this->SESy->getActState($syllabid);
+    if (count($actstateObj) == 0) return false;    
+		$actstateID = $actstateObj[0]["id"];
 		// check transition
-		$trans = $this->SESy->checkTransition($this->db, $actstate, $stateid);
+		$trans = $this->SESy->checkTransition($actstateID, $stateid);
 		// check if transition is possible
 		if ($trans) {
 			// update state in DB
 			$query = "UPDATE sqms_syllabus SET sqms_state_id = $stateid WHERE sqms_syllabus_id = $syllabid;";
 			$res = $this->db->query($query);
-			$scripts = $this->getTransitionScripts($actstate, $stateid);
-			return $scripts;
+			$scripts = $this->getTransitionScripts($actstateID, $stateid);
+      
+      /**** Execute all scripts from database at transistion ****/
+      foreach ($scripts as $script) {
+        // Set path to scripts
+        $scriptpath = "functions/".$script["transistionScript"];
+        // If script is not emptystring and exists
+        if (trim($script["transistionScript"]) != "" && file_exists($scriptpath))
+          include_once($scriptpath);
+      }
+			return true; //$scripts;
+      
 		} else
 			return false;
 	}
