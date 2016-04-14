@@ -143,6 +143,25 @@ class RequestHandler
 				return $this->addSyllabus($params["name"], $params["owner"], $params["topic"]["id"], $params["description"]);
 				break;
         
+      case "update_syllabus":
+        $res = 0;
+        $res += $this->setSyllabusName($params["ID"], $params["name"]);
+        //$res += $this->setSyllabusTopic($params["ID"], $params["TopicID"]);
+        $res += $this->setSyllabusDescr($params["ID"], $params["description"]);
+        $res += $this->setSyllabusOwner($params["ID"], $params["owner"]);
+        if ($res != 3) return ''; else return $res; 
+        break;
+        
+			case "update_syllabus_name":
+				$res = $this->setSyllabusName($params["ID"], $params["name"]);
+				if ($res != 1) return ''; else return $res;
+				break;
+				
+			case "update_syllabus_topic":
+				$res = $this->setSyllabusTopic($params["ID"], $params["TopicID"]);
+				if ($res != 1) return ''; else return $res;
+				break;        
+        
       case 'create_syllabuselement':
         return $this->addSyllabusElement(
           $params["element_order"],
@@ -152,7 +171,7 @@ class RequestHandler
           $params["description"]
         );
         break;
-				
+        
 			case "copy_syllabus":
 				$this->copySyllabus($params);
 				return "1"; // TODO
@@ -167,7 +186,7 @@ class RequestHandler
       case "update_question_state":
         return $this->setQuestionState($params["questionid"], $params["stateid"]);
         break;        
-        
+
 			//-------- Topics
 			
 			case 'topics':
@@ -236,22 +255,6 @@ class RequestHandler
 				$res = $this->updateTopic(
 					$params["ID"],
 					$params["name"]
-				);
-				if ($res != 1) return ''; else return $res;
-				break;
-				
-			case "update_syllabus":
-				$res = $this->setSyllabusName(
-					$params["ID"],
-					$params["name"]
-				);
-				if ($res != 1) return ''; else return $res;
-				break;
-				
-			case "update_syllabus_topic":
-				$res = $this->setSyllabusTopic(
-					$params["ID"],
-					$params["TopicID"]
 				);
 				if ($res != 1) return ''; else return $res;
 				break;
@@ -429,7 +432,21 @@ FROM
         $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
 	}
-  
+	private function setSyllabusDescr($syllabid, $descr) {
+		$query = "UPDATE sqms_syllabus SET description = ? WHERE sqms_syllabus_id = ?;";
+		$stmt = $this->db->prepare($query); // prepare statement
+		$stmt->bind_param("si", $descr, $syllabid); // bind params
+        $result = $stmt->execute(); // execute statement
+		return (!is_null($result) ? 1 : null);
+	}
+  // TODO: Set by Owner ID
+	private function setSyllabusOwner($syllabid, $owner) {
+		$query = "UPDATE sqms_syllabus SET owner = ? WHERE sqms_syllabus_id = ?;";
+		$stmt = $this->db->prepare($query); // prepare statement
+		$stmt->bind_param("si", $owner, $syllabid); // bind params
+        $result = $stmt->execute(); // execute statement
+		return (!is_null($result) ? 1 : null);
+	}
   
   
   // TODO: implement into class

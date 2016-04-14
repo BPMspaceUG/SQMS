@@ -15,6 +15,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     command: cmd,
     data: {
       name: '',
+      ID: -1,
       parentID: parentid,
       element_order: 1,
       severity: 25,
@@ -28,6 +29,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   $scope.items = items;
   
   if (cmd == 'update_syllabus') {
+    $scope.object.data.ID = $scope.$$prevSibling.actSyllabus.ID;
     $scope.object.data.name = $scope.$$prevSibling.actSyllabus.Name;
     $scope.object.data.description = $scope.$$prevSibling.actSyllabus.description;   
     $scope.object.data.owner = $scope.$$prevSibling.actSyllabus.Owner;
@@ -95,6 +97,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
   };
 
   $scope.editsyllabus = function(el) {
+    $scope.setSelectedSyllabus(el);
     if (el.state == 'new')
       $scope.open('modalEditSyllabus.html', 'update_syllabus');
   }
@@ -217,26 +220,22 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	}
 	
 	// Selection function
-	$scope.displ = function(el){el.showKids = !el.showKids;}	
+	$scope.displ = function(el){el.showKids = !el.showKids;}
 	$scope.setState = function(newstate) {$scope.actSyllabus.selectedOption = newstate;}
-	$scope.updateSyllabus = function () { $scope.writeData('update_syllabus', $scope.actSyllabus); }
-	
+
   //********************* Inline editing
 	$scope.saveEl = function(actEl, data, cmd) {
 		var c;
-		//console.log(actEl);
-		//console.log(data);
 		switch (cmd) {
 			case 'u_answer_t': c = 'update_answer'; actEl.answer = data; break;
 			case 'u_answer_c': c = 'update_answer'; actEl.correct = data; break;
 			case 'u_syllabel_n': c = 'update_syllabuselement'; actEl.name = data; actEl.ID = actEl.sqms_syllabus_element_id; break;
 			case 'u_syllabel_s': c = 'update_syllabuselement'; actEl.severity = data; actEl.ID = actEl.sqms_syllabus_element_id; break;
 			case 'u_topic_n': c = 'update_topic'; actEl.name = data; actEl.ID = actEl.id; break;
-			case 'u_syllab_n': c = 'update_syllabus'; actEl.name = data; break;
+			case 'u_syllab_n': c = 'update_syllabus_name'; actEl.name = data; break;
 			case 'u_syllab_tc': c = 'update_syllabus_topic'; actEl.TopicID = data; break;
 			case 'u_question_q': c = 'update_question'; actEl.Question = data; break;
 		}
-		//console.log(actEl);
 		return $http.post('getjson.php?c='+c, JSON.stringify(actEl)); // send new model
 	}
 
@@ -269,7 +268,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	$scope.actTopic = false;
   
   /******* D E B U G G I N G *******/  
-  $scope.debugMode = true;
+  $scope.debugMode = false;
   /*********************************/
   
   $scope.setstate = function(cmd, newstate) {
