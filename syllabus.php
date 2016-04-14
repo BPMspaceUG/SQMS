@@ -92,7 +92,12 @@
 				<thead>
 					<tr>
 						<th style="min-width: 95px;">&nbsp;</th>
-						<th ng-repeat="sc in syllabi_cols" ng-click="order_s(sc)" class="sortable">{{sc}}<span class="sortorder" ng-show="predicate_s === sc" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable" ng-click="order_s('ID')">ID<span class="sortorder" ng-show="predicate_s === 'ID'" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable" ng-click="order_s('Name')">Name<span class="sortorder" ng-show="predicate_s === 'Name'" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable" ng-click="order_s('Version')">Version<span class="sortorder" ng-show="predicate_s === 'Version'" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable" ng-click="order_s('Topic')">Topic<span class="sortorder" ng-show="predicate_s === 'Topic'" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable" ng-click="order_s('Owner')">Owner<span class="sortorder" ng-show="predicate_s === 'Owner'" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable" ng-click="order_s('state')">State<span class="sortorder" ng-show="predicate_s === 'state'" ng-class="{reverse:reverse_s}"></span></th>
 					</tr>
 				</thead>
 				<tbody ng-repeat="s in syllabi | filter:filtertext_sy | orderBy:predicate_s:reverse_s">
@@ -102,7 +107,7 @@
 								<i class="fa fa-plus" ng-show="!s.showKids"></i>
 								<i class="fa fa-minus" ng-hide="!s.showKids"></i>
 							</a>
-							<button class="btn pull-left" ng-click="m_editsyllabus(s)"><i class="fa fa-pencil"></i></button>
+							<button class="btn pull-left" ng-click="editsyllabus(s)"><i ng-class="{'fa fa-pencil': s.state == 'new', 'fa fa-share': s.state != 'new'}"></i></button>
 						</td>
 						<td>{{s['ID']}}</td>
 						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_n')" editable-text="s['Name']">{{s['Name'] || "empty"}}</a></td>
@@ -120,6 +125,7 @@
 							<table class="table table-striped table-condensed" style="margin:0;">
 								<thead>
 									<tr>
+										<th>ID</th>
 										<th>Order</th>
 										<th>Name</th>
 										<!--<th>Description</th>-->
@@ -128,6 +134,7 @@
 								</thead>
 								<tbody>
 								<tr ng-repeat="se in s.syllabuselements">
+									<td>{{se.sqms_syllabus_element_id}}</td>
 									<td>{{se.element_order}}</td>
 									<td><a href="#" editable-text="se.name" onbeforesave="saveEl(se, $data, 'u_syllabel_n')">{{se.name || "empty"}}</a></td>
 									<!--<td>{{se.description}}</td>-->
@@ -256,7 +263,8 @@
 				</tbody>
 			</table>
 		</div>
-		
+
+    
     
     <!-- Template Modal "Create Topic" -->
     <script type="text/ng-template" id="modalNewTopic.html">
@@ -277,8 +285,7 @@
             <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>
-    <!-- END: Template -->
-    
+
     <!-- Template Modal "Create Syllabus" -->
     <script type="text/ng-template" id="modalNewSyllabus.html">
         <div class="modal-header">
@@ -306,8 +313,35 @@
             <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>
-    <!-- END: Template -->
     
+    <!-- Template Modal "Edit Syllabus" -->
+    <script type="text/ng-template" id="modalEditSyllabus.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit syllabus</h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+          <fieldset>
+          <legend>Edit syllabus</legend>
+          <label class="control-label">Syllabus name</label>
+          <input ng-model="object.data.name" placeholder="Syllabusname" class="form-control" type="text" />
+          <label class="control-label">Topic</label>
+          <select class="form-control" ng-options="item as item.name for item in items track by item.id" ng-model="object.data.topic"></select>
+          <label class="control-label">Owner</label>
+          <input ng-model="object.data.owner" placeholder="Max Mustermann" class="form-control" type="text" />
+          <label class="control-label">Description</label>
+          <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
+          <label class="control-label">Version</label>
+          <input placeholder="1" class="form-control" type="text" disabled/>
+          </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">Save</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
     <!-- Template Modal "Create Question" -->
     <script type="text/ng-template" id="modalNewQuestion.html">
         <div class="modal-header">
@@ -333,8 +367,7 @@
             <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>
-    <!-- END: Template -->
-    
+
     <!-- Template Modal "Create Answer" -->
     <script type="text/ng-template" id="modalNewAnswer.html">
         <div class="modal-header">
@@ -356,8 +389,7 @@
             <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>
-    <!-- END: Template -->
-    
+
     <!-- Template Modal "Create Syllabus Element" -->
     <script type="text/ng-template" id="modalNewSyllabusElement.html">
         <div class="modal-header">
@@ -385,7 +417,6 @@
             <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>
-    <!-- END: Template -->
 
     <!-- Template: StateMachine Syllabus -->
     <script type="text/ng-template" id="popoverStatemachineSyllabus.html">

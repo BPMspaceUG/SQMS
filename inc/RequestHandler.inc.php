@@ -292,6 +292,7 @@ class RequestHandler
     a.name AS 'Name',
     version AS 'Version',
     b.name AS 'Topic',
+    a.description AS 'description',
     owner AS 'Owner'
 FROM
     sqms_syllabus AS a
@@ -386,17 +387,6 @@ FROM
 	}
   
   
-	// TODO: 
-	private function updateSyllabus($id, $name) {
-		// check state first, then decide which rights are possible on server side
-		//$actstate = $params["sqms_state_id"];
-		//$newstate = $params["selectedOption"]["sqms_state_id_TO"];
-		// update
-		$this->setSyllabusState($id, $newstate);
-		$this->setSyllabusName($id, $name);
-		return "Updated! ($newstate) ".time();
-	}
-	
 	private function updateAnswer($id, $answer, $correct) {
 		$query = "UPDATE sqms_answer SET answer = ?, correct = ? WHERE sqms_answer_id = ?;";
 		$stmt = $this->db->prepare($query); // prepare statement

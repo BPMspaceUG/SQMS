@@ -19,12 +19,24 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       element_order: 1,
       severity: 25,
       answer: '',
+      owner: '',
+      description: '<p>test</p>',
       correct: false,
       topic: items[0]
     }
   };
   $scope.items = items;
-
+  
+  if (cmd == 'update_syllabus') {
+    $scope.object.data.name = $scope.$$prevSibling.actSyllabus.Name;
+    $scope.object.data.description = $scope.$$prevSibling.actSyllabus.description;   
+    $scope.object.data.owner = $scope.$$prevSibling.actSyllabus.Owner;
+    $scope.object.data.topic = $scope.$$prevSibling.actSyllabus.topic;
+    $scope.items = $scope.$$prevSibling.getTopics();
+  }
+  //console.log($scope.$$prevSibling.actSyllabus);
+  
+  
   $scope.ok = function () {
     $uibModalInstance.close($scope.object); // Return result
   };
@@ -36,6 +48,11 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
 
 // Main Controller
 module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', function($scope, $http, $sce, $uibModal) {
+
+	$scope.setSelectedSyllabus = function (el) {$scope.actSyllabus = el;};
+	$scope.setSelectedQuestion = function (el) {$scope.actQuestion = el;};
+	$scope.setSelectedTopic = function (el) {$scope.actTopic = el;};
+
 
   // TODO: Remove
   $scope.items = [{
@@ -77,6 +94,10 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
     });
   };
 
+  $scope.editsyllabus = function(el) {
+    if (el.state == 'new')
+      $scope.open('modalEditSyllabus.html', 'update_syllabus');
+  }
 
 
 
@@ -196,13 +217,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	}
 	
 	// Selection function
-	$scope.displ = function(el){el.showKids = !el.showKids;}
-	
-	// TODO: only one function for this
-	$scope.setSelectedSyllabus = function (el) {$scope.actSyllabus = el;};
-	$scope.setSelectedQuestion = function (el) {$scope.actQuestion = el;};
-	$scope.setSelectedTopic = function (el) {$scope.actTopic = el;};
-	
+	$scope.displ = function(el){el.showKids = !el.showKids;}	
 	$scope.setState = function(newstate) {$scope.actSyllabus.selectedOption = newstate;}
 	$scope.updateSyllabus = function () { $scope.writeData('update_syllabus', $scope.actSyllabus); }
 	
@@ -253,7 +268,9 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	$scope.actQuestion = false;
 	$scope.actTopic = false;
   
-  $scope.debugMode = false;
+  /******* D E B U G G I N G *******/  
+  $scope.debugMode = true;
+  /*********************************/
   
   $scope.setstate = function(cmd, newstate) {
     $scope.writeData(cmd, {
