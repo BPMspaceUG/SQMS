@@ -72,6 +72,16 @@ class StateEngine {
 		$cnt = $res->num_rows;
     return ($cnt > 0);
 	}
+	public function getTransitionScripts($fromID, $toID) {
+		settype($fromID, 'integer');
+		settype($toID, 'integer');
+		$query = "SELECT transistionScript FROM ".$this->table_rules." WHERE ".
+		"sqms_state_id_FROM = $fromID AND sqms_state_id_TO = $toID;";
+		$return = array();
+		$res = $this->db->query($query);
+		$return = getResultArray($res);
+    return $return;
+	}
 }
 
 class RequestHandler 
@@ -116,7 +126,7 @@ class RequestHandler
 				$actstate = $this->SESy->getActState($syllabid);
 				@$actStateID = $actstate[0]['id'];
 				$arr0 = array("parentID" => $syllabid);
-				$arr1 = $this->getSyllabusPossibleNextStates($actStateID); // Possible next states
+        $arr1 = array("nextstates" => $this->SESy->getNextStates($actStateID)); // Possible next states
 				$arr2 = $this->getFormDataByState($actStateID); // Form data for actual state
 				$arr3 = $this->getSyllabusElementsList($syllabid);
 				// Merge data
@@ -148,10 +158,16 @@ class RequestHandler
 				return "1"; // TODO
 				break;
         
+      // TODO: Evtl. zusammenfassen zu einem Command
+        
       case "update_syllabus_state":
         return $this->setSyllabusState($params["syllabusid"], $params["stateid"]);
         break;
-				
+
+      case "update_question_state":
+        return $this->setQuestionState($params["questionid"], $params["stateid"]);
+        break;        
+        
 			//-------- Topics
 			
 			case 'topics':
@@ -190,11 +206,14 @@ class RequestHandler
 				$questionid = $params['ID'];
 				$arr0 = array("parentID" => $questionid);
 				$arr1 = $this->getAnswers($questionid);
+				$actstate = $this->SEQu->getActState($questionid);
+				@$actStateID = $actstate[0]['id'];
+				$arr2 = array("nextstates" => $this->SEQu->getNextStates($actStateID)); // Possible next states
 				// Merge data
-				$return = array_merge_recursive($arr0, $arr1);
+				$return = array_merge_recursive($arr0, $arr1, $arr2);
 				return json_encode($return);
 				break;
-
+        
 			case 'update_answer':
 				$res = $this->updateAnswer(
 					$params["ID"],
@@ -324,14 +343,18 @@ FROM
   }
 	// ------------------------------------- Questions
 	private function getQuestionList() {
-        $query = "SELECT a.sqms_question_id AS 'ID',
-b.name AS 'Topic',
-a.question AS 'Question',
-a.author AS 'Author',
-a.version AS 'Vers',
-a.id_external AS 'ExtID',
-a.sqms_question_type_id AS 'Type'
- FROM `sqms_question` AS a LEFT JOIN sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id";
+        $query = "SELECT 
+    a.sqms_question_id AS 'ID',
+    b.name AS 'Topic',
+    a.question AS 'Question',
+    a.author AS 'Author',
+    a.version AS 'Vers',
+    a.id_external AS 'ExtID',
+    c.name AS 'Type'
+FROM
+    `sqms_question` AS a LEFT JOIN
+    sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id
+    LEFT JOIN sqms_question_type AS c ON a.sqms_question_type_id = c.sqms_question_type_id";
 		$rows = $this->db->query($query);
         $res = getResultArray($rows);
 		$r = null;
@@ -361,19 +384,8 @@ a.sqms_question_type_id AS 'Type'
 	private function copySyllabus($oldSyllabus) {
 		$this->addSyllabus($oldSyllabus);
 	}
-	private function getSyllabusPossibleNextStates($actstate) {
-		settype($actstate, 'integer');
-		$query = "SELECT a.sqms_state_id_TO, b.name 
-FROM sqms_syllabus_state_rules AS a
-INNER JOIN sqms_syllabus_state AS b
-ON a.sqms_state_id_TO = b.sqms_syllabus_state_id
-WHERE sqms_state_id_FROM = $actstate;";
-		$return = array();
-		$res = $this->db->query($query);
-		$return['nextstates'] = getResultArray($res);
-        return $return;
-	}
-	
+  
+  
 	// TODO: 
 	private function updateSyllabus($id, $name) {
 		// check state first, then decide which rights are possible on server side
@@ -427,6 +439,11 @@ WHERE sqms_state_id_FROM = $actstate;";
         $result = $stmt->execute(); // execute statement
 		return (!is_null($result) ? 1 : null);
 	}
+  
+  
+  
+  // TODO: implement into class
+  
 	private function setSyllabusState($syllabid, $stateid) {
 		// params
 		settype($syllabid, 'integer');
@@ -442,7 +459,7 @@ WHERE sqms_state_id_FROM = $actstate;";
 			// update state in DB
 			$query = "UPDATE sqms_syllabus SET sqms_state_id = $stateid WHERE sqms_syllabus_id = $syllabid;";
 			$res = $this->db->query($query);
-			$scripts = $this->getTransitionScripts($actstateID, $stateid);
+			$scripts = $this->SESy->getTransitionScripts($actstateID, $stateid);
       
       /**** Execute all scripts from database at transistion ****/
       foreach ($scripts as $script) {
@@ -457,16 +474,38 @@ WHERE sqms_state_id_FROM = $actstate;";
 		} else
 			return false;
 	}
-	private function getTransitionScripts($from, $to) {
-		settype($from, 'integer');
-		settype($to, 'integer');
-		$query = "SELECT transistionScript FROM sqms_syllabus_state_rules WHERE ".
-		"sqms_state_id_FROM = $from AND sqms_state_id_TO = $to;";
-		$return = array();
-		$res = $this->db->query($query);
-		$return = getResultArray($res);
-        return $return;
+	private function setQuestionState($questionid, $stateid) {
+		// params
+		settype($questionid, 'integer');
+		settype($stateid, 'integer');
+		// get actual state from question
+    $actstateObj = $this->SEQu->getActState($questionid);
+    if (count($actstateObj) == 0) return false;    
+		$actstateID = $actstateObj[0]["id"];
+		// check transition
+		$trans = $this->SEQu->checkTransition($actstateID, $stateid);
+		// check if transition is possible
+		if ($trans) {
+			// update state in DB
+			$query = "UPDATE sqms_question SET sqms_question_state_id = $stateid WHERE sqms_question_id = $questionid;";
+			$res = $this->db->query($query);
+			$scripts = $this->SEQu->getTransitionScripts($actstateID, $stateid);
+      
+      /**** Execute all scripts from database at transistion ****/
+      foreach ($scripts as $script) {
+        // Set path to scripts
+        $scriptpath = "functions/".$script["transistionScript"];
+        // If script is not emptystring and exists
+        if (trim($script["transistionScript"]) != "" && file_exists($scriptpath))
+          include_once($scriptpath);
+      }
+			return true; //$scripts;
+      
+		} else
+			return false;
 	}
+  
+  
 	private function addTopic($name) {
 		$query = "INSERT INTO sqms_topic (name) VALUES (?);";
 		$stmt = $this->db->prepare($query); // prepare statement

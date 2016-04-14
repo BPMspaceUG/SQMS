@@ -118,6 +118,8 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 					// find parent
 					for (var k=0;k<$scope.questions.length;k++) {
 						if ($scope.questions[k].ID == a.parentID) {
+              // save all data in the element
+              $scope.questions[k].availableOptions = a.nextstates; // next states
 							// if has children
 							if (a.answers.length > 0) {
 								$scope.questions[k].HasNoChilds = false; // has now children
@@ -180,7 +182,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 						if ($scope.syllabi[k].ID == a.parentID) {
 							// save all data in the element
 							$scope.syllabi[k].availableOptions = a.nextstates; // next states
-							$scope.syllabi[k].formdata = a.formdata; // formular data
+							//$scope.syllabi[k].formdata = a.formdata; // formular data
 							// if has children
 							if (a.syllabuselements.length > 0) {
 								$scope.syllabi[k].HasNoChilds = false; // has now children
@@ -225,7 +227,8 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 
 	//********************* WRITE data to server
 	$scope.writeData = function (command, data) {
-		console.log("Sending command...");
+		console.log("Sending command ("+command+") ...");
+    console.log(data);
 		$http({
 			url: 'getjson.php?c=' + command,
 			method: "POST",
@@ -235,31 +238,29 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 			console.log("Executed command successfully! Return: " + data);
 			// TODO: ... Heavy data ... Make this callback later or at least faster
       // TODO: Only update at certain commands (create, update, ...)
-			$scope.getAllSyllabus(); // Refresh data
-			$scope.getAllQuestions(); // Refresh data
+      if (command.indexOf("syll") >= 0)
+        $scope.getAllSyllabus(); // Refresh data
+      if (command.indexOf("que") >= 0)
+        $scope.getAllQuestions(); // Refresh data
 		}).
 		error(function(error){
-			console.log("Error! " + error.message);
+			console.log("Error! " + error);
 		});
 	}
 
 	//--- Initial values
 	$scope.actSyllabus = false;
 	$scope.actQuestion = false;
-	$scope.actTopic = {};
-
-  $scope.dynamicPopover = {
-      content: 'Hello, World!',
-      templateUrl: 'popoverStatemachineSyllabus.html',
-      title: 'Title'
-    };
-    
-  $scope.setstate = function(newstate) {
-    $scope.writeData('update_syllabus_state', {
+	$scope.actTopic = false;
+  
+  $scope.debugMode = false;
+  
+  $scope.setstate = function(cmd, newstate) {
+    $scope.writeData(cmd, {
       syllabusid: $scope.actSyllabus.ID,
+      questionid: $scope.actQuestion.ID,
       stateid: newstate
     });
-    //console.log(newstate);
   }
   
 	//---- Initial functions

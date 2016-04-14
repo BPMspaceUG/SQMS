@@ -85,7 +85,8 @@
 			</div>
 			<br/>
       
-      <pre>{{actSyllabus}}</pre>
+      <!-- Debugging -->
+      <pre ng-show="debugMode">{{actSyllabus}}</pre>
 			
       <table class="table">
 				<thead>
@@ -110,7 +111,7 @@
 						<td>{{s['Owner']}}</td>
 						<td>
               <!-- StateMachine Popover -->
-              <button uib-popover-template="dynamicPopover.templateUrl" popover-trigger="focus" ng-disabled="s['state'] == 'deprecated'"
+              <button uib-popover-template="'popoverStatemachineSyllabus.html'" popover-trigger="focus" ng-disabled="s['state'] == 'deprecated'"
                 type="button" class="btn btn-default btn-sm">{{s['state']}}</button>                
             </td>
 					</tr>
@@ -160,8 +161,10 @@
 				</div>
 			</div>
 			<br/>
+      
 			<!-- Content -->
-      <pre>{{actQuestion}}</pre>
+      <pre ng-show="debugMode">{{actQuestion}}</pre>
+      
 			<table class="table">
 				<thead>
 					<tr>
@@ -188,7 +191,8 @@
 						<td>{{q['ExtID']}}</td>
 						<td>{{q['Type']}}</td>
 						<td>
-              <button uib-popover-html="htmlPopover" popover-trigger="focus" ng-disabled="q['state'] == 'deprecated'"
+							<!-- StateMachine Popover -->
+              <button uib-popover-template="'popoverStatemachineQuestion.html'" popover-trigger="focus" ng-disabled="q['state'] == 'deprecated'"
                 type="button" class="btn btn-default btn-sm">{{q['state']}}</button>
             </td>
 					</tr>
@@ -383,10 +387,18 @@
     </script>
     <!-- END: Template -->
 
-    <!-- Template: StateMachine -->
+    <!-- Template: StateMachine Syllabus -->
     <script type="text/ng-template" id="popoverStatemachineSyllabus.html">
       <div><b>goto:</b>&nbsp;<span ng-repeat="state in actSyllabus.availableOptions">
-          <button type="button" ng-click="setstate(state.sqms_state_id_TO)" class="btn btn-default btn-sm">{{state.name}}</button>
+          <button type="button" ng-click="setstate('update_syllabus_state', state.id)" class="btn btn-default btn-sm">{{state.name}}</button>
+        </span>
+      </div>
+    </script>
+    
+    <!-- Template: StateMachine Question -->
+    <script type="text/ng-template" id="popoverStatemachineQuestion.html">
+      <div><b>goto:</b>&nbsp;<span ng-repeat="state in actQuestion.availableOptions">
+          <button type="button" ng-click="setstate('update_question_state', state.id)" class="btn btn-default btn-sm">{{state.name}}</button>
         </span>
       </div>
     </script>
