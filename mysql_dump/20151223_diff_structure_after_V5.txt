@@ -8,4 +8,4 @@ ALTER TABLE `sqms_syllabus_state`
 ADD COLUMN `form_data` LONGTEXT NULL AFTER `value`;
 
 ALTER TABLE `sqms_question_state` 
-ADD COLUMN `form_data` LONGTEXT NULL AFTER `value`;
+ADD COLUMN `form_data` LONGTEXT NULL AFTER `name`;
