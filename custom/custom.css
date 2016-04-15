@@ -79,3 +79,6 @@ html {
 	background-color: #ddd;
 	cursor: pointer;
 }
+.seltbl {
+  font-weight: bold;
+}

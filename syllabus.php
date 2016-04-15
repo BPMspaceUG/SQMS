@@ -91,7 +91,7 @@
       <table class="table">
 				<thead>
 					<tr>
-						<th style="min-width: 95px;">&nbsp;</th>
+						<th>&nbsp;</th>
             <th class="sortable" ng-click="order_s('ID')">ID<span class="sortorder" ng-show="predicate_s === 'ID'" ng-class="{reverse:reverse_s}"></span></th>
             <th class="sortable" ng-click="order_s('Name')">Name<span class="sortorder" ng-show="predicate_s === 'Name'" ng-class="{reverse:reverse_s}"></span></th>
             <th class="sortable" ng-click="order_s('Version')">Version<span class="sortorder" ng-show="predicate_s === 'Version'" ng-class="{reverse:reverse_s}"></span></th>
@@ -101,20 +101,24 @@
 					</tr>
 				</thead>
 				<tbody ng-repeat="s in syllabi | filter:filtertext_sy | orderBy:predicate_s:reverse_s">
-					<tr ng-click="setSelectedSyllabus(s)" ng-class="{info: s.ID === actSyllabus.ID, success: s.state == 'new', danger: s.state == 'deprecated'}">
-						<td>
+					<tr ng-click="setSelectedSyllabus(s)"
+            ng-class="{'seltbl': s.ID === actSyllabus.ID, success: s.state == 'new',
+              danger: s.state == 'deprecated', 'warning': s.state == 'ready', 'warning': s.state == 'released'}">
+						<td style="width: 150px;">
+              <a class="btn pull-left"><i ng-class="{'fa fa-fw fa-check-square-o': s.ID === actSyllabus.ID, 'fa fa-fw fa-square-o': s.ID != actSyllabus.ID}"></i></a>
 							<a class="btn pull-left" ng-hide="s.HasNoChilds" ng-click="displ(s)">
-								<i class="fa fa-plus" ng-show="!s.showKids"></i>
-								<i class="fa fa-minus" ng-hide="!s.showKids"></i>
+								<i class="fa fa-fw fa-plus-square" ng-show="!s.showKids"></i>
+								<i class="fa fa-fw fa-minus-square" ng-hide="!s.showKids"></i>
 							</a>
-							<button class="btn pull-left" ng-click="editsyllabus(s)"><i ng-class="{'fa fa-pencil': s.state == 'new', 'fa fa-share': s.state != 'new'}"></i></button>
+              <a class="btn pull-left" ng-show="s.HasNoChilds"><i class="fa fa-fw fa-square"></i></a>
+							<a class="btn pull-left" ng-click="editsyllabus(s)"><i ng-class="{'fa fa-fw fa-pencil': s.state == 'new', 'fa fa-share': s.state != 'new'}"></i></a>
 						</td>
-						<td>{{s['ID']}}</td>
-						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_n')" editable-text="s['Name']">{{s['Name'] || "empty"}}</a></td>
-						<td>{{s['Version']}}</td>
-						<td><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" e-ng-options="t.id as t.name for t in topics" editable-select="s['Topic']">{{s['Topic' || "empty"]}}</a></td>
+						<td style="width: 50px;">{{s['ID']}}</td>
+						<td style="width: 250px;"><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_n')" editable-text="s['Name']">{{s['Name'] || "empty"}}</a></td>
+						<td style="width: 50px; text-align: center;">{{s['Version']}}</td>
+						<td style="width: 100px;"><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" e-ng-options="t.id as t.name for t in topics" editable-select="s['Topic']">{{s['Topic' || "empty"]}}</a></td>
 						<td>{{s['Owner']}}</td>
-						<td>
+						<td style="width: 90px;">
               <!-- StateMachine Popover -->
               <button uib-popover-template="'popoverStatemachineSyllabus.html'" popover-trigger="focus" ng-disabled="s['state'] == 'deprecated'"
                 type="button" class="btn btn-default btn-sm">{{s['state']}}</button>                
