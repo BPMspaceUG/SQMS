@@ -110,7 +110,7 @@
 								<i class="fa fa-fw fa-plus-square" ng-show="!s.showKids"></i>
 								<i class="fa fa-fw fa-minus-square" ng-hide="!s.showKids"></i>
 							</a>
-              <a class="btn pull-left" ng-show="s.HasNoChilds"><i class="fa fa-fw fa-square"></i></a>
+              <a class="btn pull-left" ng-show="s.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></a>
 							<a class="btn pull-left" ng-click="editsyllabus(s)"><i ng-class="{'fa fa-fw fa-pencil': s.state == 'new', 'fa fa-share': s.state != 'new'}"></i></a>
 						</td>
 						<td style="width: 50px;">{{s['ID']}}</td>

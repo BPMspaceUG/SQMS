@@ -82,3 +82,6 @@ html {
 .seltbl {
   font-weight: bold;
 }
+.icon-invisible {
+  visibility: hidden;
+}
