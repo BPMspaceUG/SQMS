@@ -19,6 +19,10 @@
 -- Table structure for table `sqms_answer`
 --
 
+CREATE DATABASE IF NOT EXISTS `bpmspace_sqms_v5` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+GRANT SELECT, INSERT, UPDATE ON ` bpmspace_sqms_v5`.* TO ' bpmspace_sqms'@'localhost';
+USE `bpmspace_sqms_v5`;
+
 DROP TABLE IF EXISTS `sqms_answer`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
