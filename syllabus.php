@@ -188,16 +188,20 @@
 					</tr>
 				</thead>
 				<tbody ng-repeat="q in questions | filter:filtertext_qu | orderBy:predicate_q:reverse_q">
-					<tr ng-click="setSelectedQuestion(q)" ng-class="{info: q.ID === actQuestion.ID, success: q.state == 'new', danger: q.state == 'deprecated'}">
-						<td>
+					<tr ng-click="setSelectedQuestion(q)"
+            ng-class="{'seltbl': q.ID === actQuestion.ID, success: q.state == 'new',
+              danger: q.state == 'deprecated', 'warning': q.state == 'ready', 'warning': q.state == 'released'}">
+						<td style="width: 150px;">
+              <a class="btn pull-left"><i ng-class="{'fa fa-fw fa-check-square-o': q.ID === actQuestion.ID, 'fa fa-fw fa-square-o': q.ID != actQuestion.ID}"></i></a>
 							<a class="btn pull-left" ng-hide="q.HasNoChilds" ng-click="displ(q)">
-								<i class="fa fa-plus" ng-show="!q.showKids"></i>
-								<i class="fa fa-minus" ng-hide="!q.showKids"></i>
+								<i class="fa fa-fw fa-plus-square" ng-show="!q.showKids"></i>
+								<i class="fa fa-fw fa-minus-square" ng-hide="!q.showKids"></i>
 							</a>
-							<button ng-click="m_editquestion(q)" class="btn pull-left"><i class="fa fa-pencil"></i></button>
+              <a class="btn pull-left" ng-show="q.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></a>
+							<a class="btn pull-left" ng-click="editquestion(q)"><i ng-class="{'fa fa-fw fa-pencil': q.state == 'new', 'fa fa-share': q.state != 'new'}"></i></a>
 						</td>
-						<td>{{q['ID']}}</td>
-						<td>{{q['Topic']}}</td>
+						<td style="width: 50px;">{{q['ID']}}</td>
+						<td><span style="white-space: nowrap;">{{q['Topic']}}</span></td>
 						<td><a href="#" onbeforesave="saveEl(q, $data, 'u_question_q')" editable-text="q['Question']">{{q['Question'] || "empty"}}</a></td>
 						<td>{{q['Author']}}</td>
 						<td>{{q['Language']}}</td>
@@ -371,6 +375,36 @@
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" type="button" ng-click="ok()">Create</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+    
+    <!-- Template Modal "Edit Question" -->
+    <script type="text/ng-template" id="modalEditQuestion.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit question</h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+          <fieldset>
+          <legend>Edit question</legend>
+          <label class="control-label">Question</label>
+          <input ng-model="object.data.name" class="form-control" type="text" />
+          <label class="control-label">Topic</label>
+          <select class="form-control" ng-options="item as item.name for item in items track by item.id" ng-model="object.data.topic"></select>
+          <label class="control-label">Author</label>
+          <input ng-model="object.data.owner" class="form-control" type="text" />
+          <label class="control-label">Language</label>
+          <input ng-model="object.data.lang" class="form-control" type="text" />
+          <label class="control-label">External ID</label>
+          <input ng-model="object.data.extid" class="form-control" type="text" />
+          <label class="control-label">Version</label>
+          <input placeholder="1" class="form-control" type="text" disabled/>
+          </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">Save</button>
             <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>

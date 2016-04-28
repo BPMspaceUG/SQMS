@@ -9,3 +9,18 @@ ADD COLUMN `form_data` LONGTEXT NULL AFTER `value`;
 
 ALTER TABLE `sqms_question_state` 
 ADD COLUMN `form_data` LONGTEXT NULL AFTER `name`;
+
+CREATE TABLE `sqms_role` (
+  `sqms_role_id` INT NOT NULL,
+  `role_name` LONGTEXT NULL,
+  PRIMARY KEY (`sqms_role_id`));
+  
+CREATE TABLE `sqms_role_LIAMUSER` (
+  `sqms_role_LIAMUSER_id` INT NOT NULL,
+  `sqms_role_id` INT NULL,
+  `sqms_LIAMUSER_id` INT NULL,
+  PRIMARY KEY (`sqms_role_LIAMUSER_id`));
+
+ALTER TABLE `sqms_topic` 
+ADD COLUMN `sqms_role_id` INT NULL AFTER `name`;
+

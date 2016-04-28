@@ -28,6 +28,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   };
   $scope.items = items;
   
+  // TODO: Improve code, so that the indexes remain the same name
   if (cmd == 'update_syllabus') {
     $scope.object.data.ID = $scope.$$prevSibling.actSyllabus.ID;
     $scope.object.data.name = $scope.$$prevSibling.actSyllabus.Name;
@@ -36,7 +37,17 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     $scope.object.data.topic = $scope.$$prevSibling.actSyllabus.topic;
     $scope.items = $scope.$$prevSibling.getTopics();
   }
-  //console.log($scope.$$prevSibling.actSyllabus);
+  else if (cmd == 'update_question') {
+    $scope.object.data.ID = $scope.$$prevSibling.actQuestion.ID;
+    $scope.object.data.name = $scope.$$prevSibling.actQuestion.Question;
+    //$scope.object.data.description = $scope.$$prevSibling.actQuestion.description;   
+    $scope.object.data.owner = $scope.$$prevSibling.actQuestion.Author;
+    $scope.object.data.topic = $scope.$$prevSibling.actQuestion.topic;
+    $scope.object.data.lang = $scope.$$prevSibling.actQuestion.Language;
+    $scope.object.data.extid = $scope.$$prevSibling.actQuestion.ExtID;
+    $scope.items = $scope.$$prevSibling.getTopics();
+  }
+  console.log($scope.$$prevSibling.actQuestion);
   
   
   $scope.ok = function () {
@@ -100,6 +111,12 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
     $scope.setSelectedSyllabus(el);
     if (el.state == 'new')
       $scope.open('modalEditSyllabus.html', 'update_syllabus');
+  }
+  
+  $scope.editquestion = function(el) {
+    $scope.setSelectedQuestion(el);
+    if (el.state == 'new')
+      $scope.open('modalEditQuestion.html', 'update_question');
   }
 
 
