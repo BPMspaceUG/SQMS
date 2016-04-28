@@ -191,7 +191,7 @@
 					<tr ng-click="setSelectedQuestion(q)"
             ng-class="{'seltbl': q.ID === actQuestion.ID, success: q.state == 'new',
               danger: q.state == 'deprecated', 'warning': q.state == 'ready', 'warning': q.state == 'released'}">
-						<td style="width: 200px;"><a class="btn pull-left"><i ng-class="{'fa fa-fw fa-check-square-o': q.ID === actQuestion.ID, 'fa fa-fw fa-square-o': q.ID != actQuestion.ID}"></i></a>
+						<td style="width: 150px;"><a class="btn pull-left"><i ng-class="{'fa fa-fw fa-check-square-o': q.ID === actQuestion.ID, 'fa fa-fw fa-square-o': q.ID != actQuestion.ID}"></i></a>
 							<a class="btn pull-left" ng-hide="q.HasNoChilds" ng-click="displ(q)">
 								<i class="fa fa-fw fa-plus-square" ng-show="!q.showKids"></i>
 								<i class="fa fa-fw fa-minus-square" ng-hide="!q.showKids"></i>

@@ -57,50 +57,27 @@
 	<div class="clearfix"></div>
 	<!--------------- MAIN MENU --------->
   <?php
-    // Get role by user id
     include_once("inc/RequestHandler.inc.php");
     
     $rm = new RoleManager();
-    $roles = $rm->getRolesByLIAMid($_SESSION['user_id']);
-        
-    if (count($roles) > 0) {
-      echo count($roles);
-      
-      echo "Roles: ";
-      for ($i=0;$i<count($roles);$i++) {
-        echo $roles[$i]["Rolename"].", ";
-      }
-      
-    }
-    
-    // TODO: Build menu by role
+	//echo "Logged in as <b>".$_SESSION['lastname']."</b><br/>";
+    //$roles = $rm->getRolesByLIAMid($_SESSION['user_id']);
   ?>
 	<div class="container">
 		<nav class="navbar navbar-light bg-faded">
 			<ul class="nav nav-tabs">
-				<li class="active">
-					<a title='Dashboard' href="#pagedashboard" data-toggle="tab"><i class="fa fa-tachometer"></i>&nbsp;Dashboard</a>
-				</li>
-				<li>
-					<a title='Show Syllabus' href="#pagesyllabus" data-toggle="tab"><i class="fa fa-table"></i>&nbsp;Syllabus</a>
-				</li>
-				<li>
-					<a title='Show all questions' href="#pagequestion" data-toggle="tab">
-						<i class="fa fa-question"></i>&nbsp;Question</span>
-					</a>
-				</li>
-				<li>
-					<a title='Show all Topics' href="#pagetopic" data-toggle="tab"><i class="fa fa-table"></i>&nbsp;Topic</a>
-				</li>
-				<li class="dropdown">
-					<a title='Admin' class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-						<i class="fa fa-user-secret"></i>&nbsp;Admin<span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu">
-						<li><a href="user.php" title='user'><i class="fa fa-user-plus"></i>&nbsp;Language (future)</a></li>
-						<li><a href="topic.php" title='Topic'><i class="fa fa-folder-o"></i>&nbsp;Topic (under topic)</a></li>
-					</ul>
-				</li>
+				<?php
+					if ($rm->isActUserAllowed("menu_dashboard"))
+						echo '<li><a title="Dashboard" href="#pagedashboard" data-toggle="tab"><i class="fa fa-tachometer"></i>&nbsp;Dashboard</a></li>';
+					if ($rm->isActUserAllowed("menu_syllabus"))
+						echo '<li><a title="Show Syllabus" href="#pagesyllabus" data-toggle="tab"><i class="fa fa-table"></i>&nbsp;Syllabus</a></li>';
+					if ($rm->isActUserAllowed("menu_question"))
+						echo '<li><a title="Show all questions" href="#pagequestion" data-toggle="tab"><i class="fa fa-question"></i>&nbsp;Question</span></a></li>';
+					if ($rm->isActUserAllowed("menu_topic"))
+						echo '<li><a title="Show all Topics" href="#pagetopic" data-toggle="tab"><i class="fa fa-table"></i>&nbsp;Topic</a></li>';
+					if ($rm->isActUserAllowed("menu_language"))
+						echo '<li><a title="Show all Languages" href="#pagelanguage" data-toggle="tab"><i class="fa fa-language"></i>&nbsp;Language</a></li>';
+				?>
 			</ul>
 		</nav>
 	</div>
