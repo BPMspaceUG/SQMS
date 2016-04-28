@@ -296,10 +296,13 @@ class RequestHandler
     version AS 'Version',
     b.name AS 'Topic',
     a.description AS 'description',
-    owner AS 'Owner'
+    owner AS 'Owner',
+    c.language AS 'Language'
 FROM
-    sqms_syllabus AS a
-    LEFT JOIN sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id;";
+    sqms_syllabus AS a LEFT JOIN sqms_topic AS b
+ON a.sqms_topic_id = b.sqms_topic_id
+LEFT JOIN sqms_language AS c
+ON c.sqms_language_id = a.sqms_language_id;";
         $return = array();
 		$res = $this->db->query($query);
 		$res = getResultArray($res);
@@ -352,13 +355,17 @@ FROM
     b.name AS 'Topic',
     a.question AS 'Question',
     a.author AS 'Author',
+    d.language AS 'Language',
     a.version AS 'Vers',
     a.id_external AS 'ExtID',
     c.name AS 'Type'
 FROM
     `sqms_question` AS a LEFT JOIN
     sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id
-    LEFT JOIN sqms_question_type AS c ON a.sqms_question_type_id = c.sqms_question_type_id";
+LEFT JOIN sqms_question_type AS c
+ON a.sqms_question_type_id = c.sqms_question_type_id
+LEFT JOIN sqms_language AS d
+ON d.sqms_language_id = a.sqms_language_id;";
 		$rows = $this->db->query($query);
         $res = getResultArray($rows);
 		$r = null;

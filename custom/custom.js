@@ -268,7 +268,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	$scope.actTopic = false;
   
   /******* D E B U G G I N G *******/  
-  $scope.debugMode = false;
+  $scope.debugMode = true;
   /*********************************/
   
   $scope.setstate = function(cmd, newstate) {

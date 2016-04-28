@@ -97,6 +97,7 @@
             <th class="sortable" ng-click="order_s('Version')">Version<span class="sortorder" ng-show="predicate_s === 'Version'" ng-class="{reverse:reverse_s}"></span></th>
             <th class="sortable" ng-click="order_s('Topic')">Topic<span class="sortorder" ng-show="predicate_s === 'Topic'" ng-class="{reverse:reverse_s}"></span></th>
             <th class="sortable" ng-click="order_s('Owner')">Owner<span class="sortorder" ng-show="predicate_s === 'Owner'" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable" ng-click="order_s('Language')">Language<span class="sortorder" ng-show="predicate_s === 'Language'" ng-class="{reverse:reverse_s}"></span></th>
             <th class="sortable" ng-click="order_s('state')">State<span class="sortorder" ng-show="predicate_s === 'state'" ng-class="{reverse:reverse_s}"></span></th>
 					</tr>
 				</thead>
@@ -118,6 +119,7 @@
 						<td style="width: 50px; text-align: center;">{{s['Version']}}</td>
 						<td style="width: 100px;"><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" e-ng-options="t.id as t.name for t in topics" editable-select="s['Topic']">{{s['Topic' || "empty"]}}</a></td>
 						<td>{{s['Owner']}}</td>
+						<td>{{s['Language']}}</td>
 						<td style="width: 90px;">
               <!-- StateMachine Popover -->
               <button uib-popover-template="'popoverStatemachineSyllabus.html'" popover-trigger="focus" ng-disabled="s['state'] == 'deprecated'"
@@ -132,7 +134,7 @@
 										<th>ID</th>
 										<th>Order</th>
 										<th>Name</th>
-										<!--<th>Description</th>-->
+										<th>Description</th>
 										<th>Severity</th>
 									</tr>
 								</thead>
@@ -141,7 +143,7 @@
 									<td>{{se.sqms_syllabus_element_id}}</td>
 									<td>{{se.element_order}}</td>
 									<td><a href="#" editable-text="se.name" onbeforesave="saveEl(se, $data, 'u_syllabel_n')">{{se.name || "empty"}}</a></td>
-									<!--<td>{{se.description}}</td>-->
+									<td>{{se.description}}</td>
 									<td><a href="#" editable-range="se.severity" onbeforesave="saveEl(se, $data, 'u_syllabel_s')" e-step="5">{{se.severity}}%</a></td>
 								</tr>
 							</table>
@@ -198,6 +200,7 @@
 						<td>{{q['Topic']}}</td>
 						<td><a href="#" onbeforesave="saveEl(q, $data, 'u_question_q')" editable-text="q['Question']">{{q['Question'] || "empty"}}</a></td>
 						<td>{{q['Author']}}</td>
+						<td>{{q['Language']}}</td>
 						<td>{{q['Vers']}}</td>
 						<td>{{q['ExtID']}}</td>
 						<td>{{q['Type']}}</td>
