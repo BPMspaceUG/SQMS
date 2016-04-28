@@ -24,3 +24,21 @@ CREATE TABLE `sqms_role_LIAMUSER` (
 ALTER TABLE `sqms_topic` 
 ADD COLUMN `sqms_role_id` INT NULL AFTER `name`;
 
+ALTER TABLE `sqms_role_LIAMUSER` 
+ADD INDEX `role_id_1_idx` (`sqms_role_id` ASC);
+ALTER TABLE `sqms_role_LIAMUSER` 
+ADD CONSTRAINT `role_id_1`
+  FOREIGN KEY (`sqms_role_id`)
+  REFERENCES `sqms_role` (`sqms_role_id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `sqms_topic` 
+ADD INDEX `ole_id_2_idx` (`sqms_role_id` ASC);
+ALTER TABLE `sqms_topic` 
+ADD CONSTRAINT `role_id_2`
+  FOREIGN KEY (`sqms_role_id`)
+  REFERENCES `sqms_role` (`sqms_role_id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  
