@@ -56,6 +56,25 @@
 	</br>
 	<div class="clearfix"></div>
 	<!--------------- MAIN MENU --------->
+  <?php
+    // Get role by user id
+    include_once("inc/RequestHandler.inc.php");
+    
+    $rm = new RoleManager();
+    $roles = $rm->getRolesByLIAMid($_SESSION['user_id']);
+        
+    if (count($roles) > 0) {
+      echo count($roles);
+      
+      echo "Roles: ";
+      for ($i=0;$i<count($roles);$i++) {
+        echo $roles[$i]["Rolename"].", ";
+      }
+      
+    }
+    
+    // TODO: Build menu by role
+  ?>
 	<div class="container">
 		<nav class="navbar navbar-light bg-faded">
 			<ul class="nav nav-tabs">

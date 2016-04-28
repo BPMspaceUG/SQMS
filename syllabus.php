@@ -181,7 +181,7 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th style="min-width: 95px;">&nbsp;</th>
+						<th>&nbsp;</th>
 						<th ng-repeat="qu in question_cols"
 							ng-click="order_q(qu)" class="sortable">{{qu}}<span class="sortorder"
 							ng-show="predicate_q === qu" ng-class="{reverse:reverse_q}"></span></th>
@@ -191,8 +191,7 @@
 					<tr ng-click="setSelectedQuestion(q)"
             ng-class="{'seltbl': q.ID === actQuestion.ID, success: q.state == 'new',
               danger: q.state == 'deprecated', 'warning': q.state == 'ready', 'warning': q.state == 'released'}">
-						<td style="width: 150px;">
-              <a class="btn pull-left"><i ng-class="{'fa fa-fw fa-check-square-o': q.ID === actQuestion.ID, 'fa fa-fw fa-square-o': q.ID != actQuestion.ID}"></i></a>
+						<td style="width: 200px;"><a class="btn pull-left"><i ng-class="{'fa fa-fw fa-check-square-o': q.ID === actQuestion.ID, 'fa fa-fw fa-square-o': q.ID != actQuestion.ID}"></i></a>
 							<a class="btn pull-left" ng-hide="q.HasNoChilds" ng-click="displ(q)">
 								<i class="fa fa-fw fa-plus-square" ng-show="!q.showKids"></i>
 								<i class="fa fa-fw fa-minus-square" ng-hide="!q.showKids"></i>
@@ -200,14 +199,14 @@
               <a class="btn pull-left" ng-show="q.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></a>
 							<a class="btn pull-left" ng-click="editquestion(q)"><i ng-class="{'fa fa-fw fa-pencil': q.state == 'new', 'fa fa-share': q.state != 'new'}"></i></a>
 						</td>
-						<td style="width: 50px;">{{q['ID']}}</td>
+						<td>{{q['ID']}}</td>
 						<td><span style="white-space: nowrap;">{{q['Topic']}}</span></td>
 						<td><a href="#" onbeforesave="saveEl(q, $data, 'u_question_q')" editable-text="q['Question']">{{q['Question'] || "empty"}}</a></td>
-						<td>{{q['Author']}}</td>
-						<td>{{q['Language']}}</td>
+						<td><small>{{q['Author']}}</small></td>
+						<td><small>{{q['Language']}}</small></td>
 						<td>{{q['Vers']}}</td>
 						<td>{{q['ExtID']}}</td>
-						<td>{{q['Type']}}</td>
+						<td><small>{{q['Type']}}</small></td>
 						<td>
 							<!-- StateMachine Popover -->
               <button uib-popover-template="'popoverStatemachineQuestion.html'" popover-trigger="focus" ng-disabled="q['state'] == 'deprecated'"

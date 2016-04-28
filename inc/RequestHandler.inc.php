@@ -84,6 +84,44 @@ class StateEngine {
 	}
 }
 
+
+class RoleManager 
+{
+    private $db;
+
+    public function __construct() {
+      // Get global variables here
+      global $DB_host;
+      global $DB_user;
+      global $DB_pass;
+      global $DB_name;
+      $db = new mysqli($DB_host, $DB_user, $DB_pass, $DB_name);
+      /* check connection */
+      if($db->connect_errno){
+        printf("Connect failed: %s\n", mysqli_connect_error());
+        exit();
+      }
+      $db->query("SET NAMES utf8");
+      $this->db = $db;
+    }
+    public function getRolesByLIAMid($liamID) {
+      settype($liamID, 'integer');
+      $query = "SELECT a.sqms_role_id AS 'ID',
+      b.role_name AS 'Rolename' FROM sqms_role_liamuser AS a
+      LEFT JOIN sqms_role AS b
+      ON a.sqms_role_id = b.sqms_role_id
+      WHERE a.sqms_LIAMUSER_id = $liamID;";
+      $res = $this->db->query($query);
+      return getResultArray($res);
+    }
+    public function getRolenameByRoleID($roleID) {
+      settype($liamID, 'integer');
+      $query = "SELECT role_name FROM sqms_role WHERE sqms_role_id = $roleID;";
+      $res = $this->db->query($query);
+      return getResultArray($res);
+    }
+}
+
 class RequestHandler 
 {
     private $db;
