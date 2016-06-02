@@ -131,7 +131,7 @@ class RoleManager
 					return true;
 			}
 		}
-		return $result;		
+		return $result;
 	}
 	// Here are the rights for each role --> TODO: Maybe add this in the database
 	public function isRoleAllowed($roleID, $area) {

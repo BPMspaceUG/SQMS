@@ -66,7 +66,6 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	$scope.setSelectedQuestion = function (el) {$scope.actQuestion = el;};
 	$scope.setSelectedTopic = function (el) {$scope.actTopic = el;};
 
-
   // TODO: Remove
   $scope.items = [{
     id: 1,
@@ -285,7 +284,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 	$scope.actTopic = false;
   
   /******* D E B U G G I N G *******/  
-  $scope.debugMode = true;
+  $scope.debugMode = false;
   /*********************************/
   
   $scope.setstate = function(cmd, newstate) {

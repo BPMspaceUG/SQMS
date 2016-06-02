@@ -106,11 +106,11 @@
             ng-class="{'seltbl': s.ID === actSyllabus.ID, success: s.state == 'new',
               danger: s.state == 'deprecated', 'warning': s.state == 'ready', 'warning': s.state == 'released'}">
 						<td style="width: 150px;">
-              <a class="btn pull-left"><i ng-class="{'fa fa-fw fa-check-square-o': s.ID === actSyllabus.ID, 'fa fa-fw fa-square-o': s.ID != actSyllabus.ID}"></i></a>
-							<a class="btn pull-left" ng-hide="s.HasNoChilds" ng-click="displ(s)">
+              <span class="btn pull-left"><i ng-class="{'fa fa-fw fa-check-square-o': s.ID === actSyllabus.ID, 'fa fa-fw fa-square-o': s.ID != actSyllabus.ID}"></i></span>
+							<span class="btn pull-left" ng-hide="s.HasNoChilds" ng-click="displ(s)">
 								<i class="fa fa-fw fa-plus-square" ng-show="!s.showKids"></i>
 								<i class="fa fa-fw fa-minus-square" ng-hide="!s.showKids"></i>
-							</a>
+							</span>
               <a class="btn pull-left" ng-show="s.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></a>
 							<a class="btn pull-left" ng-click="editsyllabus(s)"><i ng-class="{'fa fa-fw fa-pencil': s.state == 'new', 'fa fa-share': s.state != 'new'}"></i></a>
 						</td>
@@ -191,12 +191,15 @@
 					<tr ng-click="setSelectedQuestion(q)"
             ng-class="{'seltbl': q.ID === actQuestion.ID, success: q.state == 'new',
               danger: q.state == 'deprecated', 'warning': q.state == 'ready', 'warning': q.state == 'released'}">
-						<td style="width: 150px;"><a class="btn pull-left"><i ng-class="{'fa fa-fw fa-check-square-o': q.ID === actQuestion.ID, 'fa fa-fw fa-square-o': q.ID != actQuestion.ID}"></i></a>
-							<a class="btn pull-left" ng-hide="q.HasNoChilds" ng-click="displ(q)">
+						<td style="width: 150px;">
+              <span class="btn pull-left">
+                <i ng-class="{'fa fa-fw fa-check-square-o': q.ID === actQuestion.ID, 'fa fa-fw fa-square-o': q.ID != actQuestion.ID}"></i>
+              </span>
+							<span class="btn pull-left" ng-hide="q.HasNoChilds" ng-click="displ(q)">
 								<i class="fa fa-fw fa-plus-square" ng-show="!q.showKids"></i>
 								<i class="fa fa-fw fa-minus-square" ng-hide="!q.showKids"></i>
-							</a>
-              <a class="btn pull-left" ng-show="q.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></a>
+							</span>
+              <span class="btn pull-left" ng-show="q.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></span>
 							<a class="btn pull-left" ng-click="editquestion(q)"><i ng-class="{'fa fa-fw fa-pencil': q.state == 'new', 'fa fa-share': q.state != 'new'}"></i></a>
 						</td>
 						<td>{{q['ID']}}</td>

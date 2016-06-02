@@ -80,8 +80,8 @@ html {
 	cursor: pointer;
 }
 .seltbl {
-  font-weight: bold;
-  font-style: italic;
+  /*font-weight: bold;
+  font-style: italic;*/
 }
 .icon-invisible {
   visibility: hidden;
