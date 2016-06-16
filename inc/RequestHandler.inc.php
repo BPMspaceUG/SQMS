@@ -164,6 +164,13 @@ class RequestHandler
         if ($res != 1) return ''; else return $res;
         break;        
         
+      case 'delete_answer':
+        //$res = $this->delAnswer($params["ID"]);
+        $res = $this->delAnswer(1);
+        if ($res != 1) return ''; else return $res;
+        break;
+      
+        
       //----------------------- Topics
       
       case 'topics':
@@ -316,8 +323,21 @@ ON d.sqms_language_id = a.sqms_language_id;";
     $query = "INSERT INTO sqms_answer (sqms_question_id, answer, correct) VALUES (?,?,?);";
     $stmt = $this->db->prepare($query); // prepare statement
     $stmt->bind_param("isi", $name); // bind params
-        $result = $stmt->execute(); // execute statement
+    $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
+  }
+  private function delAnswer($answerID){
+    settype($answerID , 'integer');
+    // Only delete elements where state = 1 (new)
+    $query = "DELETE a FROM sqms_answer AS a
+INNER JOIN sqms_question AS b ON a.sqms_question_id = b.sqms_question_id 
+WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
+    var_dump($query);
+    $result = $this->db->query($query);
+    var_dump($result);
+    $success = $this->db->affected_rows;
+    var_dump($this->db);
+    return ($success > 0 ? 1 : null);
   }
   private function copySyllabus($oldSyllabus) {
     $this->addSyllabus($oldSyllabus);

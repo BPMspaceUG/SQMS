@@ -128,6 +128,12 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
     if (el.state == 'new')
       $scope.open('modalEditQuestion.html', 'update_question');
   }
+  
+  $scope.deleteanswer = function(answer) {
+    // the php script will check if it is acually    
+    $scope.writeData('delete_answer', answer);
+    console.log(answer.ID);
+  }
 
 
 
