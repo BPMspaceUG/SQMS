@@ -110,8 +110,11 @@
               <a class="btn pull-left" ng-show="s.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></a>
 							<a class="btn pull-left" ng-click="editsyllabus(s)"><i ng-class="{'fa fa-fw fa-pencil': s.state == 'new', 'fa fa-share': s.state != 'new'}"></i></a>
 						</td>
-						<td style="width: 50px;">{{s['ID']}}</td>
-            <!-- Name (inlineediting) -->           
+            <!-- ID -->
+						<td style="width: 50px;">
+              <a href="#" ng-click="editsyllabus(s)">{{s['ID']}}</a>            
+            </td>
+            <!-- Name (inlineediting) -->
             <td style="width: 250px;">
               <span editable-text="s['Name']" onbeforesave="saveEl(se, $data, 'u_syllab_n')" e-form="textBtnForm"></span>
               <button class="editble" ng-click="textBtnForm.$show()" ng-hide="textBtnForm.$visible" ng-disabled="s.state != 'new'">{{s['Name'] || "empty"}}</button>
@@ -158,16 +161,16 @@
                       <span editable-text="se.element_order" onbeforesave="saveEl(se, $data, 'u_syllabel_ord')"></span>
                       <button class="editble" ng-click="textBtnForm1.$show()" ng-hide="textBtnForm1.$visible" ng-disabled="s.state != 'new'">{{se.element_order || "empty"}}</button>
                     </td>
-                    <!--<td>{{se.element_order}}</td>-->
                     <!-- Name (inlineediting) -->
                     <td>
                       <span editable-text="se.name" onbeforesave="saveEl(se, $data, 'u_syllabel_n')" e-form="textBtnForm2"></span>
                       <button class="editble" ng-click="textBtnForm2.$show()" ng-hide="textBtnForm2.$visible" ng-disabled="s.state != 'new'">{{se.name || "empty"}}</button>
                     </td>
-                    <!--
-                    <td><a href="#" editable-text="se.name" onbeforesave="saveEl(se, $data, 'u_syllabel_n')">{{se.name || "empty"}}</a></td>
-                    -->
-                    <td><div style="max-height: 60px; overflow: auto;">{{se.description}}</div></td>
+                    <!-- Description -->
+                    <td>
+                      <div style="max-height: 60px; overflow: auto;">{{se.dscr}}</div>
+                    </td>
+                    <!-- Severity -->
                     <td><a href="#" editable-range="se.severity" onbeforesave="saveEl(se, $data, 'u_syllabel_s')" e-step="5">{{se.severity}}%</a></td>
                   </tr>
                 </tbody>
@@ -243,13 +246,15 @@
 							<table class="table table-striped table-condensed" style="margin:0;">
 								<thead>
 									<tr style="font-size: .9em;">
+										<th style="width:95px;">&nbsp;</th>
 										<th style="width:95px;">ID</th>
 										<th style="width:75%;">Answer</th>
 										<th>Correct</th>
 									</tr>
 								</thead>
-								<tbody>
 								<tr ng-repeat="an in q.answers" ng-class="[{danger: !an.correct}, {success: an.correct}]">
+                  
+									<td><a href="#" ng-click="deleteanswer(an)"><i class="fa fa-fw fa-trash-o"></i>Delete</a></td>
 									<td>{{an.ID}}</td>
 									<td><a href="#" editable-text="an.answer" onbeforesave="saveEl(an, $data, 'u_answer_t')">{{an.answer || "empty"}}</a></td>
 									<td><a href="#" editable-checkbox="an.correct" e-title="Correct?"

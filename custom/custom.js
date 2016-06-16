@@ -238,6 +238,10 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 							if (a.syllabuselements.length > 0) {
 								$scope.syllabi[k].HasNoChilds = false; // has now children
 								$scope.syllabi[k].syllabuselements = a.syllabuselements;
+                // Convert Angulartext into real HTML
+                for (var j=0;j<$scope.syllabi[k].syllabuselements.length;j++) {                  
+                  $scope.syllabi[k].syllabuselements[j].dscr = $sce.trustAsHtml($scope.syllabi[k].syllabuselements[j].description);
+                }
 							}
 						}
 					}
