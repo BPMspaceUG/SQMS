@@ -47,6 +47,14 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     $scope.object.data.extid = $scope.$$prevSibling.actQuestion.ExtID;
     $scope.items = $scope.$$prevSibling.getTopics();
   }
+  else if (cmd == 'update_syllabuselement') {
+    $scope.object.data.ID = $scope.$$prevSibling.actSyllabusElement.sqms_syllabus_element_id;
+    $scope.object.data.name = $scope.$$prevSibling.actSyllabusElement.name;
+    $scope.object.data.description = $scope.$$prevSibling.actSyllabusElement.description;
+    $scope.object.data.severity = $scope.$$prevSibling.actSyllabusElement.severity;
+    $scope.object.data.element_order = $scope.$$prevSibling.actSyllabusElement.element_order;
+    $scope.object.data.parentID = $scope.$$prevSibling.actSyllabusElement.sqms_syllabus_id;
+  }
   console.log($scope.$$prevSibling.actQuestion);
   
   
@@ -111,7 +119,10 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
     if (el.state == 'new')
       $scope.open('modalEditSyllabus.html', 'update_syllabus');
   }
-  
+  $scope.editsyllabuselement = function(el) {
+    $scope.actSyllabusElement = el;
+    $scope.open('modalEditSyllabusElement.html', 'update_syllabuselement');
+  }
   $scope.editquestion = function(el) {
     $scope.setSelectedQuestion(el);
     if (el.state == 'new')
@@ -280,12 +291,9 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
 
 	//--- Initial values
 	$scope.actSyllabus = false;
+	$scope.actSyllabusElement = false;
 	$scope.actQuestion = false;
 	$scope.actTopic = false;
-  
-  /******* D E B U G G I N G *******/  
-  $scope.debugMode = false;
-  /*********************************/
   
   $scope.setstate = function(cmd, newstate) {
     $scope.writeData(cmd, {

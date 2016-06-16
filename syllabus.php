@@ -84,11 +84,8 @@
 				</div>
 			</div>
 			<br/>
-      
-      <!-- Debugging -->
-      <pre ng-show="debugMode">{{actSyllabus}}</pre>
-			
-      <table class="table">
+
+      <table class="table" style="border: 2px solid #ddd;">
 				<thead>
 					<tr>
 						<th>&nbsp;</th>
@@ -101,10 +98,9 @@
             <th class="sortable" ng-click="order_s('state')">State<span class="sortorder" ng-show="predicate_s === 'state'" ng-class="{reverse:reverse_s}"></span></th>
 					</tr>
 				</thead>
-				<tbody ng-repeat="s in syllabi | filter:filtertext_sy | orderBy:predicate_s:reverse_s">
+				<tbody ng-repeat="s in syllabi | filter:filtertext_sy | orderBy:predicate_s:reverse_s" style="border: 2px solid #ddd;">
 					<tr ng-click="setSelectedSyllabus(s)"
-            ng-class="{'seltbl': s.ID === actSyllabus.ID, success: s.state == 'new',
-              danger: s.state == 'deprecated', 'warning': s.state == 'ready', 'warning': s.state == 'released'}">
+            ng-class="{success: s.state == 'new', danger: s.state == 'deprecated', 'warning': s.state == 'ready', 'warning': s.state == 'released'}">
 						<td style="width: 150px;">
               <span class="btn pull-left"><i ng-class="{'fa fa-fw fa-check-square-o': s.ID === actSyllabus.ID, 'fa fa-fw fa-square-o': s.ID != actSyllabus.ID}"></i></span>
 							<span class="btn pull-left" ng-hide="s.HasNoChilds" ng-click="displ(s)">
@@ -115,8 +111,15 @@
 							<a class="btn pull-left" ng-click="editsyllabus(s)"><i ng-class="{'fa fa-fw fa-pencil': s.state == 'new', 'fa fa-share': s.state != 'new'}"></i></a>
 						</td>
 						<td style="width: 50px;">{{s['ID']}}</td>
+            <!-- Name (inlineediting) -->           
+            <td style="width: 250px;">
+              <span editable-text="s['Name']" onbeforesave="saveEl(se, $data, 'u_syllab_n')" e-form="textBtnForm"></span>
+              <button class="editble" ng-click="textBtnForm.$show()" ng-hide="textBtnForm.$visible" ng-disabled="s.state != 'new'">{{s['Name'] || "empty"}}</button>
+            </td>
+            <!--
 						<td style="width: 250px;"><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_n')" editable-text="s['Name']">{{s['Name'] || "empty"}}</a></td>
-						<td style="width: 50px; text-align: center;">{{s['Version']}}</td>
+						-->
+            <td style="width: 50px; text-align: center;">{{s['Version']}}</td>
 						<td style="width: 100px;"><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" e-ng-options="t.id as t.name for t in topics" editable-select="s['Topic']">{{s['Topic' || "empty"]}}</a></td>
 						<td>{{s['Owner']}}</td>
 						<td>{{s['Language']}}</td>
@@ -127,25 +130,47 @@
             </td>
 					</tr>
 					<tr ng-hide="s.HasNoChilds || !s.showKids">
-						<td colspan="8" style="padding:0; background-color: #ddd; border: 1px solid #ccc;">
-							<table class="table table-striped table-condensed" style="margin:0;">
+            <!-- Nested table -->
+						<td colspan="8" style="padding:0; background-color: #ddd;">
+							<table class="table table-condensed" style="font-size: .85em; margin:0;">
 								<thead>
 									<tr>
-										<th>ID</th>
-										<th>Order</th>
-										<th>Name</th>
+										<th style="width:50px;">&nbsp;</th>
+										<th style="width:50px;">ID</th>
+										<th style="width:50px;">Order</th>
+										<th style="width:250px">Name</th>
 										<th>Description</th>
-										<th>Severity</th>
+										<th style="width:100px;">Severity</th>
 									</tr>
 								</thead>
 								<tbody>
-								<tr ng-repeat="se in s.syllabuselements">
-									<td>{{se.sqms_syllabus_element_id}}</td>
-									<td>{{se.element_order}}</td>
-									<td><a href="#" editable-text="se.name" onbeforesave="saveEl(se, $data, 'u_syllabel_n')">{{se.name || "empty"}}</a></td>
-									<td>{{se.description}}</td>
-									<td><a href="#" editable-range="se.severity" onbeforesave="saveEl(se, $data, 'u_syllabel_s')" e-step="5">{{se.severity}}%</a></td>
-								</tr>
+                  <tr ng-repeat="se in s.syllabuselements" ng-class="{success: s.state == 'new',
+                    danger: s.state == 'deprecated', 'warning': s.state == 'ready', 'warning': s.state == 'released'}">
+                    <!-- Edit SyllabusElement -->
+                    <td>
+                      <a class="btn pull-left" ng-click="editsyllabuselement(se)">
+                        <i ng-class="{'fa fa-fw fa-pencil': s.state == 'new', 'fa fa-share': s.state != 'new'}"></i>
+                      </a>                    
+                    </td>
+                    <td>{{se.sqms_syllabus_element_id}}</td>
+                    <!-- Order (inlineediting) -->
+                    <td>
+                      <span editable-text="se.element_order" onbeforesave="saveEl(se, $data, 'u_syllabel_ord')"></span>
+                      <button class="editble" ng-click="textBtnForm1.$show()" ng-hide="textBtnForm1.$visible" ng-disabled="s.state != 'new'">{{se.element_order || "empty"}}</button>
+                    </td>
+                    <!--<td>{{se.element_order}}</td>-->
+                    <!-- Name (inlineediting) -->
+                    <td>
+                      <span editable-text="se.name" onbeforesave="saveEl(se, $data, 'u_syllabel_n')" e-form="textBtnForm2"></span>
+                      <button class="editble" ng-click="textBtnForm2.$show()" ng-hide="textBtnForm2.$visible" ng-disabled="s.state != 'new'">{{se.name || "empty"}}</button>
+                    </td>
+                    <!--
+                    <td><a href="#" editable-text="se.name" onbeforesave="saveEl(se, $data, 'u_syllabel_n')">{{se.name || "empty"}}</a></td>
+                    -->
+                    <td><div style="max-height: 60px; overflow: auto;">{{se.description}}</div></td>
+                    <td><a href="#" editable-range="se.severity" onbeforesave="saveEl(se, $data, 'u_syllabel_s')" e-step="5">{{se.severity}}%</a></td>
+                  </tr>
+                </tbody>
 							</table>
 						</td>
 					</tr>
@@ -174,10 +199,7 @@
 				</div>
 			</div>
 			<br/>
-      
-			<!-- Content -->
-      <pre ng-show="debugMode">{{actQuestion}}</pre>
-      
+
 			<table class="table">
 				<thead>
 					<tr>
@@ -239,8 +261,6 @@
 				</tbody>
 			</table>
 		</div>
-		
-    
     
 		<!-- Page: Topic -->
 		<div id="pagetopic" class="tab-pane">
@@ -277,6 +297,8 @@
 			</table>
 		</div>
 
+    
+    
     
     
     <!-- Template Modal "Create Topic" -->
@@ -461,6 +483,32 @@
         </div>
     </script>
 
+    <!-- Template Modal "Edit Syllabus Element" -->
+    <script type="text/ng-template" id="modalEditSyllabusElement.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit syllabuselement</h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+          <fieldset>
+          <legend>Edit syllabuselement</legend>
+          <label class="control-label">Order</label>
+          <input class="form-control" ng-model="object.data.element_order" placeholder="1" type="text" />
+          <label class="control-label">Severity</label>
+          <input class="form-control" ng-model="object.data.severity" placeholder="23" type="text" />
+          <label class="control-label">Syllabus-Element name</label>
+          <input ng-model="object.data.name" placeholder="Syllabuselementname" class="form-control" type="text" />
+          <label class="control-label">Description</label>
+          <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
+          </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">Save</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+    
     <!-- Template: StateMachine Syllabus -->
     <script type="text/ng-template" id="popoverStatemachineSyllabus.html">
       <div><b>goto:</b>&nbsp;<span ng-repeat="state in actSyllabus.availableOptions">

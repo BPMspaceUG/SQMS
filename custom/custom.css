@@ -66,6 +66,22 @@ html {
   padding: 10px;
 }
 /***********************************************/
+.editble {
+   background:none!important;
+   border:none; 
+   padding:0!important;
+   font: inherit;
+   /*border is optional*/
+   color: #337ab7;
+   cursor: pointer;
+}
+.editble:hover {
+  text-decoration: underline;
+}
+.editble:disabled {
+  color: #333;
+  text-decoration: none;
+}
 .huge {
   font-size: 2em;
 }
@@ -78,10 +94,6 @@ html {
 .sortable:hover {
 	background-color: #ddd;
 	cursor: pointer;
-}
-.seltbl {
-  /*font-weight: bold;
-  font-style: italic;*/
 }
 .icon-invisible {
   visibility: hidden;

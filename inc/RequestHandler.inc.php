@@ -109,6 +109,8 @@ class RequestHandler
         $res = $this->updateSyllabusElement(
           $params["ID"],
           $params["name"],
+          $params["description"],
+          $params["element_order"],
           $params["severity"]
         );
         if ($res != 1) return ''; else return $res;
@@ -234,7 +236,6 @@ ON c.sqms_language_id = a.sqms_language_id;";
     $res = getResultArray($res);
     $r = null;
     foreach ($res as $el) {
-      //$state = array("state" => $this->SESy->getActState($el["ID"])[0]);
       $acts = $this->SESy->getActState($el["ID"])[0];
       $state = array("state" => $acts);
       $x = array_merge_recursive($el, $state);
@@ -328,10 +329,11 @@ ON d.sqms_language_id = a.sqms_language_id;";
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
   }
-  private function updateSyllabusElement($id, $name, $severity) {
-    $query = "UPDATE sqms_syllabus_element SET name = ?, severity = ? WHERE sqms_syllabus_element_id = ?;";
+  private function updateSyllabusElement($id, $name, $description, $elementorder, $severity) {
+    $query = "UPDATE sqms_syllabus_element SET name=?, description=?, element_order=?, severity=? ".
+      "WHERE sqms_syllabus_element_id = ?;";
     $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("sii", $name, $severity, $id); // bind params
+    $stmt->bind_param("ssiii", $name, $description, $elementorder, $severity, $id); // bind params
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
   }
