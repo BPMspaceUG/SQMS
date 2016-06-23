@@ -55,9 +55,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     $scope.object.data.element_order = $scope.$$prevSibling.actSyllabusElement.element_order;
     $scope.object.data.parentID = $scope.$$prevSibling.actSyllabusElement.sqms_syllabus_id;
   }
-  console.log($scope.$$prevSibling.actQuestion);
-  
-  
+  //console.log($scope.$$prevSibling.actQuestion);
+    
   $scope.ok = function () {
     $uibModalInstance.close($scope.object); // Return result
   };
@@ -109,9 +108,8 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
       }
     });
     modalInstance.result.then(function (result) {
-      console.log(result);
-      // Send result to server
-      $scope.writeData(result.command, result.data);
+      console.log(result);      
+      $scope.writeData(result.command, result.data); // Send result to server
     }, function () {
       //$log.info('Modal dismissed at: ' + new Date());
     });
@@ -131,6 +129,15 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
       // also check if current element has no predecessor
     }
   }
+  $scope.successorsyllabuselement = function(el) {
+    $scope.setSelectedSyllabus(el);
+    if (el.state != 'new') {
+      var res = confirm("Are you sure that you want to create a successor of the SyllabusElement '"+el.name+"'?");
+      // TODO: if OK was clicked
+      // -> create successor in database (send copy_syllabus command)
+      // also check if current element has no predecessor
+    }
+  }  
   $scope.editsyllabuselement = function(el) {
     $scope.actSyllabusElement = el;
     $scope.open('modalEditSyllabusElement.html', 'update_syllabuselement');
@@ -257,6 +264,8 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
                 // Convert Angulartext into real HTML
                 for (var j=0;j<$scope.syllabi[k].syllabuselements.length;j++) {                  
                   $scope.syllabi[k].syllabuselements[j].dscr = $sce.trustAsHtml($scope.syllabi[k].syllabuselements[j].description);
+                  // Format number
+                  $scope.syllabi[k].syllabuselements[j].severity = Math.round($scope.syllabi[k].syllabuselements[j].severity);
                 }
               }
             }

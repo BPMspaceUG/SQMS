@@ -232,6 +232,8 @@ class RequestHandler
     b.name AS 'Topic',
     a.description AS 'description',
     owner AS 'Owner',
+    validity_period_from AS 'From',
+    validity_period_to AS 'To',
     c.language AS 'Language'
 FROM
     sqms_syllabus AS a LEFT JOIN sqms_topic AS b

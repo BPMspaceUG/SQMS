@@ -94,6 +94,8 @@
             <th class="sortable" ng-click="order_s('Version')">Version<span class="sortorder" ng-show="predicate_s === 'Version'" ng-class="{reverse:reverse_s}"></span></th>
             <th class="sortable" ng-click="order_s('Topic')">Topic<span class="sortorder" ng-show="predicate_s === 'Topic'" ng-class="{reverse:reverse_s}"></span></th>
             <th class="sortable" ng-click="order_s('Owner')">Owner<span class="sortorder" ng-show="predicate_s === 'Owner'" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable" ng-click="order_s('From')">From<span class="sortorder" ng-show="predicate_s === 'From'" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable" ng-click="order_s('To')">To<span class="sortorder" ng-show="predicate_s === 'To'" ng-class="{reverse:reverse_s}"></span></th>
             <th class="sortable" ng-click="order_s('Language')">Language<span class="sortorder" ng-show="predicate_s === 'Language'" ng-class="{reverse:reverse_s}"></span></th>
             <th class="sortable" ng-click="order_s('state')">State<span class="sortorder" ng-show="predicate_s === 'state'" ng-class="{reverse:reverse_s}"></span></th>
           </tr>
@@ -126,7 +128,7 @@
                 <a class="btn pull-left" ng-click="successorsyllabus(s)" title="Create Successor...">
                   <i class="fa fa-fw fa-share"></i>
                 </a>
-              </span>              
+              </span>
             </td>
             <!-- ID -->
             <td style="width: 50px;">
@@ -143,6 +145,8 @@
             <td style="width: 50px; text-align: center;">{{s['Version']}}</td>
             <td style="width: 100px;"><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" e-ng-options="t.id as t.name for t in topics" editable-select="s['Topic']">{{s['Topic' || "empty"]}}</a></td>
             <td>{{s['Owner']}}</td>
+            <td>{{s['From']}}</td>
+            <td>{{s['To']}}</td>
             <td>{{s['Language']}}</td>
             <td style="width: 90px;">
               <!-- StateMachine Popover -->
@@ -152,7 +156,7 @@
           </tr>
           <tr ng-hide="s.HasNoChilds || !s.showKids">
             <!-- Nested table -->
-            <td colspan="8" style="padding:0; background-color: #ddd;">
+            <td colspan="10" style="padding:0; background-color: #ddd;">
               <table class="table table-condensed" style="font-size: .85em; margin:0;">
                 <thead>
                   <tr>
@@ -168,10 +172,19 @@
                   <tr ng-repeat="se in s.syllabuselements" ng-class="{success: s.state == 'new',
                     danger: s.state == 'deprecated', 'warning': s.state == 'ready', 'warning': s.state == 'released'}">
                     <!-- Edit SyllabusElement -->
-                    <td>
-                      <a class="btn pull-left" ng-click="editsyllabuselement(se)">
-                        <i ng-class="{'fa fa-fw fa-pencil': s.state == 'new', 'fa fa-share': s.state != 'new'}"></i>
-                      </a>                    
+                    <td>                    
+                      <!-- Edit Icon -->
+                      <span ng-show="s.state == 'new'">
+                        <a class="btn pull-left" ng-click="editsyllabuselement(se)" title="Edit SyllabusElement...">
+                          <i class="fa fa-fw fa-pencil"></i>
+                        </a>
+                      </span>
+                      <!-- Successor Icon -->
+                      <span ng-show="s.state != 'new'">
+                        <a class="btn pull-left" ng-click="successorsyllabuselement(se)" title="Create Successor...">
+                          <i class="fa fa-fw fa-share"></i>
+                        </a>
+                      </span>                   
                     </td>
                     <td>{{se.sqms_syllabus_element_id}}</td>
                     <!-- Order (inlineediting) -->
@@ -212,9 +225,9 @@
           <span>
             <button type="button" class="btn btn-default" ng-click="open('modalNewQuestion.html', 'create_question')">
               <i class="fa fa-plus"></i> Question</button>
-            <button type="button" class="btn btn-default" ng-disabled="!actQuestion" 
-            ng-click="open('modalNewAnswer.html', 'create_answer')">
-              <i class="fa fa-plus"></i> Answer ({{actQuestion.ID}})</button>
+            <button type="button" class="btn btn-default" ng-disabled="!actQuestion || actQuestion.state != 'new'" ng-click="open('modalNewAnswer.html', 'create_answer')">
+              <i class="fa fa-plus"></i> Answer ({{actQuestion.ID}})
+            </button>
           </span>
         </div>
         <div class="col-sm-4">

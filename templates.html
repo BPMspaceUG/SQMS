@@ -140,9 +140,8 @@
       <fieldset>
         <legend>Create answer</legend>
         <label>Answertext</label>
-        <input type="text" class="form-control" placeholder="Answer is 42" ng-model="object.data.answer"/>
-        <label>Correct?</label>
-        <input type="text" class="form-control" placeholder="Answer is 42" ng-model="object.data.correct"/>
+        <input type="text" class="form-control" placeholder="Answer is 42" ng-model="object.data.answer" autofocus/>
+        <label><input type="checkbox" class="form-control" ng-model="object.data.correct"/>Correct</label>
       </fieldset>
     </form>
   </div>
@@ -166,7 +165,7 @@
         <label class="control-label">Order</label>
         <input class="form-control" ng-model="object.data.element_order" placeholder="1" type="text" />
         <label class="control-label">Severity</label>
-        <input class="form-control" ng-model="object.data.severity" placeholder="105" type="text" />
+        <input class="form-control" ng-model="object.data.severity" min="0" max="100" placeholder="42" type="number" />
         <label class="control-label">Syllabus-Element name</label>
         <input ng-model="object.data.name" placeholder="Syllabuselementname" class="form-control" type="text" />
         <label class="control-label">Description</label>
@@ -188,11 +187,13 @@
   <div class="modal-body">
     <form class="form-horizontal">
       <fieldset>
-        <legend>Edit syllabuselement</legend>
-        <label class="control-label">Order</label>
-        <input class="form-control" ng-model="object.data.element_order" placeholder="1" type="text" />
-        <label class="control-label">Severity</label>
-        <input class="form-control" ng-model="object.data.severity" placeholder="23" type="text" />
+        <legend>Edit syllabuselement</legend>        
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Order</label>
+          <div class="col-sm-4"><input class="form-control" ng-model="object.data.element_order" placeholder="1" type="text" /></div>
+          <label class="col-sm-2 control-label">Severity</label>
+          <div class="col-sm-4"><input class="form-control" ng-model="object.data.severity" min="0" max="100" placeholder="42" type="number" /></div>
+        </div>
         <label class="control-label">Syllabus-Element name</label>
         <input ng-model="object.data.name" placeholder="Syllabuselementname" class="form-control" type="text" />
         <label class="control-label">Description</label>
