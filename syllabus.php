@@ -102,13 +102,31 @@
           <tr ng-click="setSelectedSyllabus(s)"
             ng-class="{success: s.state == 'new', danger: s.state == 'deprecated', 'warning': s.state == 'ready', 'warning': s.state == 'released'}">
             <td style="width: 150px;">
-              <span class="btn pull-left"><i ng-class="{'fa fa-fw fa-check-square-o': s.ID === actSyllabus.ID, 'fa fa-fw fa-square-o': s.ID != actSyllabus.ID}"></i></span>
-              <span class="btn pull-left" ng-hide="s.HasNoChilds" ng-click="displ(s)">
-                <i class="fa fa-fw fa-plus-square" ng-show="!s.showKids"></i>
-                <i class="fa fa-fw fa-minus-square" ng-hide="!s.showKids"></i>
+              <!-- Tickmark -->
+              <span class="btn pull-left" title="Select Syllabus">
+                <i ng-class="{'fa fa-fw fa-check-square-o': s.ID === actSyllabus.ID, 'fa fa-fw fa-square-o': s.ID != actSyllabus.ID}"></i>
               </span>
-              <a class="btn pull-left" ng-show="s.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></a>
-              <a class="btn pull-left" ng-click="editsyllabus(s)"><i ng-class="{'fa fa-fw fa-pencil': s.state == 'new', 'fa fa-share': s.state != 'new'}"></i></a>
+              <!-- Expand or Collapse -->
+              <span class="btn pull-left" ng-hide="s.HasNoChilds" ng-click="displ(s)">
+                <i class="fa fa-fw fa-plus-square" ng-show="!s.showKids" title="Expand"></i>
+                <i class="fa fa-fw fa-minus-square" ng-hide="!s.showKids" title="Collapse"></i>
+              </span>
+              <!-- Dummy Icon for design -->
+              <a class="btn pull-left" ng-show="s.HasNoChilds">
+                <i class="fa fa-fw fa-square icon-invisible"></i>
+              </a>
+              <!-- Edit Icon -->
+              <span ng-show="s.state == 'new'">
+                <a class="btn pull-left" ng-click="editsyllabus(s)" title="Edit Syllabus...">
+                  <i class="fa fa-fw fa-pencil"></i>
+                </a>
+              </span>
+              <!-- Successor Icon -->
+              <span ng-show="s.state != 'new'">
+                <a class="btn pull-left" ng-click="successorsyllabus(s)" title="Create Successor...">
+                  <i class="fa fa-fw fa-share"></i>
+                </a>
+              </span>              
             </td>
             <!-- ID -->
             <td style="width: 50px;">
@@ -143,7 +161,7 @@
                     <th style="width:50px;">Order</th>
                     <th style="width:250px">Name</th>
                     <th>Description</th>
-                    <th style="width:100px;">Severity</th>
+                    <th style="min-width:100px;">Severity</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -171,7 +189,9 @@
                       <div style="max-height: 60px; overflow: auto;">{{se.dscr}}</div>
                     </td>
                     <!-- Severity -->
-                    <td><a href="#" editable-range="se.severity" onbeforesave="saveEl(se, $data, 'u_syllabel_s')" e-step="5">{{se.severity}}%</a></td>
+                    <td>
+                      <a href="#" editable-range="se.severity" onbeforesave="saveEl(se, $data, 'u_syllabel_s')" e-step="5">{{se.severity | number:0}}%</a>
+                    </td>
                   </tr>
                 </tbody>
               </table>
