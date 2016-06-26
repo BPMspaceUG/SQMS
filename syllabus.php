@@ -132,26 +132,32 @@
             </td>
             <!-- ID -->
             <td style="width: 50px;">
-              <a href="#" ng-click="editsyllabus(s)">{{s['ID']}}</a>            
+              <a href="#" ng-click="editsyllabus(s)">{{s['ID']}}</a>
             </td>
             <!-- Name (inlineediting) -->
             <td style="width: 250px;">
               <span editable-text="s['Name']" onbeforesave="saveEl(se, $data, 'u_syllab_n')" e-form="textBtnForm"></span>
-              <button class="editble" ng-click="textBtnForm.$show()" ng-hide="textBtnForm.$visible" ng-disabled="s.state != 'new'">{{s['Name'] || "empty"}}</button>
+              <button class="editble" ng-click="textBtnForm.$show()" ng-hide="textBtnForm.$visible"
+                ng-disabled="s.state != 'new'">{{s['Name'] || "empty"}}</button>
             </td>
             <!--
             <td style="width: 250px;"><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_n')" editable-text="s['Name']">{{s['Name'] || "empty"}}</a></td>
             -->
             <td style="width: 50px; text-align: center;">{{s['Version']}}</td>
-            <td style="width: 100px;"><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" e-ng-options="t.id as t.name for t in topics" editable-select="s['Topic']">{{s['Topic' || "empty"]}}</a></td>
+            <!-- Topic -->
+            <td style="width: 100px;">
+              <a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()"
+                e-ng-options="t.id as t.name for t in topics" editable-select="s['Topic']">{{s['Topic' || "empty"]}}</a>
+            </td>
+            <!-- Other Infos -->
             <td>{{s['Owner']}}</td>
             <td>{{s['From']}}</td>
             <td>{{s['To']}}</td>
             <td>{{s['Language']}}</td>
+            <!-- Statemachine -->
             <td style="width: 90px;">
-              <!-- StateMachine Popover -->
-              <button uib-popover-template="'popoverStatemachineSyllabus.html'" popover-trigger="focus" ng-disabled="s['state'] == 'deprecated'"
-                type="button" class="btn btn-default btn-sm">{{s['state']}}</button>                
+              <button uib-popover-template="'popoverStatemachineSyllabus.html'" popover-trigger="focus"
+                ng-disabled="s['state'] == 'deprecated'" type="button" class="btn btn-default btn-sm">{{s['state']}}</button>                
             </td>
           </tr>
           <tr ng-hide="s.HasNoChilds || !s.showKids">
@@ -243,6 +249,12 @@
             <th ng-repeat="qu in question_cols"
               ng-click="order_q(qu)" class="sortable">{{qu}}<span class="sortorder"
               ng-show="predicate_q === qu" ng-class="{reverse:reverse_q}"></span></th>
+            <!-- TODO: Columns fix -->
+            <!--
+            <th class="sortable" ng-click="order_q('ID')">
+              ID<span class="sortorder" ng-show="predicate_q === 'ID'" ng-class="{reverse:reverse_q}"></span>
+            </th>
+            -->
           </tr>
         </thead>
         <tbody ng-repeat="q in questions | filter:filtertext_qu | orderBy:predicate_q:reverse_q">
