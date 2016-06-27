@@ -111,12 +111,14 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
       console.log(result);      
       $scope.writeData(result.command, result.data); // Send result to server
     }, function () {
+      // Cancel Button clicked
       //$log.info('Modal dismissed at: ' + new Date());
     });
   };
 
   $scope.editsyllabus = function(el) {
     $scope.setSelectedSyllabus(el);
+    // Only open edit form in state "new"
     if (el.state == 'new')
       $scope.open('modalEditSyllabus.html', 'update_syllabus');
   }
@@ -233,12 +235,9 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
   //------------------------------- Syllabus
   $scope.getAllSyllabus = function () {
     $http.get('getjson.php?c=syllabus')
-    .success(function(data) {
-      
+    .success(function(data) {      
       $scope.syllabi = data.syllabus;
       $scope.syllabi_cols = Object.keys($scope.syllabi[0]); // get keys from first object
-      
-      //console.log($scope.syllabi_cols);
       
       // get under-elements for each syllabus
       for (var i=0;i<$scope.syllabi.length;i++){
@@ -282,6 +281,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
   //********************* Inline editing
   $scope.saveEl = function(actEl, data, cmd) {
     var c;
+    // TODO: Optimize code maybe
     switch (cmd) {
       case 'u_answer_t': c = 'update_answer'; actEl.answer = data; break;
       case 'u_answer_c': c = 'update_answer'; actEl.correct = data; break;

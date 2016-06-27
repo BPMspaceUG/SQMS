@@ -246,15 +246,15 @@
         <thead>
           <tr>
             <th>&nbsp;</th>
-            <th ng-repeat="qu in question_cols"
-              ng-click="order_q(qu)" class="sortable">{{qu}}<span class="sortorder"
-              ng-show="predicate_q === qu" ng-class="{reverse:reverse_q}"></span></th>
-            <!-- TODO: Columns fix -->
-            <!--
-            <th class="sortable" ng-click="order_q('ID')">
-              ID<span class="sortorder" ng-show="predicate_q === 'ID'" ng-class="{reverse:reverse_q}"></span>
-            </th>
-            -->
+            <th class="sortable" ng-click="order_q('ID')">ID<span class="sortorder" ng-show="predicate_q === 'ID'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable" ng-click="order_q('Topic')">Topic<span class="sortorder" ng-show="predicate_q === 'Topic'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable" ng-click="order_q('Question')">Question<span class="sortorder" ng-show="predicate_q === 'Question'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable" ng-click="order_q('Author')">Author<span class="sortorder" ng-show="predicate_q === 'Author'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable" ng-click="order_q('Language')">Language<span class="sortorder" ng-show="predicate_q === 'Language'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable" ng-click="order_q('Vers')">Vers.<span class="sortorder" ng-show="predicate_q === 'Vers'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable" ng-click="order_q('ExtID')">Ext.ID<span class="sortorder" ng-show="predicate_q === 'ExtID'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable" ng-click="order_q('Type')">Type<span class="sortorder" ng-show="predicate_q === 'Type'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable" ng-click="order_q('State')">State<span class="sortorder" ng-show="predicate_q === 'State'" ng-class="{reverse:reverse_q}"></span></th>
           </tr>
         </thead>
         <tbody ng-repeat="q in questions | filter:filtertext_qu | orderBy:predicate_q:reverse_q">
@@ -262,15 +262,22 @@
             ng-class="{'seltbl': q.ID === actQuestion.ID, success: q.state == 'new',
               danger: q.state == 'deprecated', 'warning': q.state == 'ready', 'warning': q.state == 'released'}">
             <td style="width: 150px;">
+              <!-- Tickmark -->
               <span class="btn pull-left">
                 <i ng-class="{'fa fa-fw fa-check-square-o': q.ID === actQuestion.ID, 'fa fa-fw fa-square-o': q.ID != actQuestion.ID}"></i>
               </span>
+              <!-- Children -->
               <span class="btn pull-left" ng-hide="q.HasNoChilds" ng-click="displ(q)">
                 <i class="fa fa-fw fa-plus-square" ng-show="!q.showKids"></i>
                 <i class="fa fa-fw fa-minus-square" ng-hide="!q.showKids"></i>
               </span>
-              <span class="btn pull-left" ng-show="q.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></span>
-              <a class="btn pull-left" ng-click="editquestion(q)"><i ng-class="{'fa fa-fw fa-pencil': q.state == 'new', 'fa fa-share': q.state != 'new'}"></i></a>
+              <span class="btn pull-left" ng-show="q.HasNoChilds">
+                <i class="fa fa-fw fa-square icon-invisible"></i>
+              </span>
+              <!-- Edit -->
+              <a class="btn pull-left" ng-click="editquestion(q)">
+                <i ng-class="{'fa fa-fw fa-pencil': q.state == 'new', 'fa fa-share': q.state != 'new'}"></i>
+              </a>
             </td>
             <td>{{q['ID']}}</td>
             <td><span style="white-space: nowrap;">{{q['Topic']}}</span></td>
@@ -280,15 +287,15 @@
             <td>{{q['Vers']}}</td>
             <td>{{q['ExtID']}}</td>
             <td><small>{{q['Type']}}</small></td>
+            <!-- StateMachine Popover -->
             <td>
-              <!-- StateMachine Popover -->
               <button uib-popover-template="'popoverStatemachineQuestion.html'" popover-trigger="focus" ng-disabled="q['state'] == 'deprecated'"
                 type="button" class="btn btn-default btn-sm">{{q['state']}}</button>
             </td>
           </tr>
           <tr ng-hide="q.HasNoChilds || !q.showKids">
             <td colspan="10" style="padding:0; background-color: #ddd; border: 1px solid #ccc;">
-              <table class="table table-striped table-condensed" style="margin:0;">
+              <table class="table table-condensed" style="font-size: .85em; margin:0;">
                 <thead>
                   <tr style="font-size: .9em;">
                     <th style="width:95px;">&nbsp;</th>
