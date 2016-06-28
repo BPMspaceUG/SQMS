@@ -14,15 +14,14 @@
 class RequestHandler
 {
   private $db;
-  private $discount = 0;
   private $SESy, $SEQu;
 
-  public function __construct() {
+  public function __construct() {    
     // Get global variables here
     global $DB_host;
     global $DB_user;
     global $DB_pass;
-    global $DB_name;
+    global $DB_name;    
     // Connect to database
     $db = new mysqli($DB_host, $DB_user, $DB_pass, $DB_name);
     if($db->connect_errno){
@@ -30,20 +29,33 @@ class RequestHandler
       exit();
     }
     $db->query("SET NAMES utf8");
-    $this->db = $db;
-    
+    $this->db = $db;    
     //--- Create state engine objects for Syllabus and Question
-    // Params: $db, $tbl_root, $tbl_states, $tbl_rules, $col_rootID, $col_stateID, $colname_stateID_at_TblStates
-    $this->SESy = new StateEngine($this->db, 'sqms_syllabus', 'sqms_syllabus_state', 'sqms_syllabus_state_rules',
-      'sqms_syllabus_id', 'sqms_state_id', 'sqms_syllabus_state_id');
-    $this->SEQu = new StateEngine($this->db, 'sqms_question', 'sqms_question_state', 'sqms_question_state_rules',
-      'sqms_question_id', 'sqms_question_state_id', 'sqms_question_state_id');
+    // Params: [$db, $tbl_root, $tbl_states, $tbl_rules, $col_rootID, $col_stateID, $colname_stateID_at_TblStates]
+    // StateEngine Syllabus
+    $this->SESy = new StateEngine(
+      $this->db,
+      'sqms_syllabus',
+      'sqms_syllabus_state',
+      'sqms_syllabus_state_rules',
+      'sqms_syllabus_id',
+      'sqms_state_id',
+      'sqms_syllabus_state_id'
+    );
+    // StateEngine Question
+    $this->SEQu = new StateEngine(
+      $this->db,
+      'sqms_question',
+      'sqms_question_state',
+      'sqms_question_state_rules',
+      'sqms_question_id',
+      'sqms_question_state_id',
+      'sqms_question_state_id'
+    );
   }
   public function handle($command, $params) {
     switch($command) {
-      
-      //----------------------- Syllabus
-      
+     
       case 'syllabus':
         $arr1 = $this->getSyllabusList(); // All data from syllabus
         return json_encode($arr1);
