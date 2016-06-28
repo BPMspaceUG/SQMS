@@ -85,13 +85,16 @@
   <!--------------- END MAIN MENU --------->
   <?php
     /* presente $error_messages when not empty */
+    /*
     if (!empty($_GET["error_messages"])) {
       echo '<div class="container alert alert-danger 90_percent" role="alert"> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' ;
       echo '&nbsp;error:&nbsp;' . htmlspecialchars($_GET["error_messages"]);
       echo '</br></div>';
     }
     $help_text = null; // TODO: Remove!!
+    */
     /* presente file with helptxt if $help_text = "true" (or set) when not empty */
+    /*
     if ($help_text) {
       echo '<div class="container bg-info 90_percent" >' ;
         echo "<a data-toggle=\"collapse\" data-target=\"#collapse_help_header\" >PSEUDO CODE FOR HEADER PHP - Later here will be the helptext&nbsp;<i class=\"fa fa-chevron-down\"></i></a>";
@@ -100,6 +103,7 @@
         echo "</div>";
       echo "</div><p></p><p></p>";
     }
+    */
   ?>
 
 

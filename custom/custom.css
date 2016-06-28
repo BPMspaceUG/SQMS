@@ -98,3 +98,6 @@ html {
 .icon-invisible {
   visibility: hidden;
 }
+.menuitem {
+  margin-top: 1.25em;
+}

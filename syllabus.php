@@ -4,6 +4,7 @@
   include_once '_header.inc.php';
 
   /* presente $help_text when not empty */
+  /*
   if ($help_text) {
     echo '<div class="container bg-info 90_percent" >' ;
     echo "<a data-toggle=\"collapse\" data-target=\"#collapse_help_event\" >PSEUDO CODE FOR EVENT_GRID PHP - Later here will be the helptext&nbsp;<i class=\"fa fa-chevron-down\"></i></a>";
@@ -12,10 +13,10 @@
     echo "</div>";
     echo "</div><p></p><p></p>";
   }
+  */
 ?>
 <!--------------- SUB MENU --------->
 <div class="clearfix"></div>
-<div class="clearfix"></br></div>
 <!--------------- END SUB MENU --------->
 
 <!-- Page -->
@@ -73,14 +74,16 @@
         </div>
         <div class="col-sm-4">
           <span>
-            <button type="button" class="btn btn-default" ng-click="open('modalNewSyllabus.html', 'create_syllabus')">
-              <i class="fa fa-plus"></i> Syllabus</button>
-            <button type="button" class="btn btn-default" ng-disabled="!actSyllabus" ng-click="open('modalNewSyllabusElement.html', 'create_syllabuselement')">
-              <i class="fa fa-plus"></i> Syllabus-Element ({{actSyllabus.ID}})</button>
+            <button type="button" class="btn btn-success menuitem" ng-click="open('modalNewSyllabus.html', 'create_syllabus')">
+              <i class="fa fa-plus"></i> New Syllabus
+            </button>
+            <button type="button" class="btn btn-success menuitem" ng-disabled="!actSyllabus" ng-click="open('modalNewSyllabusElement.html', 'create_syllabuselement')">
+              <i class="fa fa-plus"></i> New S.Element ({{actSyllabus.ID}})
+            </button>
           </span>
         </div>
         <div class="col-sm-4">
-          <input type="text" ng-model="filtertext_sy" class="form-control pull-right" style="width:200px;" placeholder="filter">
+          <input type="text" ng-model="filtertext_sy" class="form-control pull-right menuitem" style="width:200px;" placeholder="filter">
         </div>
       </div>
       <br/>
@@ -229,15 +232,16 @@
         </div>
         <div class="col-sm-4">
           <span>
-            <button type="button" class="btn btn-default" ng-click="open('modalNewQuestion.html', 'create_question')">
-              <i class="fa fa-plus"></i> Question</button>
-            <button type="button" class="btn btn-default" ng-disabled="!actQuestion || actQuestion.state != 'new'" ng-click="open('modalNewAnswer.html', 'create_answer')">
-              <i class="fa fa-plus"></i> Answer ({{actQuestion.ID}})
+            <button type="button" class="btn btn-success menuitem" ng-click="open('modalNewQuestion.html', 'create_question')">
+              <i class="fa fa-plus"></i> New Question
+            </button>
+            <button type="button" class="btn btn-success menuitem" ng-disabled="!actQuestion || actQuestion.state != 'new'" ng-click="open('modalNewAnswer.html', 'create_answer')">
+              <i class="fa fa-plus"></i> New Answer ({{actQuestion.ID}})
             </button>
           </span>
         </div>
         <div class="col-sm-4">
-          <input type="text" ng-model="filtertext_qu" class="form-control pull-right" style="width:200px;" placeholder="filter">
+          <input type="text" ng-model="filtertext_qu" class="form-control pull-right menuitem" style="width:200px;" placeholder="filter">
         </div>
       </div>
       <br/>
@@ -328,7 +332,8 @@
         </div>
         <div class="col-sm-4">
           <button type="button" class="btn btn-default" ng-click="open('modalNewTopic.html', 'create_topic')">
-            <i class="fa fa-plus"></i> Topic</button>
+            <i class="fa fa-plus"></i> New Topic
+          </button>
         </div>
         <div class="col-sm-4">
           <input type="text" ng-model="filtertext" class="form-control pull-right" style="width:200px;" placeholder="filter">
@@ -352,16 +357,13 @@
           </tr>
         </tbody>
       </table>
-    </div>
-    <!-- Include all HTML templates for AngularJS -->
-    <?php
-      include_once("templates.html");
-    ?>    
+    </div>  
   </div>
 </div>
 <!-- Custom Javascript -->
 <script src="custom/custom.js"></script>
 <!-- Footer -->
 <?php
+  include_once("templates.html"); // Include all HTML templates for AngularJS
   include_once '_footer.inc.php';
 ?>
