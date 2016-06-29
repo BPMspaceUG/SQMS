@@ -74,6 +74,7 @@ html {
    /*border is optional*/
    color: #337ab7;
    cursor: pointer;
+   text-align: left;
 }
 .editble:hover {
   text-decoration: underline;

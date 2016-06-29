@@ -285,7 +285,13 @@
             </td>
             <td>{{q['ID']}}</td>
             <td><span style="white-space: nowrap;">{{q['Topic']}}</span></td>
-            <td><a href="#" onbeforesave="saveEl(q, $data, 'u_question_q')" editable-text="q['Question']">{{q['Question'] || "empty"}}</a></td>
+            <!-- Question (inlineediting) -->
+            <td style="width: 250px;">
+              <span editable-text="q['Question']" onbeforesave="saveEl(q, $data, 'u_question')" e-form="textBtnForm"></span>
+              <button class="editble" ng-click="textBtnForm.$show()" ng-hide="textBtnForm.$visible"
+                ng-disabled="q.state != 'new'">{{q['Question'] || "empty"}}</button>
+            </td>
+            <!-- <td><a href="#" onbeforesave="saveEl(q, $data, 'u_question_q')" editable-text="q['Question']">{{q['Question'] || "empty"}}</a></td>-->
             <td><small>{{q['Author']}}</small></td>
             <td><small>{{q['Language']}}</small></td>
             <td>{{q['Vers']}}</td>
