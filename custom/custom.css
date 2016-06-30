@@ -4,6 +4,21 @@ html {
 	overflow-y: scroll;
   */
 }
+/*
+a {
+  color: #000;
+}
+a:hover {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+*/
+/*
+a:not([href]) {
+  background-color: #f00;
+}
+*/
 .centering {
   float: none;
   margin: 0 auto;
@@ -66,23 +81,6 @@ html {
   padding: 10px;
 }
 /***********************************************/
-.editble {
-   background:none!important;
-   border:none; 
-   padding:0!important;
-   font: inherit;
-   /*border is optional*/
-   color: #337ab7;
-   cursor: pointer;
-   text-align: left;
-}
-.editble:hover {
-  text-decoration: underline;
-}
-.editble:disabled {
-  color: #333;
-  text-decoration: none;
-}
 .huge {
   font-size: 2em;
 }

@@ -87,10 +87,7 @@
         </div>
       </div>
       <br/>
-      
-      <!-- Debug -->
-      <pre>{{actSyllabus}}</pre>
-      
+      <!-- Table -->
       <table class="table">
         <thead>
           <tr>
@@ -143,7 +140,7 @@
             <!-- Name (inlineediting) -->
             <td style="width: 250px;">
               <div class="popover-wrapper">
-                <a href="#" editable-text="s['Name']" onbeforesave="saveEl(s, $data, 'u_syllab_n')" edit-disabled="s.state != 'new'">{{s['Name'] || 'empty' }}</a>
+                <a editable-text="s['Name']" onbeforesave="saveEl(s, $data, 'u_syllab_n')" edit-disabled="s.state != 'new'">{{s['Name'] || 'empty' }}</a>
               </div>
             </td>
             <!-- Version -->
@@ -177,14 +174,14 @@
                     <th style="width:50px;">Order</th>
                     <th style="width:250px">Name</th>
                     <th>Description</th>
-                    <th style="min-width:100px;">Severity</th>
+                    <th style="width:100px;">Severity</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr ng-repeat="se in s.syllabuselements" ng-class="{success: s.state == 'new',
                     danger: s.state == 'deprecated', 'warning': s.state == 'ready', 'warning': s.state == 'released'}">
                     <!-- Edit SyllabusElement -->
-                    <td>                    
+                    <td>
                       <!-- Edit Icon -->
                       <span ng-show="s.state == 'new'">
                         <a class="btn pull-left" ng-click="editsyllabuselement(se)" title="Edit SyllabusElement...">
@@ -201,21 +198,24 @@
                     <td>{{se.sqms_syllabus_element_id}}</td>
                     <!-- Order (inlineediting) -->
                     <td>
-                      <span editable-text="se.element_order" onbeforesave="saveEl(se, $data, 'u_syllabel_ord')"></span>
-                      <button class="editble" ng-click="textBtnForm1.$show()" ng-hide="textBtnForm1.$visible" ng-disabled="s.state != 'new'">{{se.element_order || "empty"}}</button>
+                      <div class="popover-wrapper">
+                        <a editable-text="se.element_order" onbeforesave="saveEl(se, $data, 'u_syllabel_ord')" edit-disabled="s.state != 'new'">{{se.element_order || 'empty' }}</a>
+                      </div>
                     </td>
                     <!-- Name (inlineediting) -->
                     <td>
-                      <span editable-text="se.name" onbeforesave="saveEl(se, $data, 'u_syllabel_n')" e-form="textBtnForm2"></span>
-                      <button class="editble" ng-click="textBtnForm2.$show()" ng-hide="textBtnForm2.$visible" ng-disabled="s.state != 'new'">{{se.name || "empty"}}</button>
+                      <div class="popover-wrapper">
+                        <a editable-text="se.name" onbeforesave="saveEl(se, $data, 'u_syllabel_n')" edit-disabled="s.state != 'new'">{{se.name || 'empty' }}</a>
+                      </div>
                     </td>
                     <!-- Description -->
-                    <td>
-                      <div style="max-height: 60px; overflow: auto;">{{se.dscr}}</div>
-                    </td>
+                    <td><div style="max-height: 60px; overflow: auto;">{{se.dscr}}</div></td>
                     <!-- Severity -->
                     <td>
-                      <a href="#" editable-range="se.severity" onbeforesave="saveEl(se, $data, 'u_syllabel_s')" e-step="5">{{se.severity | number:0}}%</a>
+                      <div class="popover-wrapper">
+                        <a editable-number="se.severity" onbeforesave="saveEl(se, $data, 'u_syllabel_s')"
+                          e-min="1" e-max="100"  edit-disabled="s.state != 'new'">{{se.severity | number:0}}%</a>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
