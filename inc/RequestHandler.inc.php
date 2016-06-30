@@ -242,6 +242,7 @@ class RequestHandler
     a.name AS 'Name',
     version AS 'Version',
     b.name AS 'Topic',
+    b.sqms_topic_id AS 'TopicID',
     a.description AS 'description',
     owner AS 'Owner',
     validity_period_from AS 'From',

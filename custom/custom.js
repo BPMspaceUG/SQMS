@@ -278,10 +278,13 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
   $scope.displ = function(el){el.showKids = !el.showKids;}
   $scope.setState = function(newstate) {$scope.actSyllabus.selectedOption = newstate;}
 
-  //********************* Inline editing
+  //********************* Inline editing (can be implemented in writeData() maybe)
   $scope.saveEl = function(actEl, data, cmd) {
     var c;
-    // TODO: Optimize code maybe
+    console.log(actEl);
+    console.log(data);
+    console.log(cmd);
+    // TODO: Optimize code
     switch (cmd) {
       case 'u_answer_t': c = 'update_answer'; actEl.answer = data; break;
       case 'u_answer_c': c = 'update_answer'; actEl.correct = data; break;
@@ -292,7 +295,8 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
       case 'u_syllab_tc': c = 'update_syllabus_topic'; actEl.TopicID = data; break;
       case 'u_question_q': c = 'update_question'; actEl.Question = data; break;
     }
-    return $http.post('getjson.php?c='+c, JSON.stringify(actEl)); // send new model
+    // TODO:
+    return $scope.writeData(c, actEl); //$http.post('getjson.php?c='+c, JSON.stringify(actEl)); // send new model
   }
 
   //********************* WRITE data to server

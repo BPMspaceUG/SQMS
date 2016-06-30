@@ -23,19 +23,18 @@
 <div class="container">
   <div class="tab-content">
   
-    <!-- Page: Dashboard -->
+    <!--
+    ########################################## Page: Dashboard 
+    -->
     <div id="pagedashboard" class="tab-pane active">
-    
       <div class="row bg-primary">
         <div class="col-sm-12">
           <h2>Dashboard</h2>
         </div>
       </div>
-      <br>
-    
+      <br>    
       <!-- <p>example <a href="http://bootstrapmaster.com/live/perfectum/">Dashboard Example</a></p>-->
-      <div class="row">
-      
+      <div class="row">      
         <!-- Report -->
         <div class="col-lg-3 col-md-6" ng-repeat="report in reports">
           <div class="panel panel-primary">
@@ -61,23 +60,24 @@
             -->
           </div>
         </div>
-
       </div>
     </div>
   
-    <!-- Page: Syllabus -->
+    <!--
+    ########################################## Page: Syllabus 
+    -->
     <div id="pagesyllabus" class="tab-pane">
-      
       <div class="row bg-primary">
         <div class="col-sm-4">
           <h2>Syllabus</h2>
         </div>
         <div class="col-sm-4">
+          <!-- Menu Buttons -->
           <span>
             <button type="button" class="btn btn-success menuitem" ng-click="open('modalNewSyllabus.html', 'create_syllabus')">
               <i class="fa fa-plus"></i> New Syllabus
             </button>
-            <button type="button" class="btn btn-success menuitem" ng-disabled="!actSyllabus" ng-click="open('modalNewSyllabusElement.html', 'create_syllabuselement')">
+            <button type="button" class="btn btn-success menuitem" ng-disabled="!actSyllabus || actSyllabus.state != 'new'" ng-click="open('modalNewSyllabusElement.html', 'create_syllabuselement')">
               <i class="fa fa-plus"></i> New S.Element ({{actSyllabus.ID}})
             </button>
           </span>
@@ -87,7 +87,10 @@
         </div>
       </div>
       <br/>
-
+      
+      <!-- Debug -->
+      <pre>{{actSyllabus}}</pre>
+      
       <table class="table">
         <thead>
           <tr>
@@ -139,18 +142,18 @@
             </td>
             <!-- Name (inlineediting) -->
             <td style="width: 250px;">
-              <span editable-text="s['Name']" onbeforesave="saveEl(se, $data, 'u_syllab_n')" e-form="textBtnForm"></span>
-              <button class="editble" ng-click="textBtnForm.$show()" ng-hide="textBtnForm.$visible"
-                ng-disabled="s.state != 'new'">{{s['Name'] || "empty"}}</button>
+              <div class="popover-wrapper">
+                <a href="#" editable-text="s['Name']" onbeforesave="saveEl(s, $data, 'u_syllab_n')" edit-disabled="s.state != 'new'">{{s['Name'] || 'empty' }}</a>
+              </div>
             </td>
-            <!--
-            <td style="width: 250px;"><a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_n')" editable-text="s['Name']">{{s['Name'] || "empty"}}</a></td>
-            -->
+            <!-- Version -->
             <td style="width: 50px; text-align: center;">{{s['Version']}}</td>
-            <!-- Topic -->
+            <!-- Topic (inlineediting) -->
             <td style="width: 100px;">
-              <a href="#" onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()"
-                e-ng-options="t.id as t.name for t in topics" editable-select="s['Topic']">{{s['Topic' || "empty"]}}</a>
+              <div class="popover-wrapper">
+                <a onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" edit-disabled="s.state != 'new'"
+                e-ng-options="t.id as t.name for t in topics" editable-select="s['TopicID']">{{s['Topic'] || "empty"}}</a>
+              </div>
             </td>
             <!-- Other Infos -->
             <td>{{s['Owner']}}</td>
@@ -222,8 +225,9 @@
         </tbody>
       </table>
     </div>
-
-    <!-- Page: Question -->
+    <!--
+    ########################################## Page: Question 
+    -->
     <div id="pagequestion" class="tab-pane">
       <!-- Header -->
       <div class="row bg-primary">
@@ -231,12 +235,17 @@
           <h2>Question</h2>
         </div>
         <div class="col-sm-4">
+          <!-- Menu Buttons -->
           <span>
             <button type="button" class="btn btn-success menuitem" ng-click="open('modalNewQuestion.html', 'create_question')">
               <i class="fa fa-plus"></i> New Question
             </button>
             <button type="button" class="btn btn-success menuitem" ng-disabled="!actQuestion || actQuestion.state != 'new'" ng-click="open('modalNewAnswer.html', 'create_answer')">
               <i class="fa fa-plus"></i> New Answer ({{actQuestion.ID}})
+            </button>
+            <!-- TODO: Export to mitsm Homepage -->
+            <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportQuestions.html', 'export_questions')">
+              <i class="fa fa-download"></i> Export
             </button>
           </span>
         </div>
@@ -283,7 +292,9 @@
                 <i ng-class="{'fa fa-fw fa-pencil': q.state == 'new', 'fa fa-share': q.state != 'new'}"></i>
               </a>
             </td>
+            <!-- ID -->
             <td>{{q['ID']}}</td>
+            <!-- Topic -->
             <td><span style="white-space: nowrap;">{{q['Topic']}}</span></td>
             <!-- Question (inlineediting) -->
             <td style="width: 250px;">
@@ -328,8 +339,9 @@
         </tbody>
       </table>
     </div>
-    
-    <!-- Page: Topic -->
+    <!--
+    ########################################## Page: Topic
+    -->
     <div id="pagetopic" class="tab-pane">
       <!-- Header -->
       <div class="row bg-primary">
@@ -363,7 +375,7 @@
           </tr>
         </tbody>
       </table>
-    </div>  
+    </div>
   </div>
 </div>
 <!-- Custom Javascript -->
