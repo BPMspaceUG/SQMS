@@ -141,7 +141,7 @@ class RequestHandler
         
       case 'create_answer':
         return $this->addAnswer(
-          $params["questionID"],
+          $params["parentID"],
           $params["correct"],
           $params["answer"]
         );
@@ -337,7 +337,7 @@ ON d.sqms_language_id = a.sqms_language_id;";
   private function addAnswer($questionID, $correct, $answer){
     $query = "INSERT INTO sqms_answer (sqms_question_id, answer, correct) VALUES (?,?,?);";
     $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("isi", $name); // bind params
+    $stmt->bind_param("isi", $questionID, $answer, $correct); // bind params
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
   }

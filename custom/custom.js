@@ -55,6 +55,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     $scope.object.data.element_order = $scope.$$prevSibling.actSyllabusElement.element_order;
     $scope.object.data.parentID = $scope.$$prevSibling.actSyllabusElement.sqms_syllabus_id;
   }
+  else if (cmd == 'create_answer') {
+    $scope.object.data.parentID = $scope.$$prevSibling.actQuestion.ID;
+  }
   //console.log($scope.$$prevSibling.actQuestion);
     
   $scope.ok = function () {
