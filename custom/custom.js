@@ -77,6 +77,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
   $scope.setSelectedTopic = function (el) {$scope.actTopic = el;};
 
   // TODO: Remove
+  
   $scope.items = [{
     id: 1,
     name: 'aLabel'

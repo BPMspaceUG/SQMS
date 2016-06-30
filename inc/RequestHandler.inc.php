@@ -1,5 +1,8 @@
 <?php
   // Includes
+  include_once '../phpSecureLogin/includes/db_connect.inc.php';
+  include_once '../phpSecureLogin/includes/functions.inc.php';
+  if(!isset($_SESSION)) sec_session_start();
   include_once("StateEngine.inc.php");
   include_once("RoleManager.inc.php");
 
@@ -15,6 +18,7 @@ class RequestHandler
 {
   private $db;
   private $SESy, $SEQu;
+  private $RM;
 
   public function __construct() {    
     // Get global variables here
@@ -29,7 +33,11 @@ class RequestHandler
       exit();
     }
     $db->query("SET NAMES utf8");
-    $this->db = $db;    
+    $this->db = $db;
+    
+    //--- Create RoleManager
+    $this->RM = new RoleManager();
+    
     //--- Create state engine objects for Syllabus and Question
     // Params: [$db, $tbl_root, $tbl_states, $tbl_rules, $col_rootID, $col_stateID, $colname_stateID_at_TblStates]
     // StateEngine Syllabus
@@ -186,7 +194,10 @@ class RequestHandler
       //----------------------- Topics
       
       case 'topics':
-        $return = $this->getTopicList();
+        // TODO: Read out roles
+        $roleIDs = $this->RM->getRoleIDsByLIAMid($_SESSION['user_id']);
+        // Get relevant topics connected to role
+        $return = $this->getTopicList($roleIDs);
         return json_encode($return);
         break;
         
@@ -525,8 +536,16 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
     $return['formdata'] = $tmp[0]['form_data'];
     return $return;
   }
-  private function getTopicList() {
-    $query = "SELECT sqms_topic_id AS id, name FROM `sqms_topic`";
+  private function getTopicList($roleIDs) {
+    // Only return topics which are allowed for the actual role
+    if ($roleIDs) {
+      $suffix = " WHERE ";
+      foreach ($roleIDs as $id) {
+        $suffix .= "sqms_role_id = ".$id." OR ";
+      }
+      $suffix = substr($suffix, 0, -4); // remove last " OR "
+    }
+    $query = "SELECT sqms_topic_id AS id, name FROM `sqms_topic`".$suffix;
     $res = $this->db->query($query);
     $return['topiclist'] = getResultArray($res);
     return $return;

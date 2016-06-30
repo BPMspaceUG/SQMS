@@ -68,10 +68,8 @@
     -->
     <div id="pagesyllabus" class="tab-pane">
       <div class="row bg-primary">
-        <div class="col-sm-4">
-          <h2>Syllabus</h2>
-        </div>
-        <div class="col-sm-4">
+        <h2 class="col-sm-3">Syllabus</h2>
+        <div class="col-sm-5">
           <!-- Menu Buttons -->
           <span>
             <button type="button" class="btn btn-success menuitem" ng-click="open('modalNewSyllabus.html', 'create_syllabus')">
@@ -105,7 +103,7 @@
         </thead>
         <tbody ng-repeat="s in syllabi | filter:filtertext_sy | orderBy:predicate_s:reverse_s">
           <tr ng-click="setSelectedSyllabus(s)"
-            ng-class="{success: s.state == 'new', danger: s.state == 'deprecated', 'warning': s.state == 'ready', 'warning': s.state == 'released'}">
+            ng-class="{success: s.state == 'new', danger: s.state == 'deprecated', warning: s.state == 'ready', info: s.state == 'released'}">
             <td style="width: 150px;">
               <!-- Tickmark -->
               <span class="btn pull-left" title="Select Syllabus">
@@ -231,10 +229,8 @@
     <div id="pagequestion" class="tab-pane">
       <!-- Header -->
       <div class="row bg-primary">
-        <div class="col-sm-4">
-          <h2>Question</h2>
-        </div>
-        <div class="col-sm-4">
+        <h2 class="col-sm-3">Question</h2>
+        <div class="col-sm-5">
           <!-- Menu Buttons -->
           <span>
             <button type="button" class="btn btn-success menuitem" ng-click="open('modalNewQuestion.html', 'create_question')">

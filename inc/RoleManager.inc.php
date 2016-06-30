@@ -22,10 +22,24 @@
       $db->query("SET NAMES utf8");
       $this->db = $db;
     }
+    public function getRoleIDsByLIAMid($liamID) {
+      $res = null;
+      // Read out all roles
+      $roles = $this->getRolesByLIAMid($liamID);
+      // Make an easy to use array
+      if ($roles) {
+        foreach ($roles as $role) {
+          $res[] = $role["ID"];
+        }
+      }
+      return $res;
+    }
     public function getRolesByLIAMid($liamID) {
       settype($liamID, 'integer');
-      $query = "SELECT a.sqms_role_id AS 'ID',
-      b.role_name AS 'Rolename' FROM sqms_role_LIAMUSER AS a
+      $query = "SELECT
+      a.sqms_role_id AS 'ID',
+      b.role_name AS 'Rolename'
+      FROM sqms_role_LIAMUSER AS a
       LEFT JOIN sqms_role AS b
       ON a.sqms_role_id = b.sqms_role_id
       WHERE a.sqms_LIAMUSER_id = $liamID;";

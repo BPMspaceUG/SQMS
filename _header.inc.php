@@ -2,8 +2,8 @@
   // Includes
   include_once '../phpSecureLogin/includes/db_connect.inc.php';
   include_once '../phpSecureLogin/includes/functions.inc.php';
-  
   sec_session_start();
+  
   if(login_check($mysqli) != true) {
     header("Location: ../index.php?error_messages='You are not logged in!'");
     exit();
@@ -61,8 +61,14 @@
     include_once("inc/RequestHandler.inc.php");
     
     $rm = new RoleManager();
-    //echo "Logged in as <b>".$_SESSION['lastname']."</b><br/>";
-    //$roles = $rm->getRolesByLIAMid($_SESSION['user_id']);
+    /*
+    $roleIDs = $rm->getRoleIDsByLIAMid($_SESSION['user_id']); // user_id = LIAM ID
+    echo "LiamID: ".$_SESSION['user_id']."<br/>Roles: ";
+    //var_dump($roleIDs);
+    if ($roleIDs) echo implode(", ", $roleIDs);
+    //var_dump($roles);
+    //echo "Logged in as [Lastname: <b>".$_SESSION['lastname'].", UserID: ".$_SESSION['user_id'].", Roles: ".print_r($roles)."]</b><br/>";
+    */
   ?>
   <div class="container">
     <nav class="navbar navbar-light bg-faded">
