@@ -23,19 +23,26 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       owner: '',
       description: '<p>test</p>',
       correct: false,
-      topic: items[0]
+      ngTopic: {}
     }
   };
-  $scope.items = items;
+  // Save topics in scope
+  $scope.topics = items;
+  
+  // Set selected item from syllabus 
+  $scope.getActTopicSyllab = function() {    
+    for (var i = 0; i<$scope.topics.length; i++) {
+      if ($scope.topics[i].id == $scope.$$prevSibling.actSyllabus.TopicID) {
+        $scope.object.data.ngTopic = $scope.topics[i];
+      }
+    }
+  }
+  
+  console.log("Modal opened.");
   
   // TODO: Improve code, so that the indexes remain the same name
   if (cmd == 'update_syllabus') {
-    $scope.object.data.ID = $scope.$$prevSibling.actSyllabus.ID;
-    $scope.object.data.name = $scope.$$prevSibling.actSyllabus.Name;
-    $scope.object.data.description = $scope.$$prevSibling.actSyllabus.description;   
-    $scope.object.data.owner = $scope.$$prevSibling.actSyllabus.Owner;
-    $scope.object.data.topic = $scope.$$prevSibling.actSyllabus.topic;
-    $scope.items = $scope.$$prevSibling.getTopics();
+    $scope.object.data = $scope.$$prevSibling.actSyllabus;
   }
   else if (cmd == 'update_question') {
     $scope.object.data.ID = $scope.$$prevSibling.actQuestion.ID;
@@ -45,7 +52,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     $scope.object.data.topic = $scope.$$prevSibling.actQuestion.topic;
     $scope.object.data.lang = $scope.$$prevSibling.actQuestion.Language;
     $scope.object.data.extid = $scope.$$prevSibling.actQuestion.ExtID;
-    $scope.items = $scope.$$prevSibling.getTopics();
+    //$scope.items = $scope.$$prevSibling.getTopics();
   }
   else if (cmd == 'update_syllabuselement') {
     $scope.object.data.ID = $scope.$$prevSibling.actSyllabusElement.sqms_syllabus_element_id;
@@ -60,10 +67,17 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   }
   //console.log($scope.$$prevSibling.actQuestion);
     
+  // --- [OK] clicked
   $scope.ok = function () {
-    $uibModalInstance.close($scope.object); // Return result
+    // Set the new Topic if it has changed
+    if ($scope.object.data.ngTopic) {
+      $scope.object.data.TopicID = $scope.object.data.ngTopic.id;
+      $scope.object.data.Topic = $scope.object.data.ngTopic.name;
+    }
+    // Return result
+    $uibModalInstance.close($scope.object);
   };
-  
+  // --- [Cancel] clicked
   $scope.cancel = function () {
     $uibModalInstance.dismiss('cancel');
   };
@@ -77,7 +91,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
   $scope.setSelectedTopic = function (el) {$scope.actTopic = el;};
 
   // TODO: Remove
-  
+  /*
   $scope.items = [{
     id: 1,
     name: 'aLabel'
@@ -85,7 +99,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
     id: 2,
     name: 'bLabel'
   }];
-   
+   */
   /**************************************************************
     Modal Window + Templates
   **************************************************************/
@@ -102,12 +116,16 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
           return $scope.actSyllabus.ID;
         },
         items: function () {
-          if (command == "create_syllabus" || command == "create_question") {
+          //$scope.getTopics();
+          return $scope.topics;
+          /*
+          if (command == "create_syllabus" || command == "create_question" || command == "update_syllabus" || command == "update_syllabus") {
             $scope.getTopics(); // Refresh
             return $scope.topics;
           } else {
             return $scope.items;
           }
+          */
         }
       }
     });

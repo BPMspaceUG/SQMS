@@ -19,8 +19,9 @@ class RequestHandler
   private $db;
   private $SESy, $SEQu;
   private $RM;
+  private $roleIDs;
 
-  public function __construct() {    
+  public function __construct() {
     // Get global variables here
     global $DB_host;
     global $DB_user;
@@ -62,6 +63,10 @@ class RequestHandler
     );
   }
   public function handle($command, $params) {
+    
+    // Read out actual roles
+    $this->roleIDs = $this->RM->getRoleIDsByLIAMid($_SESSION['user_id']);
+    
     switch($command) {
      
       case 'syllabus':
@@ -93,11 +98,11 @@ class RequestHandler
         
       case "update_syllabus":
         $res = 0;
-        $res += $this->setSyllabusName($params["ID"], $params["name"]);
-        //$res += $this->setSyllabusTopic($params["ID"], $params["TopicID"]);
+        $res += $this->setSyllabusName($params["ID"], $params["Name"]); 
+        $res += $this->setSyllabusTopic($params["ID"], $params["TopicID"]);
         $res += $this->setSyllabusDescr($params["ID"], $params["description"]);
-        $res += $this->setSyllabusOwner($params["ID"], $params["owner"]);
-        if ($res != 3) return ''; else return $res; 
+        $res += $this->setSyllabusOwner($params["ID"], $params["Owner"]);
+        if ($res != 4) return ''; else return $res; 
         break;
         
       case "update_syllabus_name":
@@ -108,7 +113,7 @@ class RequestHandler
       case "update_syllabus_topic":
         $res = $this->setSyllabusTopic($params["ID"], $params["TopicID"]);
         if ($res != 1) return ''; else return $res;
-        break;        
+        break;
         
       case 'create_syllabuselement':
         return $this->addSyllabusElement(
@@ -193,11 +198,9 @@ class RequestHandler
         
       //----------------------- Topics
       
-      case 'topics':
-        // TODO: Read out roles
-        $roleIDs = $this->RM->getRoleIDsByLIAMid($_SESSION['user_id']);
+      case 'topics':        
         // Get relevant topics connected to role
-        $return = $this->getTopicList($roleIDs);
+        $return = $this->getTopicList();
         return json_encode($return);
         break;
         
@@ -242,12 +245,20 @@ class RequestHandler
         break;
     }
   }
-    
-    ###################################################################################################################
-    ####################### Definition der Handles
-    ###################################################################################################################
-    
+  
+  ###################################################################################################################
+  ####################### Definition der Handles
+  ###################################################################################################################
+  
   private function getSyllabusList() {
+    // Only return topics which are allowed for the actual role
+    if ($this->roleIDs) {
+      $suffix = " WHERE ";
+      foreach ($this->roleIDs as $id) {
+        $suffix .= "b.sqms_role_id = ".$id." OR ";
+      }
+      $suffix = substr($suffix, 0, -4); // remove last " OR "
+    }   
     $query = "SELECT 
     sqms_syllabus_id AS 'ID',
     a.name AS 'Name',
@@ -263,7 +274,7 @@ FROM
     sqms_syllabus AS a LEFT JOIN sqms_topic AS b
 ON a.sqms_topic_id = b.sqms_topic_id
 LEFT JOIN sqms_language AS c
-ON c.sqms_language_id = a.sqms_language_id;";
+ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
         $return = array();
     $res = $this->db->query($query);
     $res = getResultArray($res);
@@ -536,11 +547,11 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
     $return['formdata'] = $tmp[0]['form_data'];
     return $return;
   }
-  private function getTopicList($roleIDs) {
+  private function getTopicList() {
     // Only return topics which are allowed for the actual role
-    if ($roleIDs) {
+    if ($this->roleIDs) {
       $suffix = " WHERE ";
-      foreach ($roleIDs as $id) {
+      foreach ($this->roleIDs as $id) {
         $suffix .= "sqms_role_id = ".$id." OR ";
       }
       $suffix = substr($suffix, 0, -4); // remove last " OR "

@@ -76,7 +76,7 @@
               <i class="fa fa-plus"></i> New Syllabus
             </button>
             <button type="button" class="btn btn-success menuitem" ng-disabled="!actSyllabus || actSyllabus.state != 'new'" ng-click="open('modalNewSyllabusElement.html', 'create_syllabuselement')">
-              <i class="fa fa-plus"></i> New S.Element ({{actSyllabus.ID}})
+              <i class="fa fa-plus"></i> New Syllabus-Element ({{actSyllabus.ID}})
             </button>
           </span>
         </div>
