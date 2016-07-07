@@ -91,12 +91,20 @@ a:not([href]) {
   content: '\25bc';
 }
 .sortable:hover {
-	background-color: #ddd;
-	cursor: pointer;
+  background-color: #ddd;
+  cursor: pointer;
 }
 .icon-invisible {
   visibility: hidden;
 }
 .menuitem {
   margin-top: 1.25em;
+}
+.datalist a {
+  color: #333;
+  text-decoration: none;
+}
+.datalist .success a  {
+  color: #337ab7;
+  cursor: pointer;
 }

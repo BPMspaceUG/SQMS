@@ -86,7 +86,7 @@
       </div>
       <br/>
       <!-- Table -->
-      <table class="table">
+      <table class="table datalist">
         <thead>
           <tr>
             <th>&nbsp;</th>
@@ -133,7 +133,7 @@
             </td>
             <!-- ID -->
             <td style="width: 50px;">
-              <a href="#" ng-click="editsyllabus(s)">{{s['ID']}}</a>
+              <a ng-click="editsyllabus(s)">{{s['ID']}}</a>
             </td>
             <!-- Name (inlineediting) -->
             <td style="width: 250px;">

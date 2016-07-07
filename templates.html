@@ -26,6 +26,58 @@
   <div class="modal-body">
     <form class="form-horizontal">
       <fieldset>
+        <legend>Create new syllabus</legend>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Syllabus name</label>
+          <div class="col-sm-4">
+            <input ng-model="object.data.Name" class="form-control" type="text" />
+          </div>
+          <label class="col-sm-2 control-label">Topic</label>
+          <div class="col-sm-4">
+            <select class="form-control"
+              ng-options="t.name for t in topics"
+              ng-init="object.data.ngTopic = topics[0]"
+              ng-model="object.data.ngTopic"></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Valid from</label>
+          <div class="col-sm-4">
+            <input ng-model="object.data.From" class="form-control" type="text" />
+          </div>
+          <label class="col-sm-2 control-label">Valid to</label>
+          <div class="col-sm-4">
+            <input ng-model="object.data.To" class="form-control" type="text" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Owner</label>
+          <div class="col-sm-4">
+            <input ng-model="object.data.Owner" class="form-control" type="text" />
+          </div>
+          <label class="col-sm-2 control-label">Version</label>
+          <div class="col-sm-4">
+            <input ng-model="object.data.Version" class="form-control" type="text" disabled/>
+          </div>
+        </div>
+        <label class="control-label">Description</label>
+        <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
+      </fieldset>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="ok()">Create</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+  </div>
+</script>
+<!--
+<script type="text/ng-template" id="modalNewSyllabus.html">
+  <div class="modal-header">
+    <h3 class="modal-title">Create new syllabus</h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal">
+      <fieldset>
         <legend>Create syllabus</legend>
         <label class="control-label">Syllabus name</label>
         <input ng-model="object.data.name" placeholder="Syllabusname" class="form-control" type="text" />
@@ -45,6 +97,7 @@
       <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
   </div>
 </script>
+-->
 
 <!-- Template Modal "Edit Syllabus" -->
 <script type="text/ng-template" id="modalEditSyllabus.html">

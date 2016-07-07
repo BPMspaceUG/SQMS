@@ -93,7 +93,11 @@ class RequestHandler
         break;
         
       case 'create_syllabus':
-        return $this->addSyllabus($params["name"], $params["owner"], $params["topic"]["id"], $params["description"]);
+        return $this->addSyllabus(
+          $params["Name"],
+          $params["Owner"],
+          $params["TopicID"],
+          $params["description"]);
         break;
         
       case "update_syllabus":
