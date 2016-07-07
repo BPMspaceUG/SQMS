@@ -328,6 +328,7 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     $query = "SELECT 
     a.sqms_question_id AS 'ID',
     b.name AS 'Topic',
+    b.sqms_topic_id AS 'TopicID',
     a.question AS 'Question',
     a.author AS 'Author',
     d.language AS 'Language',

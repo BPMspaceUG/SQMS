@@ -250,8 +250,8 @@
         </div>
       </div>
       <br/>
-
-      <table class="table">
+      <!-- Table -->
+      <table class="table datalist">
         <thead>
           <tr>
             <th>&nbsp;</th>
@@ -272,7 +272,7 @@
               danger: q.state == 'deprecated', 'warning': q.state == 'ready', 'warning': q.state == 'released'}">
             <td style="width: 150px;">
               <!-- Tickmark -->
-              <span class="btn pull-left">
+              <span class="btn pull-left" title="Select Question">
                 <i ng-class="{'fa fa-fw fa-check-square-o': q.ID === actQuestion.ID, 'fa fa-fw fa-square-o': q.ID != actQuestion.ID}"></i>
               </span>
               <!-- Children -->
@@ -280,25 +280,39 @@
                 <i class="fa fa-fw fa-plus-square" ng-show="!q.showKids"></i>
                 <i class="fa fa-fw fa-minus-square" ng-hide="!q.showKids"></i>
               </span>
-              <span class="btn pull-left" ng-show="q.HasNoChilds">
+              <!-- Dummy Icon for design -->
+              <a class="btn pull-left" ng-show="q.HasNoChilds">
                 <i class="fa fa-fw fa-square icon-invisible"></i>
-              </span>
-              <!-- Edit -->
-              <a class="btn pull-left" ng-click="editquestion(q)">
-                <i ng-class="{'fa fa-fw fa-pencil': q.state == 'new', 'fa fa-share': q.state != 'new'}"></i>
               </a>
+              <!-- Edit -->
+              <!-- Edit Icon -->
+              <span ng-show="q.state == 'new'">
+                <a class="btn pull-left" ng-click="editquestion(q)" title="Edit Question...">
+                  <i class="fa fa-fw fa-pencil"></i>
+                </a>
+              </span>
+              <!-- Successor Icon -->
+              <span ng-show="q.state != 'new'">
+                <a class="btn pull-left" ng-click="successorquestion(q)" title="Create Successor...">
+                  <i class="fa fa-fw fa-share"></i>
+                </a>
+              </span>
             </td>
             <!-- ID -->
             <td>{{q['ID']}}</td>
             <!-- Topic -->
-            <td><span style="white-space: nowrap;">{{q['Topic']}}</span></td>
+            <td style="width: 100px;">
+              <div class="popover-wrapper">
+                <a style="white-space: nowrap;" onbeforesave="saveEl(s, $data, 'u_question_tc')" onshow="getTopics()" edit-disabled="q.state != 'new'"
+                e-ng-options="t.id as t.name for t in topics" editable-select="q['TopicID']">{{q['Topic'] || "empty"}}</a>
+              </div>
+            </td>
             <!-- Question (inlineediting) -->
             <td style="width: 250px;">
-              <span editable-text="q['Question']" onbeforesave="saveEl(q, $data, 'u_question')" e-form="textBtnForm"></span>
-              <button class="editble" ng-click="textBtnForm.$show()" ng-hide="textBtnForm.$visible"
-                ng-disabled="q.state != 'new'">{{q['Question'] || "empty"}}</button>
+              <div class="popover-wrapper">
+                <a editable-text="q['Question']" onbeforesave="saveEl(s, $data, 'u_question')" edit-disabled="q.state != 'new'">{{q['Question'] || 'empty' }}</a>
+              </div>
             </td>
-            <!-- <td><a href="#" onbeforesave="saveEl(q, $data, 'u_question_q')" editable-text="q['Question']">{{q['Question'] || "empty"}}</a></td>-->
             <td><small>{{q['Author']}}</small></td>
             <td><small>{{q['Language']}}</small></td>
             <td>{{q['Vers']}}</td>
@@ -315,15 +329,14 @@
               <table class="table table-condensed" style="font-size: .85em; margin:0;">
                 <thead>
                   <tr style="font-size: .9em;">
-                    <th style="width:95px;">&nbsp;</th>
+                    <!--<th style="width:95px;">&nbsp;</th>-->
                     <th style="width:95px;">ID</th>
                     <th style="width:75%;">Answer</th>
                     <th>Correct</th>
                   </tr>
                 </thead>
-                <tr ng-repeat="an in q.answers" ng-class="[{danger: !an.correct}, {success: an.correct}]">
-                  
-                  <td><a href="#" ng-click="deleteanswer(an)"><i class="fa fa-fw fa-trash-o"></i>Delete</a></td>
+                <tr ng-repeat="an in q.answers" ng-class="[{danger: !an.correct}, {success: an.correct}]">                  
+                  <!--<td><a href="#" ng-click="deleteanswer(an)"><i class="fa fa-fw fa-trash-o"></i>Delete</a></td>-->
                   <td>{{an.ID}}</td>
                   <td><a href="#" editable-text="an.answer" onbeforesave="saveEl(an, $data, 'u_answer_t')">{{an.answer || "empty"}}</a></td>
                   <td><a href="#" editable-checkbox="an.correct" e-title="Correct?"

@@ -90,16 +90,6 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
   $scope.setSelectedQuestion = function (el) {$scope.actQuestion = el;};
   $scope.setSelectedTopic = function (el) {$scope.actTopic = el;};
 
-  // TODO: Remove
-  /*
-  $scope.items = [{
-    id: 1,
-    name: 'aLabel'
-  }, {
-    id: 2,
-    name: 'bLabel'
-  }];
-   */
   /**************************************************************
     Modal Window + Templates
   **************************************************************/
@@ -137,7 +127,6 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
       //$log.info('Modal dismissed at: ' + new Date());
     });
   };
-
   $scope.editsyllabus = function(el) {
     $scope.setSelectedSyllabus(el);
     // Only open edit form in state "new"
@@ -161,7 +150,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
       // -> create successor in database (send copy_syllabus command)
       // also check if current element has no predecessor
     }
-  }  
+  }
   $scope.editsyllabuselement = function(el) {
     $scope.actSyllabusElement = el;
     $scope.open('modalEditSyllabusElement.html', 'update_syllabuselement');
@@ -171,13 +160,11 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
     if (el.state == 'new')
       $scope.open('modalEditQuestion.html', 'update_question');
   }
-  
   $scope.deleteanswer = function(answer) {
     // the php script will check if it is acually    
     $scope.writeData('delete_answer', answer);
     console.log(answer.ID);
   }
-
   // Sorting Tables, TODO: remove redundant code
   $scope.predicate_s = 'ID';
   $scope.predicate_q = 'ID';
@@ -315,6 +302,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
       case 'u_topic_n': c = 'update_topic'; actEl.name = data; actEl.ID = actEl.id; break;
       case 'u_syllab_n': c = 'update_syllabus_name'; actEl.name = data; break;
       case 'u_syllab_tc': c = 'update_syllabus_topic'; actEl.TopicID = data; break;
+      case 'u_question_tc': c = 'update_question_topic'; actEl.TopicID = data; break;
       case 'u_question_q': c = 'update_question'; actEl.Question = data; break;
     }
     // TODO:
