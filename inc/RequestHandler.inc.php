@@ -119,6 +119,11 @@ class RequestHandler
         if ($res != 1) return ''; else return $res;
         break;
         
+      case "update_question_topic":
+        $res = $this->setQuestionTopic($params["ID"], $params["TopicID"]);
+        if ($res != 1) return ''; else return $res;
+        break;
+        
       case 'create_syllabuselement':
         return $this->addSyllabusElement(
           $params["element_order"],
@@ -186,11 +191,9 @@ class RequestHandler
         break;
         
       case "update_question":
-        $res = $this->updateQuestion(
-          $params["ID"],
-          $params["Question"]
-        );
-        if ($res != 1) return ''; else return $res;
+        $res = $this->updateQuestion($params["ID"], $params["name"]);
+        $res += $this->setQuestionTopic($params["ID"], $params["TopicID"]);
+        if ($res != 2) return ''; else return $res;
         break;        
         
       case 'delete_answer':
@@ -380,6 +383,13 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
     $success = $this->db->affected_rows;
     var_dump($this->db);
     return ($success > 0 ? 1 : null);
+  }
+  private function setQuestionTopic($questionid, $topicID) {
+    $query = "UPDATE sqms_question SET sqms_topic_id = ? WHERE sqms_question_id = ?;";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("ii", $topicID, $questionid); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
   }
   private function copySyllabus($oldSyllabus) {
     $this->addSyllabus($oldSyllabus);

@@ -30,9 +30,16 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   $scope.topics = items;
   
   // Set selected item from syllabus 
-  $scope.getActTopicSyllab = function() {    
+  $scope.getActTopicSyllab = function() {
     for (var i = 0; i<$scope.topics.length; i++) {
       if ($scope.topics[i].id == $scope.$$prevSibling.actSyllabus.TopicID) {
+        $scope.object.data.ngTopic = $scope.topics[i];
+      }
+    }
+  }
+  $scope.getActTopicQuestion = function() {    
+    for (var i = 0; i<$scope.topics.length; i++) {
+      if ($scope.topics[i].id == $scope.$$prevSibling.actQuestion.TopicID) {
         $scope.object.data.ngTopic = $scope.topics[i];
       }
     }

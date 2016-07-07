@@ -303,7 +303,7 @@
             <!-- Topic -->
             <td style="width: 100px;">
               <div class="popover-wrapper">
-                <a style="white-space: nowrap;" onbeforesave="saveEl(s, $data, 'u_question_tc')" onshow="getTopics()" edit-disabled="q.state != 'new'"
+                <a style="white-space: nowrap;" onbeforesave="saveEl(q, $data, 'u_question_tc')" onshow="getTopics()" edit-disabled="q.state != 'new'"
                 e-ng-options="t.id as t.name for t in topics" editable-select="q['TopicID']">{{q['Topic'] || "empty"}}</a>
               </div>
             </td>
