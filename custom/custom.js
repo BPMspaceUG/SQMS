@@ -319,6 +319,13 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
       data: JSON.stringify(data)
     }).
     success(function(data){
+      
+      // Statemachine return
+      if (command.indexOf("update_syllabus_state") >= 0) {
+        console.log(data);     
+        alert((data.result ? "YES" : "NO") + "\n\n" + data.message);
+      }      
+      
       console.log("Executed command successfully! Return: " + data);
       // TODO: ... Heavy data ... Make this callback later or at least faster
       // TODO: Only update at certain commands (create, update, ...)
@@ -327,7 +334,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
       if (command.indexOf("que") >= 0)
         $scope.getAllQuestions(); // Refresh data
     }).
-    error(function(error){
+    error(function(error){      
       console.log("Error! " + error);
     });
   }

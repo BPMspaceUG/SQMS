@@ -470,25 +470,36 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
 		$actstateID = $actstateObj[0]["id"];
 		// check transition
 		$trans = $this->SESy->checkTransition($actstateID, $stateid);
+    
 		// check if transition is possible
 		if ($trans) {
-			// update state in DB
-			$query = "UPDATE sqms_syllabus SET sqms_state_id = $stateid WHERE sqms_syllabus_id = $syllabid;";
-			$res = $this->db->query($query);
-			$scripts = $this->SESy->getTransitionScripts($actstateID, $stateid);
-      
-      /**** Execute all scripts from database at transistion ****/
+      $scripts = $this->SESy->getTransitionScripts($actstateID, $stateid);
+      // Execute all scripts from database at transistion
       foreach ($scripts as $script) {
         // Set path to scripts
         $scriptpath = "functions/".$script["transistionScript"];
         // If script is not emptystring and exists
-        if (trim($script["transistionScript"]) != "" && file_exists($scriptpath))
+        if (trim($script["transistionScript"]) != "" && file_exists($scriptpath)) {
+          // Load Script
           include_once($scriptpath);
+          
+          // !!!!!!!!!!!!!!!!!!!!!!!!
+          // TODO: More than 1 script
+          // !!!!!!!!!!!!!!!!!!!!!!!!
+          
+          // Analyse result
+          if ($script_result) {
+            // update state in DB, when plugin says yes
+            if ($script_result["result"] == true) {              
+              $query = "UPDATE sqms_syllabus SET sqms_state_id = $stateid WHERE sqms_syllabus_id = $syllabid;";
+              $res = $this->db->query($query);              
+            }
+            return json_encode($script_result);
+          }
+        }
       }
-			return true; //$scripts;
-      
-		} else
-			return false;
+    }
+    return false; // false zurückgeben
 	}
 	private function setQuestionState($questionid, $stateid) {
 		// params
