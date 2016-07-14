@@ -188,8 +188,8 @@
                       </span>
                       <!-- Successor Icon -->
                       <span ng-show="s.state != 'new'">
-                        <a class="btn pull-left" ng-click="successorsyllabuselement(se)" title="Create Successor...">
-                          <i class="fa fa-fw fa-share"></i>
+                        <a class="btn pull-left">
+                          <i class="fa fa-fw fa-square icon-invisible"></i>
                         </a>
                       </span>                   
                     </td>

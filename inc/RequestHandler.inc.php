@@ -202,6 +202,10 @@ class RequestHandler
         if ($res != 1) return ''; else return $res;
         break;
       
+      case 'users':
+        $return = $this->RM->getUsers();
+        return json_encode(array("userlist" => $return));
+        break;       
         
       //----------------------- Topics
       

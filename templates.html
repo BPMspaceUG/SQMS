@@ -53,11 +53,14 @@
         <div class="form-group">
           <label class="col-sm-2 control-label">Owner</label>
           <div class="col-sm-4">
-            <input ng-model="object.data.Owner" class="form-control" type="text" />
-          </div>
+            <select class="form-control"
+              ng-options="u.lastname for u in users"
+              ng-init="object.data.Owner = users[0]"
+              ng-model="object.data.Owner"></select>
+          </div>          
           <label class="col-sm-2 control-label">Version</label>
           <div class="col-sm-4">
-            <input ng-model="object.data.Version" class="form-control" type="text" disabled/>
+            <input ng-model="object.data.Version" class="form-control" type="text" value="1" disabled/>
           </div>
         </div>
         <label class="control-label">Description</label>
@@ -98,7 +101,6 @@
   </div>
 </script>
 -->
-
 <!-- Template Modal "Edit Syllabus" -->
 <script type="text/ng-template" id="modalEditSyllabus.html">
   <div class="modal-header">
@@ -134,7 +136,10 @@
         <div class="form-group">
           <label class="col-sm-2 control-label">Owner</label>
           <div class="col-sm-4">
-            <input ng-model="object.data.Owner" class="form-control" type="text" />
+            <select class="form-control"
+              ng-options="u.lastname for u in users"
+              ng-init="object.data.Owner = users[0]"
+              ng-model="object.data.Owner"></select>
           </div>
           <label class="col-sm-2 control-label">Version</label>
           <div class="col-sm-4">

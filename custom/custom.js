@@ -27,7 +27,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     }
   };
   // Save topics in scope
-  $scope.topics = items;
+  $scope.topics = items.topics;
+  $scope.users = items.users;
   
   // Set selected item from syllabus 
   $scope.getActTopicSyllab = function() {
@@ -44,7 +45,6 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       }
     }
   }
-  
   console.log("Modal opened.");
   
   // TODO: Improve code, so that the indexes remain the same name
@@ -81,6 +81,11 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       $scope.object.data.TopicID = $scope.object.data.ngTopic.id;
       $scope.object.data.Topic = $scope.object.data.ngTopic.name;
     }
+    // Check if Owner is an Object, should be always the case
+    if ($scope.object.data.Owner instanceof Object) {
+      // TODO: Convert Owner to ID
+      $scope.object.data.Owner = $scope.object.data.Owner.lastname;
+    }
     // Return result
     $uibModalInstance.close($scope.object);
   };
@@ -113,16 +118,10 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
           return $scope.actSyllabus.ID;
         },
         items: function () {
-          //$scope.getTopics();
-          return $scope.topics;
-          /*
-          if (command == "create_syllabus" || command == "create_question" || command == "update_syllabus" || command == "update_syllabus") {
-            $scope.getTopics(); // Refresh
-            return $scope.topics;
-          } else {
-            return $scope.items;
-          }
-          */
+          return {
+            topics: $scope.topics,
+            users: $scope.users
+          };
         }
       }
     });
@@ -144,15 +143,6 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
     $scope.setSelectedSyllabus(el);
     if (el.state != 'new') {
       var res = confirm("Are you sure that you want to create a successor of the Syllabus '"+el.Name+"'?");
-      // TODO: if OK was clicked
-      // -> create successor in database (send copy_syllabus command)
-      // also check if current element has no predecessor
-    }
-  }
-  $scope.successorsyllabuselement = function(el) {
-    $scope.setSelectedSyllabus(el);
-    if (el.state != 'new') {
-      var res = confirm("Are you sure that you want to create a successor of the SyllabusElement '"+el.name+"'?");
       // TODO: if OK was clicked
       // -> create successor in database (send copy_syllabus command)
       // also check if current element has no predecessor
@@ -230,15 +220,18 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
   
   //------------------------------- Topic
   
-  $http.get('getjson.php?c=topics').success(function(data) {
-    $scope.topics = data.topiclist;
-  });
-  
   $scope.getTopics = function() {
-    return $scope.topics.length ? null : $http.get('getjson.php?c=topics').success(function(data) {
-      $scope.topics = data;
+    $http.get('getjson.php?c=topics').success(function(data) {
+      $scope.topics = data.topiclist; // store in scope
     });
-  };
+    return $scope.topics;
+  };  
+  $scope.getUsers = function() {
+    $http.get('getjson.php?c=users').success(function(data) {
+      $scope.users = data.userlist; // store in scope
+    });
+    return $scope.users;
+  }
   /* TODO
   $scope.$watch('user.group', function(newVal, oldVal) {
     if (newVal !== oldVal) {
@@ -356,4 +349,6 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
   //---- Initial functions
   $scope.getAllSyllabus();
   $scope.getAllQuestions();
+  $scope.getTopics();
+  $scope.getUsers();
 }]);

@@ -5,6 +5,7 @@
   class RoleManager
   {
     private $db;
+    private $dbLIAM;
 
     public function __construct() {
       // Get global variables here
@@ -12,6 +13,7 @@
       global $DB_user;
       global $DB_pass;
       global $DB_name;
+      
       // Connect to database
       // TODO: give DB object in the constructor
       $db = new mysqli($DB_host, $DB_user, $DB_pass, $DB_name);
@@ -21,6 +23,15 @@
       }
       $db->query("SET NAMES utf8");
       $this->db = $db;
+      
+      // Connect to LIAM
+      $db2 = new mysqli(HOST, USER, PASSWORD, DATABASE);
+      if($db2->connect_errno){
+        printf("Connect failed: %s\n", mysqli_connect_error());
+        exit();
+      }
+      $db2->query("SET NAMES utf8");
+      $this->dbLIAM = $db2;
     }
     public function getRoleIDsByLIAMid($liamID) {
       $res = null;
@@ -55,7 +66,7 @@
     public function isActUserAllowed($area) {
       $result = false;
       // get roles from act user
-      $roles = $this->getRolesByLIAMid($_SESSION['user_id']); 
+      $roles = $this->getRolesByLIAMid($_SESSION['user_id']);
       // has roles
       if (count($roles) > 0) {
         for ($i=0;$i<count($roles);$i++) {
@@ -64,6 +75,12 @@
         }
       }
       return $result;
+    }
+    public function getUsers() {
+      //settype($liamID, 'integer');
+      $query = "SELECT * FROM members;";
+      $res = $this->dbLIAM->query($query);
+      return getResultArray($res);
     }
     // Here are the rights for each role --> TODO: Maybe add this in the database
     public function isRoleAllowed($roleID, $area) {
