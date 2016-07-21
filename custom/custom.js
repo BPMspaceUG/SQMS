@@ -23,7 +23,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       owner: '',
       description: '<p>test</p>',
       correct: false,
-      ngTopic: {}
+      ngTopic: {},
+      ngOwner: {}
     }
   };
   // Save topics in scope
@@ -81,10 +82,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       $scope.object.data.TopicID = $scope.object.data.ngTopic.id;
       $scope.object.data.Topic = $scope.object.data.ngTopic.name;
     }
-    // Check if Owner is an Object, should be always the case
-    if ($scope.object.data.Owner instanceof Object) {
-      // TODO: Convert Owner to ID
-      $scope.object.data.Owner = $scope.object.data.Owner.lastname;
+    if ($scope.object.data.ngOwner) {
+      $scope.object.data.Owner = $scope.object.data.ngOwner.lastname;
     }
     // Return result
     $uibModalInstance.close($scope.object);
@@ -126,7 +125,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
       }
     });
     modalInstance.result.then(function (result) {
-      console.log(result);      
+      console.log(result);
       $scope.writeData(result.command, result.data); // Send result to server
     }, function () {
       // Cancel Button clicked
