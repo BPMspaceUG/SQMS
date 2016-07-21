@@ -24,7 +24,6 @@
   }
   
   /***********************************************************/
-  
   // Set message
   if ($result)
     $message = "Transition from [$actstate] to [$newstate] is allowed (ID is even).";

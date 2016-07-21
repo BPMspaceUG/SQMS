@@ -97,7 +97,10 @@ class RequestHandler
           $params["Name"],
           $params["Owner"],
           $params["TopicID"],
-          $params["description"]);
+          $params["description"],
+          $params["From"],
+          $params["To"]
+          );
         break;
         
       case "update_syllabus":
@@ -299,7 +302,7 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     $return['syllabus'] = $r;
     return $return;
   }
-  private function addSyllabus($name, $owner, $topic, $description) {
+  private function addSyllabus($name, $owner, $topic, $description, $from, $to) {
     // TODO: Prepare statement
     $query = "INSERT INTO sqms_syllabus ".
       "(name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
@@ -310,8 +313,8 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
       $topic.",". // Topic
       "'".$owner."',".
       "1,". // LangID
-      "CURDATE(),".
-      "DATE_ADD(CURDATE(), INTERVAL 1 YEAR),".
+      "'".$from."',".
+      "'".$to."',".
       "'".$description."');";
     $result = $this->db->query($query);
     if (!$result) $this->db->error;

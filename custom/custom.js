@@ -10,6 +10,8 @@ module.run(function(editableOptions) {
 // Controller of Modal Window
 module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items, cmd, parentid) {
 
+  var ds = new Date();
+  
   // Initial settings  
   $scope.object = {
     command: cmd,
@@ -21,8 +23,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       severity: 25,
       answer: '',
       owner: '',
-      From: '2011-11-13',
-      To: '2012-11-13',
+      From: ds.getFullYear() + '-' + (ds.getMonth()+1) + '-' + ds.getUTCDate(),
+      To: (ds.getFullYear()+1) + '-' + (ds.getMonth()+1) + '-' + ds.getUTCDate(),
       description: '<p>test</p>',
       correct: false,
       ngTopic: {},
