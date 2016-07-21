@@ -21,6 +21,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       severity: 25,
       answer: '',
       owner: '',
+      From: '2011-11-13',
+      To: '2012-11-13',
       description: '<p>test</p>',
       correct: false,
       ngTopic: {},
@@ -30,6 +32,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   // Save topics in scope
   $scope.topics = items.topics;
   $scope.users = items.users;
+  
+  console.log($scope.object);
   
   // Set selected item from syllabus 
   $scope.getActTopicSyllab = function() {

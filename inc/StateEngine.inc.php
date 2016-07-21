@@ -36,6 +36,14 @@
       $res = $this->db->query($query);
       return getResultArray($res);
     }
+    public function getStateAsObject($stateid) {
+      settype($id, 'integer');
+      $query = "SELECT ".$this->colname_stateID." AS 'id', ".
+        $this->colname_stateName." AS 'name' FROM ".$this->table_states.
+        " WHERE ".$this->colname_stateID." = $stateid;";        
+      $res = $this->db->query($query);
+      return getResultArray($res);
+    }
     public function getNextStates($actstate) {
       settype($actstate, 'integer');
       $query = "SELECT a.".$this->colname_to." AS 'id', b.".

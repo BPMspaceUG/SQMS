@@ -456,23 +456,21 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
   }
-  
-  
   // TODO: implement into class
-  
-	private function setSyllabusState($syllabid, $stateid) {
-		// params
-		settype($syllabid, 'integer');
-		settype($stateid, 'integer');
-		// get actual state from syllabus
+  private function setSyllabusState($syllabid, $stateid) {
+    // params
+    settype($syllabid, 'integer');
+    settype($stateid, 'integer');
+    // get actual state from syllabus
     $actstateObj = $this->SESy->getActState($syllabid);
-    if (count($actstateObj) == 0) return false;    
-		$actstateID = $actstateObj[0]["id"];
-		// check transition
-		$trans = $this->SESy->checkTransition($actstateID, $stateid);
+    if (count($actstateObj) == 0) return false;
+    $actstateID = $actstateObj[0]["id"];
+    // check transition
+    $trans = $this->SESy->checkTransition($actstateID, $stateid);
     
-		// check if transition is possible
-		if ($trans) {
+    // check if transition is possible
+    if ($trans) {
+      $newstateObj = $this->SEQu->getStateAsObject($stateid);
       $scripts = $this->SESy->getTransitionScripts($actstateID, $stateid);
       // Execute all scripts from database at transistion
       foreach ($scripts as $script) {
@@ -480,13 +478,10 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
         $scriptpath = "functions/".$script["transistionScript"];
         // If script is not emptystring and exists
         if (trim($script["transistionScript"]) != "" && file_exists($scriptpath)) {
-          // Load Script
-          include_once($scriptpath);
           
-          // !!!!!!!!!!!!!!!!!!!!!!!!
           // TODO: More than 1 script
-          // !!!!!!!!!!!!!!!!!!!!!!!!
-          
+          include_once($scriptpath); // Load Script          
+        
           // Analyse result
           if ($script_result) {
             // update state in DB, when plugin says yes
@@ -500,23 +495,23 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
       }
     }
     return false; // false zurückgeben
-	}
-	private function setQuestionState($questionid, $stateid) {
-		// params
-		settype($questionid, 'integer');
-		settype($stateid, 'integer');
-		// get actual state from question
+  }
+  private function setQuestionState($questionid, $stateid) {
+    // params
+    settype($questionid, 'integer');
+    settype($stateid, 'integer');
+    // get actual state from question
     $actstateObj = $this->SEQu->getActState($questionid);
     if (count($actstateObj) == 0) return false;    
-		$actstateID = $actstateObj[0]["id"];
-		// check transition
-		$trans = $this->SEQu->checkTransition($actstateID, $stateid);
-		// check if transition is possible
-		if ($trans) {
-			// update state in DB
-			$query = "UPDATE sqms_question SET sqms_question_state_id = $stateid WHERE sqms_question_id = $questionid;";
-			$res = $this->db->query($query);
-			$scripts = $this->SEQu->getTransitionScripts($actstateID, $stateid);
+    $actstateID = $actstateObj[0]["id"];
+    // check transition
+    $trans = $this->SEQu->checkTransition($actstateID, $stateid);
+    // check if transition is possible
+    if ($trans) {
+      // update state in DB
+      $query = "UPDATE sqms_question SET sqms_question_state_id = $stateid WHERE sqms_question_id = $questionid;";
+      $res = $this->db->query($query);
+      $scripts = $this->SEQu->getTransitionScripts($actstateID, $stateid);
       
       /**** Execute all scripts from database at transistion ****/
       foreach ($scripts as $script) {
