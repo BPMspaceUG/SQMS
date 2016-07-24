@@ -25,7 +25,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       owner: '',
       From: ds.getFullYear() + '-' + (ds.getMonth()+1) + '-' + ds.getUTCDate(),
       To: (ds.getFullYear()+1) + '-' + (ds.getMonth()+1) + '-' + ds.getUTCDate(),
-      description: '<p>test</p>',
+      description: '<p>Please enter a description</p>',
       correct: false,
       ngTopic: {},
       ngOwner: {}
@@ -79,8 +79,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   else if (cmd == 'create_answer') {
     $scope.object.data.parentID = $scope.$$prevSibling.actQuestion.ID;
   }
-  //console.log($scope.$$prevSibling.actQuestion);
-    
+   
   // --- [OK] clicked
   $scope.ok = function () {
     // Set the new Topic if it has changed
@@ -93,10 +92,12 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     }
     // Return result
     $uibModalInstance.close($scope.object);
+    console.log("Modal ok clicked");
   };
   // --- [Cancel] clicked
   $scope.cancel = function () {
     $uibModalInstance.dismiss('cancel');
+    console.log("Modal cancel clicked");
   };
 });
 

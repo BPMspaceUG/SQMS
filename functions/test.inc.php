@@ -23,6 +23,8 @@
     $result = true; // Transistion is allowed
   }
   
+  // TODO: Check parameters like if entered text is valid
+  
   /***********************************************************/
   // Set message
   if ($result)
