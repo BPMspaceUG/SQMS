@@ -142,6 +142,13 @@ class RequestHandler
         return "1"; // TODO
         break;
         
+      // TODO
+      case "create_successor":
+        $this->createSuccessor($params);
+        // Predecessor = ID from successor
+        // TODO: Create all syllabus elements too
+        break;
+        
       case 'update_syllabuselement':
         $res = $this->updateSyllabusElement(
           $params["ID"],
@@ -198,7 +205,8 @@ class RequestHandler
         $res += $this->setQuestionTopic($params["ID"], $params["TopicID"]);
         if ($res != 2) return ''; else return $res;
         break;        
-        
+      
+      // TODO: Remove...
       case 'delete_answer':
         //$res = $this->delAnswer($params["ID"]);
         $res = $this->delAnswer(1);
@@ -212,27 +220,20 @@ class RequestHandler
         
       //----------------------- Topics
       
-      case 'topics':        
-        // Get relevant topics connected to role
+      case 'topics': // Get relevant topics connected to role
         $return = $this->getTopicList();
         return json_encode($return);
         break;
         
-      case 'create_topic':
+      case 'create_topic': // Create a new topic
         return $this->addTopic($params["name"]);
         break;
-        
-      case 'delete_topic': // doesnt work because of settings in database
-        return $this->delTopic($params["sqms_topic_id"]);
-        break;
-      
-      case 'update_topic':
-        $res = $this->updateTopic(
-          $params["ID"],
-          $params["name"]
-        );
+            
+      case 'update_topic': // Update a topic
+        $res = $this->updateTopic($params["ID"], $params["name"]);
         if ($res != 1) return ''; else return $res;
         break;
+        
         
       // TODO: Evtl. zusammenfassen zu einem Command
         
@@ -319,6 +320,20 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     $result = $this->db->query($query);
     if (!$result) $this->db->error;
     return $result;
+  }
+  private function createSuccessor($SyllabusID) {
+    // Copy Syllabus
+    $this->copySyllabus();
+    // Create all Syllabus Elements
+    /*for ($i=0;$i<count($elements);$i++) {
+      $this->addSyllabusElement();
+    }*/
+    
+    // update Old Syllabus (set IDs and set state to deprecated)
+    // UPDATE sqms_syllabus_id_predecessor
+    
+    // update New Copy (Version)
+    // UPDATE version, sqms_syllabus_id_successor
   }
   private function addSyllabusElement($element_order, $severity, $parentID, $name, $description) {
     // TODO: Prepare statement
@@ -534,13 +549,6 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
     $stmt = $this->db->prepare($query); // prepare statement
     $stmt->bind_param("s", $name); // bind params
     $result = $stmt->execute(); // execute statement
-    return (!is_null($result) ? 1 : null);
-  }
-  // TODO: Prepare statement and check if dataset shoul really be deleted from DB
-  private function delTopic($id) {
-    $query = "UPDATE sqms_topic SET name = 'XXXXXXX' WHERE sqms_topic_id = ".$id.";";
-    $result = $this->db->query($query);
-    //if (!$result) $this->db->error;
     return (!is_null($result) ? 1 : null);
   }
   private function addQuestion($question, $author, $topicID) {
