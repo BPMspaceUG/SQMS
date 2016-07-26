@@ -301,11 +301,13 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     $return['syllabus'] = $r;
     return $return;
   }
-  private function addSyllabus($name, $owner, $topic, $description, $from, $to, $version = 1) {
+  private function addSyllabus($name, $owner, $topic, $description, $from, $to, $version = 1, $successor = null) {
     // TODO: Prepare statement
     $query = "INSERT INTO sqms_syllabus ".
       "(name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
-      "validity_period_from, validity_period_to, description) VALUES (".
+      "validity_period_from, validity_period_to, description".
+      ($successor != null ? ", sqms_syllabus_id_successor" : "").
+      ") VALUES (".
       "'".$name."',".
       "1,". // StateID (always State = 1 (new) at creating)
       $version.",". // Version
@@ -314,32 +316,57 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
       "1,". // LangID
       "'".$from."',".
       "'".$to."',".
-      "'".$description."');";
+      "'".$description."'".
+      ($successor != null ? ", $successor" : "").
+      ");";
+    
+    /* TODO:
+    
+    $query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
+      "validity_period_from, validity_period_to, description, sqms_syllabus_id_successor) ".
+      "VALUES (?,?,?,?,?,?,?,?,?,?);";
+      
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("siiisisssi", $1, .....); // bind params
+    $result = $stmt->execute(); // execute statement
+    */
+    
     $result = $this->db->query($query);
     if (!$result) $this->db->error;
-    return $result;
+    // Return last inserted ID
+    $res = null;
+    if ($result)
+      $res = $this->db->insert_id;
+    return $res;
+  }
+  private function updateSyllabusPredecessor($SyllabusID, $PredecessorID) {
+    $query = "UPDATE sqms_syllabus SET sqms_syllabus_id_predecessor = ? WHERE sqms_syllabus_id = ?;";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("ii", $PredecessorID, $SyllabusID); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
   }
   private function createSuccessor($OldSyllabus) {
-    // Copy Syllabus
-    $this->addSyllabus(
+    
+    // Copy Syllabus with Successor and new Version
+    $newID = $this->addSyllabus(
       $OldSyllabus["Name"],
       $OldSyllabus["Owner"],
       $OldSyllabus["TopicID"],
       $OldSyllabus["description"],
       $OldSyllabus["From"],
       $OldSyllabus["To"],
-      (int)$OldSyllabus["Version"] + 1 // increase version
+      (int)$OldSyllabus["Version"] + 1, // increase version
+      $OldSyllabus["ID"] // Successor
     );
-    // Create all Syllabus Elements
+    // TODO: Copy all Syllabus Elements
     /*for ($i=0;$i<count($elements);$i++) {
       $this->addSyllabusElement();
     }*/
+    // update Old Syllabus (set PredecessorID and TODO: set state to deprecated)
+    $this->updateSyllabusPredecessor($OldSyllabus["ID"], $newID);
     
-    // update Old Syllabus (set IDs and set state to deprecated)
-    // UPDATE sqms_syllabus_id_predecessor
-    
-    // update New Copy (Version)
-    // UPDATE version, sqms_syllabus_id_successor
+    return $newID;
   }
   private function addSyllabusElement($element_order, $severity, $parentID, $name, $description) {
     // TODO: Prepare statement
