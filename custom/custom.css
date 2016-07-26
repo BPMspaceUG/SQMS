@@ -80,6 +80,8 @@ a:not([href]) {
   height: 60px;
   padding: 10px;
 }
+
+table table tr {background: #eee;}
 /***********************************************/
 .huge {
   font-size: 2em;

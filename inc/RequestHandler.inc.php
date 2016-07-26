@@ -144,9 +144,7 @@ class RequestHandler
         
       // TODO
       case "create_successor":
-        $this->createSuccessor($params);
-        // Predecessor = ID from successor
-        // TODO: Create all syllabus elements too
+        return $this->createSuccessor($params);
         break;
         
       case 'update_syllabuselement':
@@ -303,14 +301,14 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     $return['syllabus'] = $r;
     return $return;
   }
-  private function addSyllabus($name, $owner, $topic, $description, $from, $to) {
+  private function addSyllabus($name, $owner, $topic, $description, $from, $to, $version = 1) {
     // TODO: Prepare statement
     $query = "INSERT INTO sqms_syllabus ".
       "(name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
       "validity_period_from, validity_period_to, description) VALUES (".
       "'".$name."',".
-      "1,". // StateID (alwas 1 at creating)
-      "1,". // Version
+      "1,". // StateID (always State = 1 (new) at creating)
+      $version.",". // Version
       $topic.",". // Topic
       "'".$owner."',".
       "1,". // LangID
@@ -321,9 +319,17 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     if (!$result) $this->db->error;
     return $result;
   }
-  private function createSuccessor($SyllabusID) {
+  private function createSuccessor($OldSyllabus) {
     // Copy Syllabus
-    $this->copySyllabus();
+    $this->addSyllabus(
+      $OldSyllabus["Name"],
+      $OldSyllabus["Owner"],
+      $OldSyllabus["TopicID"],
+      $OldSyllabus["description"],
+      $OldSyllabus["From"],
+      $OldSyllabus["To"],
+      (int)$OldSyllabus["Version"] + 1 // increase version
+    );
     // Create all Syllabus Elements
     /*for ($i=0;$i<count($elements);$i++) {
       $this->addSyllabusElement();

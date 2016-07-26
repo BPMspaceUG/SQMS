@@ -176,8 +176,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="se in s.syllabuselements" ng-class="{success: s.state == 'new',
-                    danger: s.state == 'deprecated', 'warning': s.state == 'ready', 'warning': s.state == 'released'}">
+                  <tr ng-repeat="se in s.syllabuselements">
                     <!-- Edit SyllabusElement -->
                     <td>
                       <!-- Edit Icon -->

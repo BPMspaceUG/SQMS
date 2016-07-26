@@ -150,6 +150,7 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
     if (el.state != 'new') {
       var res = confirm("Are you sure that you want to create a successor of the Syllabus '"+el.Name+"'?");
       // TODO: if OK was clicked
+      $scope.writeData('create_successor', el);
       // -> create successor in database (send copy_syllabus command)
       // also check if current element has no predecessor
     }
