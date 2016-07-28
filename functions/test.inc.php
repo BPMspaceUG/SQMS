@@ -24,6 +24,7 @@
     $result = true; // Transistion is allowed
   }
   */
+  $result = true;
   
   // TODO: Check parameters like if entered text is valid
   

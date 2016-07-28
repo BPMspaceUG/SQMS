@@ -138,13 +138,14 @@ class RequestHandler
           $params["description"]
         );
         break;
-        
+      
+      /*
       case "copy_syllabus":
         $this->copySyllabus($params);
         return "1"; // TODO
         break;
+      */
         
-      // TODO
       case "create_successor":
         return $this->createSuccessor($params);
         break;
@@ -348,8 +349,7 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
   }
-  private function createSuccessor($OldSyllabus) {
-    
+  private function createSuccessor($OldSyllabus) {    
     // Copy Syllabus with Successor and new Version
     $newID = $this->addSyllabus(
       $OldSyllabus["Name"],
@@ -362,9 +362,18 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
       $OldSyllabus["ID"] // Successor
     );
     // TODO: Copy all Syllabus Elements
-    /*for ($i=0;$i<count($elements);$i++) {
-      $this->addSyllabusElement();
-    }*/
+    $SyElements = $this->getSyllabusElementsList($OldSyllabus["ID"])["syllabuselements"];
+    foreach ($SyElements as $SE) {
+      var_dump($SE);
+      // Add SyllabusElement
+      $this->addSyllabusElement(
+        $SE["element_order"],
+        $SE["severity"],
+        $newID,
+        $SE["name"],
+        $SE["description"]
+      );
+    }
     // update Old Syllabus (set PredecessorID and TODO: set state to deprecated)
     $this->updateSyllabusPredecessor($OldSyllabus["ID"], $newID);
     
@@ -612,7 +621,14 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
   }
   private function getSyllabusElementsList($id=-1) {
     settype($id, 'integer');
-    $query = "SELECT * FROM sqms_syllabus_element"; // TODO: Replace * -> column names
+    /*
+    Feature in future:
+    sqms_syllabus_element_id_predecessor
+    sqms_syllabus_element_id_successor
+    */  
+    $query = "SELECT ".
+    "sqms_syllabus_element_id, element_order, severity, sqms_syllabus_id,".
+    "name, description FROM sqms_syllabus_element";
     if ($id > 0) {
       $query .= " WHERE sqms_syllabus_id = $id";
     }

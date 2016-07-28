@@ -82,6 +82,8 @@ a:not([href]) {
 }
 
 table table tr {background: #eee;}
+table tbody:hover {}
+
 /***********************************************/
 .huge {
   font-size: 2em;
