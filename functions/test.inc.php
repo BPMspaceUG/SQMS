@@ -12,30 +12,15 @@
     the "result" field of $script_result variable.
   ************************************************************/
 
-  $result = false; // Transistion is not allowed
-  
   // Read out state info
   $actstate = $actstateObj[0]["name"];
   $newstate = $newstateObj[0]["name"];
-  
-  // If SyllabusID is even then allow transition
-  /*
-  if ($syllabid % 2 == 0) {
-    $result = true; // Transistion is allowed
-  }
-  */
-  $result = true;
-  
+    
   // TODO: Check parameters like if entered text is valid
   
-  /***********************************************************/
-  // Set message
-  if ($result)
-    $message = "Transition from [$actstate] to [$newstate] is allowed (ID is even).";
-  else
-    $message = "Transition from [$actstate] to [$newstate] is not allowed if SyllabusID odd.";
+  $result = true; // if false, then transition not possible
+  $message = "Transition from [$actstate] to [$newstate].";
   
-  $script_result = array(
-    "result" => $result,
-    "message" => $message);
+  /***********************************************************/
+  $script_result = array("result" => $result, "message" => $message);
 ?>

@@ -233,8 +233,7 @@ class RequestHandler
       case 'update_topic': // Update a topic
         $res = $this->updateTopic($params["ID"], $params["name"]);
         if ($res != 1) return ''; else return $res;
-        break;
-        
+        break;        
         
       // TODO: Evtl. zusammenfassen zu einem Command
         
@@ -267,6 +266,7 @@ class RequestHandler
   ###################################################################################################################
   
   private function getSyllabusList() {
+    
     // Only return topics which are allowed for the actual role
     if ($this->roleIDs) {
       $suffix = " WHERE ";
@@ -274,7 +274,8 @@ class RequestHandler
         $suffix .= "b.sqms_role_id = ".$id." OR ";
       }
       $suffix = substr($suffix, 0, -4); // remove last " OR "
-    }   
+    }
+    
     $query = "SELECT 
     sqms_syllabus_id AS 'ID',
     a.name AS 'Name',
@@ -305,26 +306,6 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     return $return;
   }
   private function addSyllabus($name, $owner, $topic, $description, $from, $to, $version = 1, $successor = null) {
-    // TODO: Prepare statement
-    /*
-    $query = "INSERT INTO sqms_syllabus ".
-      "(name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
-      "validity_period_from, validity_period_to, description".
-      ($successor != null ? ", sqms_syllabus_id_successor" : "").
-      ") VALUES (".
-      "'".$name."',".
-      "1,". // StateID (always State = 1 (new) at creating)
-      $version.",". // Version
-      $topic.",". // Topic
-      "'".$owner."',".
-      "1,". // LangID
-      "'".$from."',".
-      "'".$to."',".
-      "'".$description."'".
-      ($successor != null ? ", $successor" : "").
-    ");";
-    */
-    
     if ($successor != null)
       $query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
         "validity_period_from, validity_period_to, description, sqms_syllabus_id_successor) ".
@@ -332,17 +313,13 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     else
       $query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
         "validity_period_from, validity_period_to, description) VALUES (?,?,?,?,?,?,?,?,?);";
-    
     $stmt = $this->db->prepare($query);
     $one = 1;
     if ($successor != null)
       $stmt->bind_param("siiisisssi", $name, $one, $version, $topic, $owner, $one, $from, $to, $description, $successor);
     else
       $stmt->bind_param("siiisisss", $name, $one, $version, $topic, $owner, $one, $from, $to, $description);
-    $result = $stmt->execute();    
-    /*
-    $result = $this->db->query($query);
-    */
+    $result = $stmt->execute();
     if (!$result) $this->db->error;
     // Return last inserted ID
     $res = null;
@@ -352,12 +329,12 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
   }
   private function updateSyllabusPredecessor($SyllabusID, $PredecessorID) {
     $query = "UPDATE sqms_syllabus SET sqms_syllabus_id_predecessor = ? WHERE sqms_syllabus_id = ?;";
-    $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("ii", $PredecessorID, $SyllabusID); // bind params
-    $result = $stmt->execute(); // execute statement
+    $stmt = $this->db->prepare($query);
+    $stmt->bind_param("ii", $PredecessorID, $SyllabusID);
+    $result = $stmt->execute();
     return (!is_null($result) ? 1 : null);
   }
-  private function createSuccessor($OldSyllabus) {    
+  private function createSuccessor($OldSyllabus) {
     // Copy Syllabus with Successor and new Version
     $newID = $this->addSyllabus(
       $OldSyllabus["Name"],
@@ -366,7 +343,7 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
       $OldSyllabus["description"],
       $OldSyllabus["From"],
       $OldSyllabus["To"],
-      (int)$OldSyllabus["Version"] + 1, // increase version
+      (int)$OldSyllabus["Version"]+1, // increase version
       $OldSyllabus["ID"] // Successor
     );
     // Copy all Syllabus Elements
@@ -381,9 +358,9 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
         $SE["description"]
       );
     }
-    // update Old Syllabus (set PredecessorID and TODO: set state to deprecated)
+    // update Old Syllabus (set PredecessorID)
     $this->updateSyllabusPredecessor($OldSyllabus["ID"], $newID);
-    
+    // TODO: set state to deprecated    
     return $newID;
   }
   private function addSyllabusElement($element_order, $severity, $parentID, $name, $description) {
@@ -559,22 +536,20 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
       foreach ($scripts as $script) {
         // Set path to scripts
         $scriptpath = "functions/".$script["transistionScript"];
-        // If script is not emptystring and exists
-        if (trim($script["transistionScript"]) != "" && file_exists($scriptpath)) {
-          
-          // TODO: More than 1 script
-          include_once($scriptpath); // Load Script          
         
-          // Analyse result
-          if ($script_result) {
-            // update state in DB, when plugin says yes
-            if ($script_result["result"] == true) {              
-              $query = "UPDATE sqms_syllabus SET sqms_state_id = $stateid WHERE sqms_syllabus_id = $syllabid;";
-              $res = $this->db->query($query);              
-            }
-            return json_encode($script_result);
-          }
-        }
+        // Standard Result
+        $script_result = array("result" => true, "message" => "");
+        
+        // If script exists then load it
+        if (trim($scriptpath) != "functions/" && file_exists($scriptpath))
+          include_once($scriptpath);
+        // update state in DB, when plugin says yes
+        if ($script_result["result"] == true) {             
+          $query = "UPDATE sqms_syllabus SET sqms_state_id = $stateid WHERE sqms_syllabus_id = $syllabid;";
+          $res = $this->db->query($query);              
+        }        
+        // Return
+        return json_encode($script_result);
       }
     }
     return false; // false zurückgeben
