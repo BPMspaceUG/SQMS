@@ -306,6 +306,7 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
   }
   private function addSyllabus($name, $owner, $topic, $description, $from, $to, $version = 1, $successor = null) {
     // TODO: Prepare statement
+    /*
     $query = "INSERT INTO sqms_syllabus ".
       "(name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
       "validity_period_from, validity_period_to, description".
@@ -321,20 +322,27 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
       "'".$to."',".
       "'".$description."'".
       ($successor != null ? ", $successor" : "").
-      ");";
-    
-    /* TODO:
-    
-    $query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
-      "validity_period_from, validity_period_to, description, sqms_syllabus_id_successor) ".
-      "VALUES (?,?,?,?,?,?,?,?,?,?);";
-      
-    $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("siiisisssi", $1, .....); // bind params
-    $result = $stmt->execute(); // execute statement
+    ");";
     */
     
+    if ($successor != null)
+      $query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
+        "validity_period_from, validity_period_to, description, sqms_syllabus_id_successor) ".
+        "VALUES (?,?,?,?,?,?,?,?,?,?);";
+    else
+      $query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
+        "validity_period_from, validity_period_to, description) VALUES (?,?,?,?,?,?,?,?,?);";
+    
+    $stmt = $this->db->prepare($query);
+    $one = 1;
+    if ($successor != null)
+      $stmt->bind_param("siiisisssi", $name, $one, $version, $topic, $owner, $one, $from, $to, $description, $successor);
+    else
+      $stmt->bind_param("siiisisss", $name, $one, $version, $topic, $owner, $one, $from, $to, $description);
+    $result = $stmt->execute();    
+    /*
     $result = $this->db->query($query);
+    */
     if (!$result) $this->db->error;
     // Return last inserted ID
     $res = null;
@@ -361,10 +369,9 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
       (int)$OldSyllabus["Version"] + 1, // increase version
       $OldSyllabus["ID"] // Successor
     );
-    // TODO: Copy all Syllabus Elements
+    // Copy all Syllabus Elements
     $SyElements = $this->getSyllabusElementsList($OldSyllabus["ID"])["syllabuselements"];
     foreach ($SyElements as $SE) {
-      var_dump($SE);
       // Add SyllabusElement
       $this->addSyllabusElement(
         $SE["element_order"],
