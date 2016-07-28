@@ -19,9 +19,11 @@
   $newstate = $newstateObj[0]["name"];
   
   // If SyllabusID is even then allow transition
+  /*
   if ($syllabid % 2 == 0) {
     $result = true; // Transistion is allowed
   }
+  */
   
   // TODO: Check parameters like if entered text is valid
   

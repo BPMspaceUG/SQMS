@@ -109,7 +109,9 @@ class RequestHandler
         $res += $this->setSyllabusTopic($params["ID"], $params["TopicID"]);
         $res += $this->setSyllabusDescr($params["ID"], $params["description"]);
         $res += $this->setSyllabusOwner($params["ID"], $params["Owner"]);
-        if ($res != 4) return ''; else return $res; 
+        $res += $this->setSyllabusFrom($params["ID"], $params["From"]);
+        $res += $this->setSyllabusTo($params["ID"], $params["To"]);
+        if ($res != 6) return ''; else return $res;
         break;
         
       case "update_syllabus_name":
@@ -504,6 +506,20 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
     $query = "UPDATE sqms_syllabus SET owner = ? WHERE sqms_syllabus_id = ?;";
     $stmt = $this->db->prepare($query); // prepare statement
     $stmt->bind_param("si", $owner, $syllabid); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
+  }
+  private function setSyllabusFrom($syllabid, $from) {
+    $query = "UPDATE sqms_syllabus SET validity_period_from = ? WHERE sqms_syllabus_id = ?;";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("si", $from, $syllabid); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
+  }
+  private function setSyllabusTo($syllabid, $to) {
+    $query = "UPDATE sqms_syllabus SET validity_period_to = ? WHERE sqms_syllabus_id = ?;";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("si", $to, $syllabid); // bind params
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
   }
