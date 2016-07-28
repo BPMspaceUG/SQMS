@@ -254,7 +254,6 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
     .success(function(data) {      
       $scope.syllabi = data.syllabus;
       $scope.syllabi_cols = Object.keys($scope.syllabi[0]); // get keys from first object
-      
       // get under-elements for each syllabus
       for (var i=0;i<$scope.syllabi.length;i++){
         $scope.syllabi[i].HasNoChilds = true; // default = no children
@@ -277,8 +276,14 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
                 $scope.syllabi[k].HasNoChilds = false; // has now children
                 $scope.syllabi[k].syllabuselements = a.syllabuselements;
                 // Convert Angulartext into real HTML
-                for (var j=0;j<$scope.syllabi[k].syllabuselements.length;j++) {                  
-                  $scope.syllabi[k].syllabuselements[j].dscr = $sce.trustAsHtml($scope.syllabi[k].syllabuselements[j].description);
+                for (var j=0;j<$scope.syllabi[k].syllabuselements.length;j++) {
+                  
+                  var html = $scope.syllabi[k].syllabuselements[j].description;
+                  var div = document.createElement("div");
+                  div.innerHTML = html;
+                  var txt = div.textContent || div.innerText || "";
+                  
+                  $scope.syllabi[k].syllabuselements[j].displDescr = txt;
                   // Format number
                   $scope.syllabi[k].syllabuselements[j].severity = Math.round($scope.syllabi[k].syllabuselements[j].severity);
                 }

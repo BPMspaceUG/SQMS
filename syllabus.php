@@ -206,7 +206,7 @@
                       </div>
                     </td>
                     <!-- Description -->
-                    <td><div style="max-height: 60px; overflow: auto;">{{se.dscr}}</div></td>
+                    <td><div style="max-height: 60px; overflow: auto;">{{se.displDescr}}</div></td>
                     <!-- Severity -->
                     <td>
                       <div class="popover-wrapper">

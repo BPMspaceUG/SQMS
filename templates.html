@@ -243,20 +243,32 @@
 <!-- Template Modal "Create Syllabus Element" -->
 <script type="text/ng-template" id="modalNewSyllabusElement.html">
   <div class="modal-header">
-    <h3 class="modal-title">Create new syllabuselement</h3>
+    <h3 class="modal-title">Create new Syllabuselement</h3>
   </div>
   <div class="modal-body">
     <form class="form-horizontal">
       <fieldset>
-        <legend>Create syllabuselement</legend>
-        <label class="control-label">Parent Syllabus</label>
-        <input class="form-control" ng-model="object.data.parentID" placeholder="105" type="text" />
-        <label class="control-label">Order</label>
-        <input class="form-control" ng-model="object.data.element_order" placeholder="1" type="text" />
-        <label class="control-label">Severity</label>
-        <input class="form-control" ng-model="object.data.severity" min="0" max="100" placeholder="42" type="number" />
-        <label class="control-label">Syllabus-Element name</label>
-        <input ng-model="object.data.name" placeholder="Syllabuselementname" class="form-control" type="text" />
+        <legend>Create Syllabuselement</legend>        
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Element Name</label>
+          <div class="col-sm-4">
+            <input ng-model="object.data.name" placeholder="Syllabuselementname" class="form-control" type="text" />
+          </div>
+          <label class="col-sm-2 control-label">Order</label>
+          <div class="col-sm-4">
+            <input class="form-control" ng-model="object.data.element_order" placeholder="1" type="text" />
+          </div>
+        </div>        
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Parent Syllabus</label>
+          <div class="col-sm-4">
+            <input class="form-control" ng-model="object.data.parentID" placeholder="105" type="text" />
+          </div>
+          <label class="col-sm-2 control-label">Severity</label>
+          <div class="col-sm-4">
+            <input class="form-control" ng-model="object.data.severity" min="0" max="100" placeholder="42" type="number" />
+          </div>
+        </div>        
         <label class="control-label">Description</label>
         <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
       </fieldset>
@@ -276,15 +288,27 @@
   <div class="modal-body">
     <form class="form-horizontal">
       <fieldset>
-        <legend>Edit syllabuselement</legend>        
+        <legend>Edit Syllabuselement</legend>    
         <div class="form-group">
+          <label class="col-sm-2 control-label">Element Name</label>
+          <div class="col-sm-4">
+            <input ng-model="object.data.name" placeholder="Syllabuselementname" class="form-control" type="text" />
+          </div>
           <label class="col-sm-2 control-label">Order</label>
-          <div class="col-sm-4"><input class="form-control" ng-model="object.data.element_order" placeholder="1" type="text" /></div>
+          <div class="col-sm-4">
+            <input class="form-control" ng-model="object.data.element_order" placeholder="1" type="text" />
+          </div>
+        </div>        
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Parent Syllabus</label>
+          <div class="col-sm-4">
+            <input class="form-control" ng-model="object.data.parentID" placeholder="105" type="text" disabled/>
+          </div>
           <label class="col-sm-2 control-label">Severity</label>
-          <div class="col-sm-4"><input class="form-control" ng-model="object.data.severity" min="0" max="100" placeholder="42" type="number" /></div>
+          <div class="col-sm-4">
+            <input class="form-control" ng-model="object.data.severity" min="0" max="100" placeholder="42" type="number" />
+          </div>
         </div>
-        <label class="control-label">Syllabus-Element name</label>
-        <input ng-model="object.data.name" placeholder="Syllabuselementname" class="form-control" type="text" />
         <label class="control-label">Description</label>
         <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
       </fieldset>
