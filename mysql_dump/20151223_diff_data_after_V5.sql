@@ -21,4 +21,9 @@ UPDATE `sqms_topic` SET `sqms_role_id`='4' WHERE `sqms_topic_id`='10';
 
 UPDATE `bpmspace_sqms_v5`.`sqms_question_type` SET `name`='sample testing', `description`='this question can be public!' WHERE `sqms_question_type_id`='1';
 UPDATE `bpmspace_sqms_v5`.`sqms_question_type` SET `name`='live testing', `description`='this question MUST NOT be public!' WHERE `sqms_question_type_id`='2';
-UPDATE `bpmspace_sqms_v5`.`sqms_question_type` SET `name`='special', `description`=' ' WHERE `sqms_question_type_id`='3';;
+UPDATE `bpmspace_sqms_v5`.`sqms_question_type` SET `name`='special', `description`=' ' WHERE `sqms_question_type_id`='3';
+
+UPDATE `bpmspace_sqms_v5`.`sqms_language` SET `language`='english' WHERE `sqms_language_id`='2';
+UPDATE `bpmspace_sqms_v5`.`sqms_language` SET `language`='français' WHERE `sqms_language_id`='3';
+UPDATE `bpmspace_sqms_v5`.`sqms_language` SET `language`='español' WHERE `sqms_language_id`='4';
+
