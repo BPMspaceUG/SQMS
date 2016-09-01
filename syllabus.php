@@ -66,7 +66,6 @@
     <!--
     ########################################## Page: Syllabus 
     -->
-    <pre>{{actSyllabus}}</pre>
     <div id="pagesyllabus" class="tab-pane">
       <div class="row bg-primary">
         <h2 class="col-sm-3">Syllabus</h2>
