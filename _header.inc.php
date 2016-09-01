@@ -24,10 +24,10 @@
   <link rel="stylesheet" href="../css/xeditable.css">
   <link rel="stylesheet" href="css/SQMS.css">
   <!-- JS -->
-  <script type="text/javascript" src="js/angular.min.js"></script>
+  <script type="text/javascript" src="../js/angular.min.js"></script>
   <script type="text/javascript" src="https://code.angularjs.org/1.4.9/angular-sanitize.min.js"></script>
-  <script type="text/javascript" src="js/ui-bootstrap-1.3.1.min.js"></script>
-  <script type="text/javascript" src="js/ui-bootstrap-tpls-1.3.1.min.js"></script>
+  <script type="text/javascript" src="../js/ui-bootstrap-1.3.1.min.js"></script>
+  <script type="text/javascript" src="../js/ui-bootstrap-tpls-1.3.1.min.js"></script>
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <!-- TinyMCE -->
   <script src="https://cdn.tinymce.com/4/tinymce.min.js"></script>
@@ -36,9 +36,9 @@
   <script src="js/tinymce/tinymce.min.js"></script>
   -->
   <script src="js/tinymceng.js"></script>  
-  <script type="text/javascript" src="js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="js/xeditable.min.js"></script>
-  <script type="text/javascript" src="custom/custom.js"></script>
+  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../js/xeditable.min.js"></script>
+  <script type="text/javascript" src="js/SQMS.js"></script>
   <!----- js scripts are loaded in the footer --------------------> 
 </head>
 <body ng-controller="SQMSController">
