@@ -66,6 +66,7 @@
     <!--
     ########################################## Page: Syllabus 
     -->
+    <pre>{{actSyllabus}}</pre>
     <div id="pagesyllabus" class="tab-pane">
       <div class="row bg-primary">
         <h2 class="col-sm-3">Syllabus</h2>
@@ -125,7 +126,7 @@
                 </a>
               </span>
               <!-- Successor Icon -->
-              <span ng-show="s.state != 'new'">
+              <span ng-show="s.state != 'new' && s.SuccID == null">
                 <a class="btn pull-left" ng-click="successorsyllabus(s)" title="Create Successor...">
                   <i class="fa fa-fw fa-share"></i>
                 </a>

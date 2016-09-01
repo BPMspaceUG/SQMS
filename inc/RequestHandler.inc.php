@@ -280,7 +280,9 @@ class RequestHandler
     owner AS 'Owner',
     validity_period_from AS 'From',
     validity_period_to AS 'To',
-    c.language AS 'Language'
+    c.language AS 'Language',
+    a.sqms_syllabus_id_successor AS 'SuccID',
+    a.sqms_syllabus_id_predecessor AS 'PredID'
 FROM
     sqms_syllabus AS a LEFT JOIN sqms_topic AS b
 ON a.sqms_topic_id = b.sqms_topic_id
@@ -352,9 +354,9 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
         $SE["description"]
       );
     }
-    // update Old Syllabus (set PredecessorID)
+    // update Old Syllabus (set Predecessor ID)
     $this->updateSyllabusPredecessor($OldSyllabus["ID"], $newID);
-    // TODO: set state to deprecated    
+    // TODO: set state of old Syllabus to deprecated
     return $newID;
   }
   private function addSyllabusElement($element_order, $severity, $parentID, $name, $description) {

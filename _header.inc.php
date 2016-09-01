@@ -18,11 +18,11 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>BPMspace SQMS</title>
   <!-- CSS -->
-  <link rel="stylesheet" href="css/bootstrap.min.css" media="screen">
-  <link rel="stylesheet" href="css/font-awesome.min.css">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" media="screen">
+  <link rel="stylesheet" href="../css/font-awesome.min.css">
   <link rel="stylesheet" href="http://www.fuelcdn.com/fuelux/3.13.0/css/fuelux.min.css">
-  <link rel="stylesheet" href="css/xeditable.css">
-  <link rel="stylesheet" href="custom/custom.css">
+  <link rel="stylesheet" href="../css/xeditable.css">
+  <link rel="stylesheet" href="../custom/custom.css">
   <!-- JS -->
   <script type="text/javascript" src="js/angular.min.js"></script>
   <script type="text/javascript" src="https://code.angularjs.org/1.4.9/angular-sanitize.min.js"></script>

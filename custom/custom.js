@@ -147,11 +147,15 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   }
   $scope.successorsyllabus = function(el) {
     $scope.setSelectedSyllabus(el);
+    // not possible in state NEW
     if (el.state != 'new') {
-      var res = confirm("Are you sure that you want to create a successor of the Syllabus '"+el.Name+"'?");
-      console.log(res)
-      // TODO: if OK was clicked
-      $scope.writeData('create_successor', el);
+      // Ask user for confirmation
+      var res = confirm("Are you sure that you want to create a successor of the Syllabus \n'"+el.Name+
+        "'?\n\nInfo: This will create a new Version of this Syllabus and sets the current to DEPRECATED.");
+      if (res) {
+        //if OK was clicked
+        $scope.writeData('create_successor', el);
+      }
     }
   }
   $scope.editsyllabuselement = function(el) {
