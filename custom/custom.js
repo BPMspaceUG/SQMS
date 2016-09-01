@@ -1,6 +1,6 @@
 'use strict';
 
-var module = angular.module('phonecatApp', ['ngSanitize', 'xeditable', 'ui.bootstrap', 'ui.tinymce'])
+var module = angular.module('SQMSApp', ['ngSanitize', 'xeditable', 'ui.bootstrap', 'ui.tinymce'])
 
 // Needed for inline editing
 module.run(function(editableOptions) {
@@ -102,7 +102,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
 });
 
 // Main Controller
-module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', function($scope, $http, $sce, $uibModal) {
+module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', function($scope, $http, $sce, $uibModal) {
 
   $scope.setSelectedSyllabus = function (el) {$scope.actSyllabus = el;};
   $scope.setSelectedQuestion = function (el) {$scope.actQuestion = el;};
@@ -149,10 +149,9 @@ module.controller('PhoneListCtrl', ['$scope', '$http', '$sce', '$uibModal', func
     $scope.setSelectedSyllabus(el);
     if (el.state != 'new') {
       var res = confirm("Are you sure that you want to create a successor of the Syllabus '"+el.Name+"'?");
+      console.log(res)
       // TODO: if OK was clicked
       $scope.writeData('create_successor', el);
-      // -> create successor in database (send copy_syllabus command)
-      // also check if current element has no predecessor
     }
   }
   $scope.editsyllabuselement = function(el) {

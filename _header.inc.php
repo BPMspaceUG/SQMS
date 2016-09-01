@@ -13,7 +13,7 @@
   }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" ng-app="phonecatApp">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="SQMSApp">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>BPMspace SQMS</title>
@@ -41,7 +41,7 @@
   <script type="text/javascript" src="custom/custom.js"></script>
   <!----- js scripts are loaded in the footer --------------------> 
 </head>
-<body ng-controller="PhoneListCtrl">
+<body ng-controller="SQMSController">
   <div class="container">
     <div class="container">
       <div class="col-md-12"><?php include_once '../_header_LIAM.inc.php'; ?></div>

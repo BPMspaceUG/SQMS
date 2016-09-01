@@ -139,14 +139,8 @@ class RequestHandler
         );
         break;
       
-      /*
-      case "copy_syllabus":
-        $this->copySyllabus($params);
-        return "1"; // TODO
-        break;
-      */
-        
       case "create_successor":
+        // check if current element has no predecessor
         return $this->createSuccessor($params);
         break;
         
