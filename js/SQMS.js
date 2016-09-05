@@ -105,6 +105,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
 
 
   var ds = new Date();
+  var ds2 = new Date();
+  ds2.setYear(ds2.getFullYear() + 1);
   
   // Initial settings  
   $scope.object = {
@@ -117,8 +119,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       severity: 25,
       answer: '',
       owner: '',
-      From: ds.getFullYear() + '-' + (ds.getMonth()+1) + '-' + ds.getUTCDate(),
-      To: (ds.getFullYear()+1) + '-' + (ds.getMonth()+1) + '-' + ds.getUTCDate(),
+      From: ds, // .getFullYear() + '-' + (ds.getMonth()+1) + '-' + ds.getUTCDate(),
+      To: ds2, // + '-' + (ds.getMonth()+1) + '-' + ds.getUTCDate(),
       description: '<p>Please enter a description</p>',
       correct: false,
       ngTopic: {},
