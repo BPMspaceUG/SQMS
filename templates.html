@@ -43,11 +43,23 @@
         <div class="form-group">
           <label class="col-sm-2 control-label">Valid from</label>
           <div class="col-sm-4">
-            <input ng-model="object.data.From" class="form-control" type="text" />
+            <!-- <input ng-model="object.data.From" class="form-control" type="text" /> -->
+            <p class="input-group">
+              <input type="text" class="form-control" ng-model="object.data.From" uib-datepicker-popup="{{format}}" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
           </div>
           <label class="col-sm-2 control-label">Valid to</label>
           <div class="col-sm-4">
-            <input ng-model="object.data.To" class="form-control" type="text" />
+            <!-- <input ng-model="object.data.To" class="form-control" type="text" />-->
+            <p class="input-group">
+              <input type="text" class="form-control" ng-model="object.data.To" uib-datepicker-popup="{{format}}" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
           </div>
         </div>
         <div class="form-group">

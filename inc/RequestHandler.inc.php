@@ -540,10 +540,10 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
         if (trim($scriptpath) != "functions/" && file_exists($scriptpath))
           include_once($scriptpath);
         // update state in DB, when plugin says yes
-        if ($script_result["result"] == true) {             
+        if ($script_result["result"] == true) {
           $query = "UPDATE sqms_syllabus SET sqms_state_id = $stateid WHERE sqms_syllabus_id = $syllabid;";
-          $res = $this->db->query($query);              
-        }        
+          $res = $this->db->query($query);
+        }
         // Return
         return json_encode($script_result);
       }

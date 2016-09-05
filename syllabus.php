@@ -190,7 +190,7 @@
                         <a class="btn pull-left">
                           <i class="fa fa-fw fa-square icon-invisible"></i>
                         </a>
-                      </span>                   
+                      </span>
                     </td>
                     <td>{{se.sqms_syllabus_element_id}}</td>
                     <!-- Order (inlineediting) -->
