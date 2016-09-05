@@ -130,6 +130,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   // Save topics in scope
   $scope.topics = items.topics;
   $scope.users = items.users;
+  $scope.languages = items.languages;
   
   console.log($scope.object);
   
@@ -222,7 +223,8 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
         items: function () {
           return {
             topics: $scope.topics,
-            users: $scope.users
+            users: $scope.users,
+            languages: $scope.languages
           };
         }
       }
@@ -338,6 +340,14 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
     });
     return $scope.users;
   }
+  $scope.getLanguages = function() {
+    $http.get('getjson.php?c=languages').success(function(data) {
+      $scope.languages = data.langlist; // store in scope
+    });
+    console.log($scope.languages);
+    return $scope.languages;
+  }
+  
   /* TODO
   $scope.$watch('user.group', function(newVal, oldVal) {
     if (newVal !== oldVal) {
@@ -469,4 +479,5 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   $scope.getAllQuestions();
   $scope.getTopics();
   $scope.getUsers();
+  $scope.getLanguages();
 }]);

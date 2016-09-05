@@ -66,15 +66,15 @@
             </p>
           </div>
         </div>
-        <div class="form-group">    
+        <div class="form-group">
           <label class="col-sm-2 control-label">Language</label>
           <div class="col-sm-4">
             <select class="form-control"
-              ng-options="u.lastname for u in users"
-              ng-init="object.data.ngOwner = users[0]"
-              ng-model="object.data.ngOwner"></select>
+              ng-options="l.language for l in languages"
+              ng-init="object.data.ngLang = languages[0]"
+              ng-model="object.data.ngLang"></select>
           </div>
-        </div>        
+        </div>
         <div class="form-group">
           <label class="col-sm-2 control-label">Owner</label>
           <div class="col-sm-4">
@@ -88,7 +88,6 @@
             <input ng-model="object.data.Version" class="form-control" type="text" value="1" disabled/>
           </div>
         </div>
-        
         <label class="control-label">Description</label>
         <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
       </fieldset>

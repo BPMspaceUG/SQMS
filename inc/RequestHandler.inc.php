@@ -211,7 +211,12 @@ class RequestHandler
       case 'users':
         $return = $this->RM->getUsers();
         return json_encode(array("userlist" => $return));
-        break;       
+        break;
+        
+      case 'languages':
+        $return = $this->getLanguages();
+        return json_encode(array("langlist" => $return));
+        break;
         
       //----------------------- Topics
       
@@ -300,6 +305,11 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     }
     $return['syllabus'] = $r;
     return $return;
+  }
+  private function getLanguages() {
+    $query = "SELECT sqms_language_id, language FROM sqms_language;";
+    $res = $this->db->query($query);
+    return getResultArray($res);
   }
   private function addSyllabus($name, $owner, $topic, $description, $from, $to, $version = 1, $successor = null) {
     if ($successor != null)
