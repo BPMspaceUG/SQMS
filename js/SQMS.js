@@ -155,6 +155,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   // TODO: Improve code, so that the indexes remain the same name
   if (cmd == 'update_syllabus') {
     $scope.object.data = $scope.$$prevSibling.actSyllabus;
+    // Parse Date
+    $scope.object.data.From = Date.parse($scope.object.data.From);
+    $scope.object.data.To = Date.parse($scope.object.data.To);
   }
   else if (cmd == 'update_question') {
     $scope.object.data.ID = $scope.$$prevSibling.actQuestion.ID;
