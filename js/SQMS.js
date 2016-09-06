@@ -242,7 +242,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
     $scope.setSelectedSyllabus(el);
     // Only open edit form in state "new"
     if (el.state == 'new')
-      $scope.open('modalEditSyllabus.html', 'update_syllabus');
+      $scope.open('modalSyllabus.html', 'update_syllabus');
   }
   $scope.successorsyllabus = function(el) {
     $scope.setSelectedSyllabus(el);
