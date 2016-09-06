@@ -103,7 +103,6 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   
   // <END>
 
-
   var ds = new Date();
   var ds2 = new Date();
   ds2.setYear(ds2.getFullYear() + 1);
