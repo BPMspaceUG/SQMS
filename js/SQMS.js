@@ -119,12 +119,14 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       severity: 25,
       answer: '',
       owner: '',
+      Version: 1,
       From: ds, // .getFullYear() + '-' + (ds.getMonth()+1) + '-' + ds.getUTCDate(),
       To: ds2, // + '-' + (ds.getMonth()+1) + '-' + ds.getUTCDate(),
       description: '<p>Please enter a description</p>',
       correct: false,
       ngTopic: {},
-      ngOwner: {}
+      ngOwner: {},
+      ngLang: {}
     }
   };
   // Save topics in scope
