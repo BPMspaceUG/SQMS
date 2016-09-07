@@ -99,7 +99,8 @@ class RequestHandler
           $params["TopicID"],
           $params["description"],
           $params["From"],
-          $params["To"]
+          $params["To"],
+          $params["LangID"]
           );
         break;
         
@@ -199,7 +200,7 @@ class RequestHandler
         $res = $this->updateQuestion($params["ID"], $params["name"]);
         $res += $this->setQuestionTopic($params["ID"], $params["TopicID"]);
         if ($res != 2) return ''; else return $res;
-        break;        
+        break;
       
       // TODO: Remove...
       case 'delete_answer':
@@ -232,7 +233,7 @@ class RequestHandler
       case 'update_topic': // Update a topic
         $res = $this->updateTopic($params["ID"], $params["name"]);
         if ($res != 1) return ''; else return $res;
-        break;        
+        break;
         
       // TODO: Evtl. zusammenfassen zu einem Command
         
@@ -242,7 +243,7 @@ class RequestHandler
 
       case "update_question_state":
         return $this->setQuestionState($params["questionid"], $params["stateid"]);
-        break;        
+        break;
 
         //-------- Reports for Dashboard
       case 'getreports':
@@ -311,7 +312,7 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     $res = $this->db->query($query);
     return getResultArray($res);
   }
-  private function addSyllabus($name, $owner, $topic, $description, $from, $to, $version = 1, $successor = null) {
+  private function addSyllabus($name, $owner, $topic, $description, $from, $to, $langID, $version = 1, $successor = null) {
     if ($successor != null)
       $query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
         "validity_period_from, validity_period_to, description, sqms_syllabus_id_successor) ".
@@ -322,9 +323,9 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     $stmt = $this->db->prepare($query);
     $one = 1;
     if ($successor != null)
-      $stmt->bind_param("siiisisssi", $name, $one, $version, $topic, $owner, $one, $from, $to, $description, $successor);
+      $stmt->bind_param("siiisisssi", $name, $one, $version, $topic, $owner, $langID, $from, $to, $description, $successor);
     else
-      $stmt->bind_param("siiisisss", $name, $one, $version, $topic, $owner, $one, $from, $to, $description);
+      $stmt->bind_param("siiisisss", $name, $one, $version, $topic, $owner, $langID, $from, $to, $description);
     $result = $stmt->execute();
     if (!$result) $this->db->error;
     // Return last inserted ID
@@ -349,6 +350,7 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
       $OldSyllabus["description"],
       $OldSyllabus["From"],
       $OldSyllabus["To"],
+      $OldSyllabus["LangID"],
       (int)$OldSyllabus["Version"]+1, // increase version
       $OldSyllabus["ID"] // Successor
     );
@@ -412,7 +414,7 @@ ON d.sqms_language_id = a.sqms_language_id;";
     }
     $return['questionlist'] = $r;
     return $return;
-    }
+  }
   private function getAnswers($questionID) {
     settype($questionID , 'integer');
     $query = "SELECT sqms_answer_id AS 'ID', answer, correct FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
@@ -446,9 +448,6 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
     $stmt->bind_param("ii", $topicID, $questionid); // bind params
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
-  }
-  private function copySyllabus($oldSyllabus) {
-    $this->addSyllabus($oldSyllabus);
   }
   private function updateAnswer($id, $answer, $correct) {
     $query = "UPDATE sqms_answer SET answer = ?, correct = ? WHERE sqms_answer_id = ?;";

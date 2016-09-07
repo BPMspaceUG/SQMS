@@ -175,7 +175,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     $scope.object.data.description = $scope.$$prevSibling.actSyllabusElement.description;
     $scope.object.data.severity = $scope.$$prevSibling.actSyllabusElement.severity;
     $scope.object.data.element_order = $scope.$$prevSibling.actSyllabusElement.element_order;
-    $scope.object.data.parentID = $scope.$$prevSibling.actSyllabusElement.sqms_syllabus_id;
+    $scope.object.data.parentID = $scope.$$prevSibling.actSyllabusElement.sqms_syllabus_id; 
+    console.log($scope.object);
   }
   else if (cmd == 'create_answer') {
     $scope.object.data.parentID = $scope.$$prevSibling.actQuestion.ID;
@@ -424,6 +425,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
       case 'u_answer_c': c = 'update_answer'; actEl.correct = data; break;
       case 'u_syllabel_n': c = 'update_syllabuselement'; actEl.name = data; actEl.ID = actEl.sqms_syllabus_element_id; break;
       case 'u_syllabel_s': c = 'update_syllabuselement'; actEl.severity = data; actEl.ID = actEl.sqms_syllabus_element_id; break;
+      case 'u_syllabel_ord': c = 'update_syllabuselement'; actEl.element_order = data; actEl.ID = actEl.sqms_syllabus_element_id; break;
       case 'u_topic_n': c = 'update_topic'; actEl.name = data; actEl.ID = actEl.id; break;
       case 'u_syllab_n': c = 'update_syllabus_name'; actEl.name = data; break;
       case 'u_syllab_tc': c = 'update_syllabus_topic'; actEl.TopicID = data; break;
