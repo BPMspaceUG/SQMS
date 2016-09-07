@@ -75,7 +75,7 @@
             <button type="button" class="btn btn-success menuitem" ng-click="open('modalSyllabus.html', 'create_syllabus')">
               <i class="fa fa-plus"></i> New Syllabus
             </button>
-            <button type="button" class="btn btn-success menuitem" ng-disabled="!actSyllabus || actSyllabus.state != 'new'" ng-click="open('modalNewSyllabusElement.html', 'create_syllabuselement')">
+            <button type="button" class="btn btn-success menuitem" ng-disabled="!actSyllabus || actSyllabus.state != 'new'" ng-click="open('modalSyllabusElement.html', 'create_syllabuselement')">
               <i class="fa fa-plus"></i> New SyllabusElement
             </button>
           </span>

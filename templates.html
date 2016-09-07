@@ -110,6 +110,49 @@
   <ng-include src="'modalFooter.html'"></ng-include>
 </script>
 
+<!-- Template Modal "SyllabusElement" -->
+<script type="text/ng-template" id="modalSyllabusElement.html">
+  <div class="modal-header">
+    <h3 class="modal-title">SyllabusElement</h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal">
+      <fieldset>
+        <legend>SyllabusElement Properties</legend>
+        <!-- Name / Order -->
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Name</label>
+          <div class="col-sm-6">
+            <input class="form-control" ng-model="object.data.name" type="text" />
+          </div>
+          <label class="col-sm-2 control-label">Order</label>
+          <div class="col-sm-2">
+            <input class="form-control" ng-model="object.data.element_order" type="text" />
+          </div>
+        </div>
+        <!-- Parent / Severity -->
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Parent</label>
+          <div class="col-sm-6">
+            <select class="form-control"
+              ng-options="s.Name for s in synamelist"
+              ng-init="getActParentSyllabElement()"
+              ng-model="object.data.ngParent"></select>
+          </div>
+          <label class="col-sm-2 control-label">Severity</label>
+          <div class="col-sm-2">
+            <input class="form-control" ng-model="object.data.severity" min="0" max="100" type="number" />
+          </div>
+        </div>
+        <!-- Description -->
+        <label class="control-label">Description</label>
+        <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
+      </fieldset>
+    </form>
+  </div>
+  <ng-include src="'modalFooter.html'"></ng-include>
+</script>
+
 <!-- Template Modal "Create Question" -->
 <script type="text/ng-template" id="modalNewQuestion.html">
   <div class="modal-header">
@@ -181,83 +224,9 @@
   <ng-include src="'modalFooter.html'"></ng-include>
 </script>
 
-<!-- Template Modal "Create Syllabus Element" -->
-<script type="text/ng-template" id="modalNewSyllabusElement.html">
-  <div class="modal-header">
-    <h3 class="modal-title">Create new Syllabuselement</h3>
-  </div>
-  <div class="modal-body">
-    <form class="form-horizontal">
-      <fieldset>
-        <legend>Create Syllabuselement</legend>
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Element Name</label>
-          <div class="col-sm-4">
-            <input ng-model="object.data.name" placeholder="Syllabuselementname" class="form-control" type="text" />
-          </div>
-          <label class="col-sm-2 control-label">Order</label>
-          <div class="col-sm-4">
-            <input class="form-control" ng-model="object.data.element_order" placeholder="1" type="text" />
-          </div>
-        </div>        
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Parent Syllabus</label>
-          <div class="col-sm-4">
-            <input class="form-control" ng-model="object.data.parentID" placeholder="105" type="text" />
-          </div>
-          <label class="col-sm-2 control-label">Severity</label>
-          <div class="col-sm-4">
-            <input class="form-control" ng-model="object.data.severity" min="0" max="100" placeholder="42" type="number" />
-          </div>
-        </div>        
-        <label class="control-label">Description</label>
-        <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
-      </fieldset>
-    </form>
-  </div>
-  <ng-include src="'modalFooter.html'"></ng-include>
-</script>
-
-<!-- Template Modal "Edit Syllabus Element" -->
-<script type="text/ng-template" id="modalEditSyllabusElement.html">
-  <div class="modal-header">
-    <h3 class="modal-title">Edit syllabuselement</h3>
-  </div>
-  <div class="modal-body">
-    <form class="form-horizontal">
-      <fieldset>
-        <legend>Edit Syllabuselement</legend>
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Elementname</label>
-          <div class="col-sm-4">
-            <input ng-model="object.data.name" placeholder="Syllabuselementname" class="form-control" type="text" />
-          </div>
-          <label class="col-sm-2 control-label">Order</label>
-          <div class="col-sm-4">
-            <input class="form-control" ng-model="object.data.element_order" placeholder="1" type="text" />
-          </div>
-        </div>        
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Parent Syllabus</label>
-          <div class="col-sm-4">
-            <input class="form-control" ng-model="object.data.parentID" placeholder="105" type="text" disabled/>
-          </div>
-          <label class="col-sm-2 control-label">Severity</label>
-          <div class="col-sm-4">
-            <input class="form-control" ng-model="object.data.severity" min="0" max="100" placeholder="42" type="number" />
-          </div>
-        </div>
-        <label class="control-label">Description</label>
-        <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
-      </fieldset>
-    </form>
-  </div>
-  <ng-include src="'modalFooter.html'"></ng-include>
-</script>
-
 <!-- Template: StateMachine Syllabus -->
 <script type="text/ng-template" id="popoverStatemachineSyllabus.html">
-  <div><small>goto state</small><br/><br/>
+  <div><small>goto state<br/><br/></small>
     <div ng-repeat="state in actSyllabus.availableOptions">
       <button type="button" style="margin-bottom: 3px;"
         ng-click="setstate('update_syllabus_state', state.id)"
@@ -268,8 +237,11 @@
 
 <!-- Template: StateMachine Question -->
 <script type="text/ng-template" id="popoverStatemachineQuestion.html">
-  <div><b>goto:</b>&nbsp;<span ng-repeat="state in actQuestion.availableOptions">
-      <button type="button" ng-click="setstate('update_question_state', state.id)" class="btn btn-default btn-sm">{{state.name}}</button>
-    </span>
+  <div><small>goto state<br/><br/></small>
+    <div ng-repeat="state in actQuestion.availableOptions">
+      <button type="button" style="margin-bottom: 3px;"
+        ng-click="setstate('update_question_state', state.id)"
+        class="btn btn-primary btn-sm">&rarr; {{state.name}}</button>
+    </div>
   </div>
 </script>

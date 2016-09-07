@@ -78,7 +78,7 @@ class RequestHandler
         $arr1 = $this->getSyllabusList(); // All data from syllabus
         return json_encode($arr1);
         break;
-        
+
       case 'getsyllabusdetails':
         $syllabid = $params["ID"];
         $actstate = $this->SESy->getActState($syllabid);
@@ -157,7 +157,8 @@ class RequestHandler
           $params["name"],
           $params["description"],
           $params["element_order"],
-          $params["severity"]
+          $params["severity"],
+          (int)$params["parentID"]
         );
         if ($res != 1) return ''; else return $res;
         break;
@@ -327,7 +328,7 @@ class RequestHandler
   }
   */
   
-  private function getSyllabusList() {    
+  private function getSyllabusList($shortlist = false) {    
     // Only return topics which are allowed for the actual role
     if ($this->roleIDs) {
       $suffix = " WHERE ";
@@ -335,30 +336,34 @@ class RequestHandler
         $suffix .= "b.sqms_role_id = ".$id." OR ";
       }
       $suffix = substr($suffix, 0, -4); // remove last " OR "
-    }    
+    }  
+
     $query = "SELECT 
-    sqms_syllabus_id AS 'ID',
-    a.name AS 'Name',
-    version AS 'Version',
-    b.name AS 'Topic',
-    b.sqms_topic_id AS 'TopicID',
-    a.description AS 'description',
-    owner AS 'Owner',
-    validity_period_from AS 'From',
-    validity_period_to AS 'To',
-    c.language AS 'Language',
-    c.sqms_language_id AS 'LangID',
-    a.sqms_syllabus_id_successor AS 'SuccID',
-    a.sqms_syllabus_id_predecessor AS 'PredID'
-FROM
-    sqms_syllabus AS a LEFT JOIN sqms_topic AS b
-ON a.sqms_topic_id = b.sqms_topic_id
-LEFT JOIN sqms_language AS c
-ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
-        $return = array();
+      sqms_syllabus_id AS 'ID',
+      a.name AS 'Name',
+      version AS 'Version',
+      b.name AS 'Topic',
+      b.sqms_topic_id AS 'TopicID',
+      a.description AS 'description',
+      owner AS 'Owner',
+      validity_period_from AS 'From',
+      validity_period_to AS 'To',
+      c.language AS 'Language',
+      c.sqms_language_id AS 'LangID',
+      a.sqms_syllabus_id_successor AS 'SuccID',
+      a.sqms_syllabus_id_predecessor AS 'PredID'
+  FROM
+      sqms_syllabus AS a LEFT JOIN sqms_topic AS b
+  ON a.sqms_topic_id = b.sqms_topic_id
+  LEFT JOIN sqms_language AS c
+  ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
+
+
+    $return = array();
     $res = $this->db->query($query);
-    $res = getResultArray($res);
+    $res = getResultArray($res);    
     $r = null;
+    
     foreach ($res as $el) {
       $acts = $this->SESy->getActState($el["ID"])[0];
       $state = array("state" => $acts);
@@ -511,11 +516,11 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     if (!$result) $this->db->error;
     return $result;
   }
-  private function updateSyllabusElement($id, $name, $description, $elementorder, $severity) {
-    $query = "UPDATE sqms_syllabus_element SET name=?, description=?, element_order=?, severity=? ".
+  private function updateSyllabusElement($id, $name, $description, $elementorder, $severity, $parentID) {
+    $query = "UPDATE sqms_syllabus_element SET name=?, description=?, element_order=?, severity=?, sqms_syllabus_id=? ".
       "WHERE sqms_syllabus_element_id = ?;";
     $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("ssiii", $name, $description, $elementorder, $severity, $id); // bind params
+    $stmt->bind_param("ssiiii", $name, $description, $elementorder, $severity, $parentID, $id); // bind params
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
   }

@@ -19,6 +19,7 @@ a:not([href]) {
   background-color: #f00;
 }
 */
+
 .centering {
   float: none;
   margin: 0 auto;
@@ -26,6 +27,7 @@ a:not([href]) {
 .90_percent {
   max-width: 90%;
 }
+/*
 .modal {
   position: fixed;
   top: 3%;
@@ -80,7 +82,7 @@ a:not([href]) {
   height: 60px;
   padding: 10px;
 }
-
+*/
 table table tr {background: #eee;}
 table tbody:hover {}
 

@@ -117,17 +117,19 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       Version: 1,
       From: ds,
       To: ds2,
-      description: '<p>Please enter a description</p>',
+      description: '<p>Enter a description...</p>',
       correct: false,
       ngTopic: {},
       ngOwner: {},
-      ngLang: {}
+      ngLang: {},
+      ngParent: {}
     }
   };
   // Save topics in scope
   $scope.topics = items.topics;
   $scope.users = items.users;
   $scope.languages = items.languages;
+  $scope.synamelist = items.synamelist;
   
   console.log($scope.object);
   
@@ -140,8 +142,6 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     }
   }
   $scope.getActLangSyllab = function() {
-    console.log($scope.languages);
-    console.log($scope.$$prevSibling.actSyllabus);
     for (var i = 0; i<$scope.languages.length; i++) {
       if ($scope.languages[i].sqms_language_id == $scope.$$prevSibling.actSyllabus.LangID) {
         $scope.object.data.ngLang = $scope.languages[i];
@@ -155,6 +155,17 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       }
     }
   }
+  $scope.getActParentSyllabElement = function() {
+    /*console.log("swag");
+    console.log($scope.synamelist);
+    console.log($scope.synamelist);*/
+    for (var i = 0; i<$scope.synamelist.length; i++) {
+      if ($scope.synamelist[i].ID == $scope.$$prevSibling.actSyllabus.ID) {
+        $scope.object.data.ngParent = $scope.synamelist[i];
+      }
+    }
+  }
+  
   console.log("Modal opened.");
   
   // TODO: Improve code, so that the indexes remain the same name
@@ -201,6 +212,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     if ($scope.object.data.ngLang) {
       $scope.object.data.LangID = $scope.object.data.ngLang.sqms_language_id;
     }
+    if ($scope.object.data.ngParent) {
+      $scope.object.data.parentID = $scope.object.data.ngParent.ID;
+    }
     // Return result
     $uibModalInstance.close($scope.object);
     console.log("Modal ok clicked");
@@ -238,7 +252,8 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
           return {
             topics: $scope.topics,
             users: $scope.users,
-            languages: $scope.languages
+            languages: $scope.languages,
+            synamelist: $scope.syllabi
           };
         }
       }
@@ -272,7 +287,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   }
   $scope.editsyllabuselement = function(el) {
     $scope.actSyllabusElement = el;
-    $scope.open('modalEditSyllabusElement.html', 'update_syllabuselement');
+    $scope.open('modalSyllabusElement.html', 'update_syllabuselement');
   }
   $scope.editquestion = function(el) {
     $scope.setSelectedQuestion(el);
@@ -361,6 +376,14 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
     console.log($scope.languages);
     return $scope.languages;
   }
+  /*
+  $scope.getSynamelist = function() {
+    $http.get('getjson.php?c=syllabusnames').success(function(data) {
+      $scope.synamelist = data.syllabus; // store in scope
+    });
+    console.log($scope.synamelist);
+    return $scope.synamelist;
+  }*/
   
   /* TODO
   $scope.$watch('user.group', function(newVal, oldVal) {
@@ -495,4 +518,5 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   $scope.getTopics();
   $scope.getUsers();
   $scope.getLanguages();
+  //$scope.getSynamelist();
 }]);
