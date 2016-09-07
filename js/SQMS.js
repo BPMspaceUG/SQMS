@@ -51,19 +51,14 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
 
   $scope.toggleMin();
 
-  $scope.open1 = function() {
-    $scope.popup1.opened = true;
-  };
-  $scope.open2 = function() {
-    $scope.popup2.opened = true;
-  };
-
+  $scope.open1 = function() { $scope.popup1.opened = true; };
+  $scope.open2 = function() { $scope.popup2.opened = true; };
   $scope.setDate = function(year, month, day) {
     $scope.dt = new Date(year, month, day);
   };
 
-  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-  $scope.format = $scope.formats[2];
+  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'yyyy-MM-dd', 'shortDate'];
+  $scope.format = $scope.formats[3];
   $scope.altInputFormats = ['M!/d!/yyyy'];
 
   $scope.popup1 = { opened: false };
@@ -103,11 +98,12 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   
   // <END>
 
+  // Date format when creating
   var ds = new Date();
   var ds2 = new Date();
   ds2.setYear(ds2.getFullYear() + 1);
-  
-  // Initial settings  
+    
+  // Initial settings
   $scope.object = {
     command: cmd,
     data: {
@@ -119,8 +115,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       answer: '',
       owner: '',
       Version: 1,
-      From: ds, // .getFullYear() + '-' + (ds.getMonth()+1) + '-' + ds.getUTCDate(),
-      To: ds2, // + '-' + (ds.getMonth()+1) + '-' + ds.getUTCDate(),
+      From: ds,
+      To: ds2,
       description: '<p>Please enter a description</p>',
       correct: false,
       ngTopic: {},
@@ -156,8 +152,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   if (cmd == 'update_syllabus') {
     $scope.object.data = $scope.$$prevSibling.actSyllabus;
     // Parse Date
-    $scope.object.data.From = Date.parse($scope.object.data.From);
-    $scope.object.data.To = Date.parse($scope.object.data.To);
+    $scope.object.data.From = new Date($scope.object.data.From);
+    $scope.object.data.To = new Date($scope.object.data.To);
+    console.log($scope.object);
   }
   else if (cmd == 'update_question') {
     $scope.object.data.ID = $scope.$$prevSibling.actQuestion.ID;
