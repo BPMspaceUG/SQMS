@@ -192,6 +192,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     if ($scope.object.data.ngOwner) {
       $scope.object.data.Owner = $scope.object.data.ngOwner.lastname;
     }
+    if ($scope.object.data.ngLang) {
+      $scope.object.data.LangID = $scope.object.data.ngLang.sqms_language_id;
+    }
     // Return result
     $uibModalInstance.close($scope.object);
     console.log("Modal ok clicked");

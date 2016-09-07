@@ -257,8 +257,11 @@
 
 <!-- Template: StateMachine Syllabus -->
 <script type="text/ng-template" id="popoverStatemachineSyllabus.html">
-  <div><b>goto:</b>&nbsp;<div ng-repeat="state in actSyllabus.availableOptions">
-      <button type="button" style="margin-bottom: 3px;" ng-click="setstate('update_syllabus_state', state.id)" class="btn btn-default btn-xs">{{state.name}}</button>
+  <div><small>goto state</small><br/><br/>
+    <div ng-repeat="state in actSyllabus.availableOptions">
+      <button type="button" style="margin-bottom: 3px;"
+        ng-click="setstate('update_syllabus_state', state.id)"
+        class="btn btn-primary btn-sm">&rarr; {{state.name}}</button>
     </div>
   </div>
 </script>

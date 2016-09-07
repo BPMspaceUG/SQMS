@@ -26,7 +26,7 @@
     <!--
     ########################################## Page: Dashboard 
     -->
-    <div id="pagedashboard" class="tab-pane active">
+    <div id="pagedashboard" class="tab-pane">
       <div class="row bg-primary">
         <div class="col-sm-12">
           <h2>Dashboard</h2>
@@ -66,7 +66,7 @@
     <!--
     ########################################## Page: Syllabus 
     -->
-    <div id="pagesyllabus" class="tab-pane">
+    <div id="pagesyllabus" class="tab-pane active">
       <div class="row bg-primary">
         <h2 class="col-sm-3">Syllabus</h2>
         <div class="col-sm-5">
@@ -76,7 +76,7 @@
               <i class="fa fa-plus"></i> New Syllabus
             </button>
             <button type="button" class="btn btn-success menuitem" ng-disabled="!actSyllabus || actSyllabus.state != 'new'" ng-click="open('modalNewSyllabusElement.html', 'create_syllabuselement')">
-              <i class="fa fa-plus"></i> New Syllabus-Element ({{actSyllabus.ID}})
+              <i class="fa fa-plus"></i> New SyllabusElement
             </button>
           </span>
         </div>
@@ -236,7 +236,7 @@
               <i class="fa fa-plus"></i> New Question
             </button>
             <button type="button" class="btn btn-success menuitem" ng-disabled="!actQuestion || actQuestion.state != 'new'" ng-click="open('modalNewAnswer.html', 'create_answer')">
-              <i class="fa fa-plus"></i> New Answer ({{actQuestion.ID}})
+              <i class="fa fa-plus"></i> New Answer
             </button>
             <!-- TODO: Export to mitsm Homepage -->
             <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportQuestions.html', 'export_questions')">

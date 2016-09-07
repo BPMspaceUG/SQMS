@@ -13,7 +13,7 @@
     }
     return $results_array;
   }
-  
+
 class RequestHandler
 {
   private $db;
@@ -26,14 +26,19 @@ class RequestHandler
     global $DB_host;
     global $DB_user;
     global $DB_pass;
-    global $DB_name;    
+    global $DB_name;
+    
     // Connect to database
     $db = new mysqli($DB_host, $DB_user, $DB_pass, $DB_name);
     if($db->connect_errno){
       printf("Connect failed: %s\n", mysqli_connect_error());
       exit();
     }
+    
+    // Set charset
     $db->query("SET NAMES utf8");
+    
+    // Save DB Connection
     $this->db = $db;
     
     //--- Create RoleManager
@@ -112,7 +117,8 @@ class RequestHandler
         $res += $this->setSyllabusOwner($params["ID"], $params["Owner"]);
         $res += $this->setSyllabusFrom($params["ID"], $params["From"]);
         $res += $this->setSyllabusTo($params["ID"], $params["To"]);
-        if ($res != 6) return ''; else return $res;
+        $res += $this->setSyllabusLang($params["ID"], $params["LangID"]);
+        if ($res != 7) return ''; else return $res;
         break;
         
       case "update_syllabus_name":
@@ -265,8 +271,63 @@ class RequestHandler
   ####################### Definition der Handles
   ###################################################################################################################
   
-  private function getSyllabusList() {
+  private function getLanguages() {
+    $query = "SELECT sqms_language_id, language FROM sqms_language;";
+    $res = $this->db->query($query);
+    return getResultArray($res);
+  }
+  
+  /********************************************** Syllabus */
+  
+  // TODO: Class
+  /*
+  class Syllabus {
+    private $conn;
+    private $table_name = "sqms_syllabus";
+    // Object Properties
+    public $id;
+    public $name;
+    public $version;
+    public $state_id;
+    public $topic_id;
+    public $owner_id;
+    public $lang_id;
+    public $successor;
+    public $predecessor;
+    public $validfrom;
+    public $validto;
+    public $description;
     
+    public function __construct($db) {
+      $this->conn = $db;
+    }
+    public function create() {
+      $query = "INSERT INTO ".$this->table_name." (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
+        "validity_period_from, validity_period_to, description) VALUES (?,?,?,?,?,?,?,?,?);";
+      $stmt = $this->conn->prepare($query);
+
+      $this->name = htmlspecialchars(strip_tags($this->name));
+      //$this->price = htmlspecialchars(strip_tags($this->price));
+      $this->description = htmlspecialchars(strip_tags($this->description));
+      //$this->category_id = htmlspecialchars(strip_tags($this->category_id));
+      //$this->timestamp = htmlspecialchars(strip_tags($this->timestamp));
+      
+      $stmt->bindParam(1, $this->name);
+      //$stmt->bindParam(2, $this->price);
+      $stmt->bindParam(3, $this->description);
+      //$stmt->bindParam(4, $this->category_id);
+      //$stmt->bindParam(5, $this->timestamp);
+
+      if($stmt->execute()){
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+  */
+  
+  private function getSyllabusList() {    
     // Only return topics which are allowed for the actual role
     if ($this->roleIDs) {
       $suffix = " WHERE ";
@@ -274,8 +335,7 @@ class RequestHandler
         $suffix .= "b.sqms_role_id = ".$id." OR ";
       }
       $suffix = substr($suffix, 0, -4); // remove last " OR "
-    }
-    
+    }    
     $query = "SELECT 
     sqms_syllabus_id AS 'ID',
     a.name AS 'Name',
@@ -306,11 +366,6 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     }
     $return['syllabus'] = $r;
     return $return;
-  }
-  private function getLanguages() {
-    $query = "SELECT sqms_language_id, language FROM sqms_language;";
-    $res = $this->db->query($query);
-    return getResultArray($res);
   }
   private function addSyllabus($name, $owner, $topic, $description, $from, $to, $langID, $version = 1, $successor = null) {
     if ($successor != null)
@@ -371,113 +426,6 @@ ON c.sqms_language_id = a.sqms_language_id".$suffix.";";
     // TODO: set state of old Syllabus to deprecated
     return $newID;
   }
-  private function addSyllabusElement($element_order, $severity, $parentID, $name, $description) {
-    // TODO: Prepare statement
-    $query = "INSERT INTO sqms_syllabus_element ".
-      "(element_order, severity, sqms_syllabus_id, name, description) VALUES (".
-      $element_order.",".
-      $severity.",".
-      $parentID.",".
-      "'".$name."',".
-      "'".$description."');";
-        $result = $this->db->query($query);
-    if (!$result) $this->db->error;
-    return $result;
-  }
-  // ------------------------------------- Questions
-  private function getQuestionList() {
-    $query = "SELECT 
-    a.sqms_question_id AS 'ID',
-    b.name AS 'Topic',
-    b.sqms_topic_id AS 'TopicID',
-    a.question AS 'Question',
-    a.author AS 'Author',
-    d.language AS 'Language',
-    a.version AS 'Vers',
-    a.id_external AS 'ExtID',
-    c.name AS 'Type'
-FROM
-    `sqms_question` AS a LEFT JOIN
-    sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id
-LEFT JOIN sqms_question_type AS c
-ON a.sqms_question_type_id = c.sqms_question_type_id
-LEFT JOIN sqms_language AS d
-ON d.sqms_language_id = a.sqms_language_id;";
-    $rows = $this->db->query($query);
-    $res = getResultArray($rows);
-    $r = null;
-    foreach ($res as $el) {
-      $acts = $this->SEQu->getActState($el["ID"])[0];
-      $state = array("state" => $acts);
-      $x = array_merge_recursive($el, $state);
-      $r[] = $x;
-    }
-    $return['questionlist'] = $r;
-    return $return;
-  }
-  private function getAnswers($questionID) {
-    settype($questionID , 'integer');
-    $query = "SELECT sqms_answer_id AS 'ID', answer, correct FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
-    $res = $this->db->query($query);
-    $return['answers'] = getResultArray($res);
-    return $return;
-  }
-  private function addAnswer($questionID, $correct, $answer){
-    $query = "INSERT INTO sqms_answer (sqms_question_id, answer, correct) VALUES (?,?,?);";
-    $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("isi", $questionID, $answer, $correct); // bind params
-    $result = $stmt->execute(); // execute statement
-    return (!is_null($result) ? 1 : null);
-  }
-  private function delAnswer($answerID){
-    settype($answerID , 'integer');
-    // Only delete elements where state = 1 (new)
-    $query = "DELETE a FROM sqms_answer AS a
-INNER JOIN sqms_question AS b ON a.sqms_question_id = b.sqms_question_id 
-WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
-    var_dump($query);
-    $result = $this->db->query($query);
-    var_dump($result);
-    $success = $this->db->affected_rows;
-    var_dump($this->db);
-    return ($success > 0 ? 1 : null);
-  }
-  private function setQuestionTopic($questionid, $topicID) {
-    $query = "UPDATE sqms_question SET sqms_topic_id = ? WHERE sqms_question_id = ?;";
-    $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("ii", $topicID, $questionid); // bind params
-    $result = $stmt->execute(); // execute statement
-    return (!is_null($result) ? 1 : null);
-  }
-  private function updateAnswer($id, $answer, $correct) {
-    $query = "UPDATE sqms_answer SET answer = ?, correct = ? WHERE sqms_answer_id = ?;";
-    $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("sii", $answer, $correct, $id); // bind params
-    $result = $stmt->execute(); // execute statement
-    return (!is_null($result) ? 1 : null);
-  }
-  private function updateSyllabusElement($id, $name, $description, $elementorder, $severity) {
-    $query = "UPDATE sqms_syllabus_element SET name=?, description=?, element_order=?, severity=? ".
-      "WHERE sqms_syllabus_element_id = ?;";
-    $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("ssiii", $name, $description, $elementorder, $severity, $id); // bind params
-    $result = $stmt->execute(); // execute statement
-    return (!is_null($result) ? 1 : null);
-  }
-  private function updateTopic($id, $name) {
-    $query = "UPDATE sqms_topic SET name = ? WHERE sqms_topic_id = ?;";
-    $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("si", $name, $id); // bind params
-    $result = $stmt->execute(); // execute statement
-    return (!is_null($result) ? 1 : null);
-  }
-  private function updateQuestion($id, $question) {
-    $query = "UPDATE sqms_question SET question = ? WHERE sqms_question_id = ?;";
-    $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("si", $question, $id); // bind params
-    $result = $stmt->execute(); // execute statement
-    return (!is_null($result) ? 1 : null);
-  }
   private function setSyllabusName($syllabid, $newname) {
     $query = "UPDATE sqms_syllabus SET name = ? WHERE sqms_syllabus_id = ?;";
     $stmt = $this->db->prepare($query); // prepare statement
@@ -521,7 +469,185 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
   }
-  // TODO: implement into class
+  private function setSyllabusLang($syllabid, $langID) {
+    $query = "UPDATE sqms_syllabus SET sqms_language_id = ? WHERE sqms_syllabus_id = ?;";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("si", $langID, $syllabid); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
+  }  
+  /********************************************** SyllabusElement */
+  
+  private function getSyllabusElementsList($id=-1) {
+    settype($id, 'integer');
+    /*
+    Feature in future:
+    sqms_syllabus_element_id_predecessor
+    sqms_syllabus_element_id_successor
+    */  
+    $query = "SELECT ".
+    "sqms_syllabus_element_id, element_order, severity, sqms_syllabus_id,".
+    "name, description FROM sqms_syllabus_element";
+    if ($id > 0) {
+      $query .= " WHERE sqms_syllabus_id = $id";
+    }
+    $query .= " ORDER BY element_order;";
+    $return = array();
+    $res = $this->db->query($query);
+    $return['syllabuselements'] = getResultArray($res);
+    return $return;
+  }  
+  private function addSyllabusElement($element_order, $severity, $parentID, $name, $description) {
+    // TODO: Prepare statement
+    $query = "INSERT INTO sqms_syllabus_element ".
+      "(element_order, severity, sqms_syllabus_id, name, description) VALUES (".
+      $element_order.",".
+      $severity.",".
+      $parentID.",".
+      "'".$name."',".
+      "'".$description."');";
+        $result = $this->db->query($query);
+    if (!$result) $this->db->error;
+    return $result;
+  }
+  private function updateSyllabusElement($id, $name, $description, $elementorder, $severity) {
+    $query = "UPDATE sqms_syllabus_element SET name=?, description=?, element_order=?, severity=? ".
+      "WHERE sqms_syllabus_element_id = ?;";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("ssiii", $name, $description, $elementorder, $severity, $id); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
+  }
+  
+  /********************************************** Question */
+  
+  private function getQuestionList() {
+    $query = "SELECT 
+    a.sqms_question_id AS 'ID',
+    b.name AS 'Topic',
+    b.sqms_topic_id AS 'TopicID',
+    a.question AS 'Question',
+    a.author AS 'Author',
+    d.language AS 'Language',
+    a.version AS 'Vers',
+    a.id_external AS 'ExtID',
+    c.name AS 'Type'
+FROM
+    `sqms_question` AS a LEFT JOIN
+    sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id
+LEFT JOIN sqms_question_type AS c
+ON a.sqms_question_type_id = c.sqms_question_type_id
+LEFT JOIN sqms_language AS d
+ON d.sqms_language_id = a.sqms_language_id;";
+    $rows = $this->db->query($query);
+    $res = getResultArray($rows);
+    $r = null;
+    foreach ($res as $el) {
+      $acts = $this->SEQu->getActState($el["ID"])[0];
+      $state = array("state" => $acts);
+      $x = array_merge_recursive($el, $state);
+      $r[] = $x;
+    }
+    $return['questionlist'] = $r;
+    return $return;
+  }
+  private function addQuestion($question, $author, $topicID) {
+    $query = "INSERT INTO `sqms_question` (
+  `sqms_language_id`,`sqms_question_state_id`,`question`,`author`,`version`,`id_external`,
+  `sqms_question_id_predecessor`,`sqms_question_id_successor`,`sqms_question_type_id`,`sqms_topic_id`)
+  VALUES (1,1,?,?,1,'',0,0,1,?);";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("ssi", $question, $author, $topicID); // bind params
+    $result = $stmt->execute(); // execute statement
+    return $result;
+  }
+  private function updateQuestion($id, $question) {
+    $query = "UPDATE sqms_question SET question = ? WHERE sqms_question_id = ?;";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("si", $question, $id); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
+  }
+  private function setQuestionTopic($questionid, $topicID) {
+    $query = "UPDATE sqms_question SET sqms_topic_id = ? WHERE sqms_question_id = ?;";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("ii", $topicID, $questionid); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
+  }
+  
+  /********************************************** Answer */
+  
+  private function getAnswers($questionID) {
+    settype($questionID , 'integer');
+    $query = "SELECT sqms_answer_id AS 'ID', answer, correct FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
+    $res = $this->db->query($query);
+    $return['answers'] = getResultArray($res);
+    return $return;
+  }
+  private function addAnswer($questionID, $correct, $answer){
+    $query = "INSERT INTO sqms_answer (sqms_question_id, answer, correct) VALUES (?,?,?);";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("isi", $questionID, $answer, $correct); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
+  }
+  private function delAnswer($answerID){
+    settype($answerID , 'integer');
+    // Only delete elements where state = 1 (new)
+    $query = "DELETE a FROM sqms_answer AS a
+INNER JOIN sqms_question AS b ON a.sqms_question_id = b.sqms_question_id 
+WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
+    var_dump($query);
+    $result = $this->db->query($query);
+    var_dump($result);
+    $success = $this->db->affected_rows;
+    var_dump($this->db);
+    return ($success > 0 ? 1 : null);
+  }
+  private function updateAnswer($id, $answer, $correct) {
+    $query = "UPDATE sqms_answer SET answer = ?, correct = ? WHERE sqms_answer_id = ?;";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("sii", $answer, $correct, $id); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
+  }
+  
+  /********************************************** Topic */
+  
+  private function getTopicList() {
+    // Only return topics which are allowed for the actual role
+    if ($this->roleIDs) {
+      $suffix = " WHERE ";
+      foreach ($this->roleIDs as $id) {
+        $suffix .= "sqms_role_id = ".$id." OR ";
+      }
+      $suffix = substr($suffix, 0, -4); // remove last " OR "
+    }
+    $query = "SELECT sqms_topic_id AS id, name FROM `sqms_topic`".$suffix;
+    $res = $this->db->query($query);
+    $return['topiclist'] = getResultArray($res);
+    return $return;
+  }  
+  private function addTopic($name) {
+    $query = "INSERT INTO sqms_topic (name) VALUES (?);";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("s", $name); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
+  }
+  private function updateTopic($id, $name) {
+    $query = "UPDATE sqms_topic SET name = ? WHERE sqms_topic_id = ?;";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param("si", $name, $id); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
+  }
+  
+
+  
+  
+  // TODO: implement into class StateEngine
   private function setSyllabusState($syllabid, $stateid) {
     // params
     settype($syllabid, 'integer');
@@ -589,42 +715,11 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
     } else
       return false;
   }
-  private function addTopic($name) {
-    $query = "INSERT INTO sqms_topic (name) VALUES (?);";
-    $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("s", $name); // bind params
-    $result = $stmt->execute(); // execute statement
-    return (!is_null($result) ? 1 : null);
-  }
-  private function addQuestion($question, $author, $topicID) {
-    $query = "INSERT INTO `sqms_question` (
-  `sqms_language_id`,`sqms_question_state_id`,`question`,`author`,`version`,`id_external`,
-  `sqms_question_id_predecessor`,`sqms_question_id_successor`,`sqms_question_type_id`,`sqms_topic_id`)
-  VALUES (1,1,?,?,1,'',0,0,1,?);";
-    $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("ssi", $question, $author, $topicID); // bind params
-    $result = $stmt->execute(); // execute statement
-    return $result;
-  }
-  private function getSyllabusElementsList($id=-1) {
-    settype($id, 'integer');
-    /*
-    Feature in future:
-    sqms_syllabus_element_id_predecessor
-    sqms_syllabus_element_id_successor
-    */  
-    $query = "SELECT ".
-    "sqms_syllabus_element_id, element_order, severity, sqms_syllabus_id,".
-    "name, description FROM sqms_syllabus_element";
-    if ($id > 0) {
-      $query .= " WHERE sqms_syllabus_id = $id";
-    }
-    $query .= " ORDER BY element_order;";
-    $return = array();
-    $res = $this->db->query($query);
-    $return['syllabuselements'] = getResultArray($res);
-    return $return;
-  }
+  
+
+  
+  
+  // TODO: Obsolete!!!
   private function getFormDataByState($state) {
     if (!isset($state)) $state = 1;
     settype($state, 'integer');
@@ -635,20 +730,9 @@ WHERE a.sqms_answer_id = $answerID AND b.sqms_question_state_id = 1;";
     $return['formdata'] = $tmp[0]['form_data'];
     return $return;
   }
-  private function getTopicList() {
-    // Only return topics which are allowed for the actual role
-    if ($this->roleIDs) {
-      $suffix = " WHERE ";
-      foreach ($this->roleIDs as $id) {
-        $suffix .= "sqms_role_id = ".$id." OR ";
-      }
-      $suffix = substr($suffix, 0, -4); // remove last " OR "
-    }
-    $query = "SELECT sqms_topic_id AS id, name FROM `sqms_topic`".$suffix;
-    $res = $this->db->query($query);
-    $return['topiclist'] = getResultArray($res);
-    return $return;
-  }
+  
+  
+  
   // ----------------------------------- Reports
   private function getReport_QuestionsWithoutQuestionmarks(){
     $query = "SELECT 'Questions without Questionmarks' as attr, COUNT(*) AS value, 'fa-question' AS icon FROM sqms_question WHERE question NOT LIKE '%?%';";
