@@ -83,7 +83,7 @@
           <div class="col-sm-4">
             <select class="form-control"
               ng-options="l.language for l in languages"
-              ng-init="object.data.ngLang = languages[0]"
+              ng-init="getActLangSyllab()"
               ng-model="object.data.ngLang"></select>
           </div>
         </div>

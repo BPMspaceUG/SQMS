@@ -347,6 +347,7 @@ class RequestHandler
     validity_period_from AS 'From',
     validity_period_to AS 'To',
     c.language AS 'Language',
+    c.sqms_language_id AS 'LangID',
     a.sqms_syllabus_id_successor AS 'SuccID',
     a.sqms_syllabus_id_predecessor AS 'PredID'
 FROM
@@ -577,6 +578,16 @@ ON d.sqms_language_id = a.sqms_language_id;";
   }
   
   /********************************************** Answer */
+  
+  /*
+  class Answer {
+    private $conn;
+    private $table_name = "sqms_answer";
+    // Object Properties
+    public $id;
+    public $name;
+  }
+  */
   
   private function getAnswers($questionID) {
     settype($questionID , 'integer');
