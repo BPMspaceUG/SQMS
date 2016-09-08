@@ -152,8 +152,8 @@
             </td>
             <!-- Other Infos -->
             <td>{{s['Owner']}}</td>
-            <td>{{s['From']}}</td>
-            <td>{{s['To']}}</td>
+            <td>{{s['From'] | date:'yyyy-MM-dd'}}</td>
+            <td>{{s['To'] | date:'yyyy-MM-dd'}}</td>
             <td>{{s['Language']}}</td>
             <!-- Statemachine -->
             <td style="width: 90px;">
