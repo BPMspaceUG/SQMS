@@ -1,4 +1,4 @@
-<!-- Template Modal "Footer" -->
+<!-- Footer -->
 <script type="text/ng-template" id="modalFooter.html">
   <div class="modal-footer">
     <button class="btn btn-success" type="button" ng-click="ok()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
@@ -6,7 +6,7 @@
   </div>
 </script>
 
-<!-- Template Modal "Create Topic" -->
+<!-- TOPIC -->
 <script type="text/ng-template" id="modalNewTopic.html">
   <div class="modal-header">
     <h3 class="modal-title">Topic</h3>
@@ -23,7 +23,7 @@
   <ng-include src="'modalFooter.html'"></ng-include>
 </script>
 
-<!-- Template Modal "Create Syllabus" -->
+<!-- SYLLABUS -->
 <script type="text/ng-template" id="modalSyllabus.html">
   <div class="modal-header">
     <h3 class="modal-title">Syllabus</h3>
@@ -103,14 +103,14 @@
         </div>
         <!-- Description -->
         <label class="control-label">Description</label>
-        <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
+        <textarea data-ui-tinymce ui-tinymce="tinymceOptions" ng-model="object.data.description"></textarea>
       </fieldset>
     </form>
   </div>
   <ng-include src="'modalFooter.html'"></ng-include>
 </script>
 
-<!-- Template Modal "SyllabusElement" -->
+<!-- SYLLABUSELEMENT -->
 <script type="text/ng-template" id="modalSyllabusElement.html">
   <div class="modal-header">
     <h3 class="modal-title">SyllabusElement</h3>
@@ -146,7 +146,7 @@
         </div>
         <!-- Description -->
         <label class="control-label">Description</label>
-        <textarea data-ui-tinymce ng-model="object.data.description"></textarea>
+        <textarea data-ui-tinymce ui-tinymce="tinymceOptions" ng-model="object.data.description"></textarea>
       </fieldset>
     </form>
   </div>

@@ -7,11 +7,11 @@ module.run(function(editableOptions) {
   editableOptions.theme = 'bs3'; // needed for inline editing
 });
 
-// Controller of Modal Window
+/***********************************************************
+ *                 Modal Window Controller                 *
+ ***********************************************************/
 module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items, cmd, parentid) {
-
   // <START>
-
   /*
   $scope.today = function() {
     $scope.From = new Date();
@@ -21,8 +21,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   $scope.clear = function() {
     $scope.dt = null;
   };
-  */
-  
+  */  
   $scope.inlineOptions = {
     customClass: getDayClass,
     minDate: new Date(),
@@ -94,8 +93,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       }
     }
     return '';
-  }
-  
+  }  
   // <END>
 
   // Date format when creating
@@ -125,6 +123,19 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       ngParent: {}
     }
   };
+  $scope.tinymceOptions = {
+    inline: false,
+    /*plugins : 'advlist autolink link image lists charmap print preview',*/
+    plugins: [
+      'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+      'searchreplace wordcount visualblocks visualchars code fullscreen',
+      'insertdatetime media nonbreaking save table contextmenu directionality',
+      'emoticons template paste textcolor colorpicker textpattern imagetools'
+    ],    
+    skin: 'lightgray',
+    theme : 'modern'
+  };
+  
   // Save topics in scope
   $scope.topics = items.topics;
   $scope.users = items.users;
@@ -156,9 +167,6 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     }
   }
   $scope.getActParentSyllabElement = function() {
-    /*console.log("swag");
-    console.log($scope.synamelist);
-    console.log($scope.synamelist);*/
     for (var i = 0; i<$scope.synamelist.length; i++) {
       if ($scope.synamelist[i].ID == $scope.$$prevSibling.actSyllabus.ID) {
         $scope.object.data.ngParent = $scope.synamelist[i];
@@ -226,21 +234,24 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   };
 });
 
-// Main Controller
+/***********************************************************
+ *                    Main Controller                      *
+ ***********************************************************/
 module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', function($scope, $http, $sce, $uibModal) {
+
+  // TODO: Make _ONE_ Object Model for Syllabus, Question and Topic => saves code
 
   $scope.setSelectedSyllabus = function (el) {$scope.actSyllabus = el;};
   $scope.setSelectedQuestion = function (el) {$scope.actQuestion = el;};
   $scope.setSelectedTopic = function (el) {$scope.actTopic = el;};
 
-  /**************************************************************
-    Modal Window + Templates
-  **************************************************************/
+  // Modal Window + Templates Functions
+  
   $scope.open = function (TemplateName, command) {
     var modalInstance = $uibModal.open({
       animation: false,
       templateUrl: TemplateName,
-      controller: 'ModalInstanceCtrl',
+      controller: 'ModalInstanceCtrl', // pass controller
       resolve: {
         cmd: function () {
           return command;
@@ -266,6 +277,8 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
       //$log.info('Modal dismissed at: ' + new Date());
     });
   };
+  
+  
   $scope.editsyllabus = function(el) {
     $scope.setSelectedSyllabus(el);
     // Only open edit form in state "new"
@@ -299,7 +312,8 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
     $scope.writeData('delete_answer', answer);
     console.log(answer.ID);
   }
-  // Sorting Tables, TODO: remove redundant code
+  // Sorting Tables
+  // TODO: remove redundant code
   $scope.predicate_s = 'ID';
   $scope.predicate_q = 'ID';
   $scope.reverse_s = false;
@@ -355,14 +369,12 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
     }
   )};
   
-  //------------------------------- Topic
-  
   $scope.getTopics = function() {
     $http.get('getjson.php?c=topics').success(function(data) {
       $scope.topics = data.topiclist; // store in scope
     });
     return $scope.topics;
-  };  
+  };
   $scope.getUsers = function() {
     $http.get('getjson.php?c=users').success(function(data) {
       $scope.users = data.userlist; // store in scope
@@ -376,23 +388,6 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
     console.log($scope.languages);
     return $scope.languages;
   }
-  /*
-  $scope.getSynamelist = function() {
-    $http.get('getjson.php?c=syllabusnames').success(function(data) {
-      $scope.synamelist = data.syllabus; // store in scope
-    });
-    console.log($scope.synamelist);
-    return $scope.synamelist;
-  }*/
-  
-  /* TODO
-  $scope.$watch('user.group', function(newVal, oldVal) {
-    if (newVal !== oldVal) {
-      var selected = $filter('filter')($scope.groups, {id: $scope.user.group});
-      $scope.user.groupName = selected.length ? selected[0].text : null;
-    }
-  });
-  */
   
   //------------------------------- Syllabus
   $scope.getAllSyllabus = function () {
@@ -512,11 +507,10 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
     });
   }
   
-  //---- Initial functions
+  //---- Initial function calls
   $scope.getAllSyllabus();
   $scope.getAllQuestions();
   $scope.getTopics();
   $scope.getUsers();
   $scope.getLanguages();
-  //$scope.getSynamelist();
 }]);
