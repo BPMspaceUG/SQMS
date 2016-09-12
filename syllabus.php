@@ -89,60 +89,46 @@
       <table class="table datalist">
         <thead>
           <tr>
-            <th>&nbsp;</th>
-            <th class="sortable" ng-click="order_s('ID')">ID<span class="sortorder" ng-show="predicate_s === 'ID'" ng-class="{reverse:reverse_s}"></span></th>
-            <th class="sortable" ng-click="order_s('Name')">Name<span class="sortorder" ng-show="predicate_s === 'Name'" ng-class="{reverse:reverse_s}"></span></th>
-            <th class="sortable" ng-click="order_s('Version')">Version<span class="sortorder" ng-show="predicate_s === 'Version'" ng-class="{reverse:reverse_s}"></span></th>
+            <th style="min-width: 95px;">&nbsp;</th>
+            <th style="min-width: 50px;" class="sortable" ng-click="order_s('ID')">ID<span class="sortorder" ng-show="predicate_s === 'ID'" ng-class="{reverse:reverse_s}"></span></th>
+            <th style="min-width: 250px;" class="sortable" ng-click="order_s('Name')">Name<span class="sortorder" ng-show="predicate_s === 'Name'" ng-class="{reverse:reverse_s}"></span></th>
+            <th style="width: 50px; text-align: center;" class="sortable visible-lg visible-md" ng-click="order_s('Version')">Version<span class="sortorder" ng-show="predicate_s === 'Version'" ng-class="{reverse:reverse_s}"></span></th>
             <th class="sortable" ng-click="order_s('Topic')">Topic<span class="sortorder" ng-show="predicate_s === 'Topic'" ng-class="{reverse:reverse_s}"></span></th>
-            <th class="sortable" ng-click="order_s('Owner')">Owner<span class="sortorder" ng-show="predicate_s === 'Owner'" ng-class="{reverse:reverse_s}"></span></th>
-            <th class="sortable" ng-click="order_s('From')">From<span class="sortorder" ng-show="predicate_s === 'From'" ng-class="{reverse:reverse_s}"></span></th>
-            <th class="sortable" ng-click="order_s('To')">To<span class="sortorder" ng-show="predicate_s === 'To'" ng-class="{reverse:reverse_s}"></span></th>
-            <th class="sortable" ng-click="order_s('Language')">Language<span class="sortorder" ng-show="predicate_s === 'Language'" ng-class="{reverse:reverse_s}"></span></th>
-            <th class="sortable" ng-click="order_s('state')">State<span class="sortorder" ng-show="predicate_s === 'state'" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable visible-lg visible-md" ng-click="order_s('Owner')">Owner<span class="sortorder" ng-show="predicate_s === 'Owner'" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable visible-lg" ng-click="order_s('From')">From<span class="sortorder" ng-show="predicate_s === 'From'" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable visible-lg" ng-click="order_s('To')">To<span class="sortorder" ng-show="predicate_s === 'To'" ng-class="{reverse:reverse_s}"></span></th>
+            <th class="sortable visible-lg visible-md" ng-click="order_s('Language')">Language<span class="sortorder" ng-show="predicate_s === 'Language'" ng-class="{reverse:reverse_s}"></span></th>
+            <th style="width: 90px;" class="sortable" ng-click="order_s('state')">State<span class="sortorder" ng-show="predicate_s === 'state'" ng-class="{reverse:reverse_s}"></span></th>
           </tr>
         </thead>
         <tbody ng-repeat="s in syllabi | filter:filtertext_sy | orderBy:predicate_s:reverse_s">
           <tr ng-click="setSelectedSyllabus(s)"
             ng-class="{success: s.state == 'new', danger: s.state == 'deprecated', warning: s.state == 'ready', info: s.state == 'released'}">
-            <td style="width: 150px;">
+            <td class="tablemenu">
               <!-- Tickmark -->
-              <span class="btn pull-left" title="Select Syllabus">
-                <i ng-class="{'fa fa-fw fa-check-square-o': s.ID === actSyllabus.ID, 'fa fa-fw fa-square-o': s.ID != actSyllabus.ID}"></i>
-              </span>
+              <span title="Select Syllabus"><i ng-class="{'fa fa-fw fa-check-square-o': s.ID === actSyllabus.ID, 'fa fa-fw fa-square-o': s.ID != actSyllabus.ID}"></i></span>
               <!-- Expand or Collapse -->
-              <span class="btn pull-left" ng-hide="s.HasNoChilds" ng-click="displ(s)">
+              <span ng-hide="s.HasNoChilds" ng-click="displ(s)">
                 <i class="fa fa-fw fa-plus-square" ng-show="!s.showKids" title="Expand"></i>
                 <i class="fa fa-fw fa-minus-square" ng-hide="!s.showKids" title="Collapse"></i>
               </span>
               <!-- Dummy Icon for design -->
-              <a class="btn pull-left" ng-show="s.HasNoChilds">
-                <i class="fa fa-fw fa-square icon-invisible"></i>
-              </a>
+              <span ng-show="s.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></span>
               <!-- Edit Icon -->
-              <span ng-show="s.state == 'new'">
-                <a class="btn pull-left" ng-click="editsyllabus(s)" title="Edit Syllabus...">
-                  <i class="fa fa-fw fa-pencil"></i>
-                </a>
-              </span>
+              <span ng-show="s.state == 'new'"><a ng-click="editsyllabus(s)" title="Edit Syllabus..."><i class="fa fa-fw fa-pencil"></i></a></span>
               <!-- Successor Icon -->
-              <span ng-show="s.state != 'new' && s.SuccID == null">
-                <a class="btn pull-left" ng-click="successorsyllabus(s)" title="Create Successor...">
-                  <i class="fa fa-fw fa-share"></i>
-                </a>
-              </span>
+              <span ng-show="s.state != 'new' && s.SuccID == null"><a ng-click="successorsyllabus(s)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a></span>
             </td>
             <!-- ID -->
-            <td style="width: 50px;">
-              <a ng-click="editsyllabus(s)">{{s['ID']}}</a>
-            </td>
+            <td><a ng-click="editsyllabus(s)">{{s['ID']}}</a></td>
             <!-- Name (inlineediting) -->
-            <td style="width: 250px;">
+            <td>
               <div class="popover-wrapper">
                 <a editable-text="s['Name']" onbeforesave="saveEl(s, $data, 'u_syllab_n')" edit-disabled="s.state != 'new'">{{s['Name'] || 'empty' }}</a>
               </div>
             </td>
             <!-- Version -->
-            <td style="width: 50px; text-align: center;">{{s['Version']}}</td>
+            <td style="width: 50px; text-align: center;" class="visible-lg visible-md">{{s['Version']}}</td>
             <!-- Topic (inlineediting) -->
             <td style="width: 100px;">
               <div class="popover-wrapper">
@@ -151,12 +137,12 @@
               </div>
             </td>
             <!-- Other Infos -->
-            <td>{{s['Owner']}}</td>
-            <td>{{s['From'] | date:'yyyy-MM-dd'}}</td>
-            <td>{{s['To'] | date:'yyyy-MM-dd'}}</td>
-            <td>{{s['Language']}}</td>
+            <td style="width: 100px;" class="visible-lg visible-md">{{s['Owner']}}</td>
+            <td style="width: 70px;" class="visible-lg">{{s['From'] | date:'yyyy-MM-dd'}}</td>
+            <td style="width: 70px;" class="visible-lg">{{s['To'] | date:'yyyy-MM-dd'}}</td>
+            <td style="width: 100px;" class="visible-lg visible-md">{{s['Language']}}</td>
             <!-- Statemachine -->
-            <td style="width: 90px;">
+            <td>
               <button uib-popover-template="'popoverStatemachineSyllabus.html'" popover-trigger="focus"
                 ng-disabled="s['state'] == 'deprecated'" type="button" class="btn btn-default btn-sm">{{s['state']}}</button>                
             </td>
@@ -253,7 +239,7 @@
       <table class="table datalist">
         <thead>
           <tr>
-            <th>&nbsp;</th>
+            <th style="min-width: 95px;">&nbsp;</th>
             <th class="sortable" ng-click="order_q('ID')">ID<span class="sortorder" ng-show="predicate_q === 'ID'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable" ng-click="order_q('Topic')">Topic<span class="sortorder" ng-show="predicate_q === 'Topic'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable" ng-click="order_q('Question')">Question<span class="sortorder" ng-show="predicate_q === 'Question'" ng-class="{reverse:reverse_q}"></span></th>
@@ -269,36 +255,23 @@
           <tr ng-click="setSelectedQuestion(q)"
             ng-class="{'seltbl': q.ID === actQuestion.ID, success: q.state == 'new',
               danger: q.state == 'deprecated', 'warning': q.state == 'ready', 'warning': q.state == 'released'}">
-            <td style="width: 150px;">
+            <td class="tablemenu">
               <!-- Tickmark -->
-              <span class="btn pull-left" title="Select Question">
-                <i ng-class="{'fa fa-fw fa-check-square-o': q.ID === actQuestion.ID, 'fa fa-fw fa-square-o': q.ID != actQuestion.ID}"></i>
-              </span>
+              <span title="Select Question"><i ng-class="{'fa fa-fw fa-check-square-o': q.ID === actQuestion.ID, 'fa fa-fw fa-square-o': q.ID != actQuestion.ID}"></i></span>
               <!-- Children -->
-              <span class="btn pull-left" ng-hide="q.HasNoChilds" ng-click="displ(q)">
+              <span ng-hide="q.HasNoChilds" ng-click="displ(q)">
                 <i class="fa fa-fw fa-plus-square" ng-show="!q.showKids"></i>
                 <i class="fa fa-fw fa-minus-square" ng-hide="!q.showKids"></i>
               </span>
               <!-- Dummy Icon for design -->
-              <a class="btn pull-left" ng-show="q.HasNoChilds">
-                <i class="fa fa-fw fa-square icon-invisible"></i>
-              </a>
-              <!-- Edit -->
+              <span ng-show="q.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></span>
               <!-- Edit Icon -->
-              <span ng-show="q.state == 'new'">
-                <a class="btn pull-left" ng-click="editquestion(q)" title="Edit Question...">
-                  <i class="fa fa-fw fa-pencil"></i>
-                </a>
-              </span>
+              <span ng-show="q.state == 'new'"><a ng-click="editquestion(q)" title="Edit Question..."><i class="fa fa-fw fa-pencil"></i></a></span>
               <!-- Successor Icon -->
-              <span ng-show="q.state != 'new'">
-                <a class="btn pull-left" ng-click="successorquestion(q)" title="Create Successor...">
-                  <i class="fa fa-fw fa-share"></i>
-                </a>
-              </span>
+              <span ng-show="q.state != 'new'"><a ng-click="successorquestion(q)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a></span>
             </td>
             <!-- ID -->
-            <td>{{q['ID']}}</td>
+            <td style="width: 50px;">{{q['ID']}}</td>
             <!-- Topic -->
             <td style="width: 100px;">
               <div class="popover-wrapper">
