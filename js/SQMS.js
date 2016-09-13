@@ -112,6 +112,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       severity: 25,
       answer: '',
       owner: '',
+      Owner: '',
       Version: 1,
       From: ds,
       To: ds2,

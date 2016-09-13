@@ -115,7 +115,7 @@ class RequestHandler
         $res += $this->updateSyllabusCol($params["ID"], "name", "s", $params["Name"]);
         $res += $this->updateSyllabusCol($params["ID"], "sqms_topic_id", "i", $params["TopicID"]);
         $res += $this->updateSyllabusCol($params["ID"], "description", "s", $params["description"]);
-        $res += $this->updateSyllabusCol($params["ID"], "owner", "s", $params["Owner"]);
+        $res += $this->updateSyllabusCol($params["ID"], "owner", "s", $params["owner"]);
         $res += $this->updateSyllabusCol($params["ID"], "validity_period_from", "s", $params["From"]);
         $res += $this->updateSyllabusCol($params["ID"], "validity_period_to", "s", $params["To"]);
         $res += $this->updateSyllabusCol($params["ID"], "sqms_language_id", "i", $params["LangID"]);
@@ -172,17 +172,19 @@ class RequestHandler
         break;
         
       case 'create_question':
-        var_dump($params);
         return $this->addQuestion(
           $params['Question'],
-          $params['Owner'],
-          $params['ngTopic']['id']
+          $params['owner'],
+          $params['ngTopic']['id'],
+          $params['ExtID'],
+          $params['ngLang']['sqms_language_id'],
+          1 // TODO: $params['ngQType']['id']
         );
         break;
       
       case "update_question":
         $res = $this->updateQuestionCol($params["ID"], "question", "s", $params["Question"]);
-        $res += $this->updateQuestionCol($params["ID"], "author", "s", $params["Owner"]);
+        $res += $this->updateQuestionCol($params["ID"], "author", "s", $params["owner"]);
         $res += $this->updateQuestionCol($params["ID"], "id_external", "i", $params["ExtID"]);
         $res += $this->updateQuestionCol($params["ID"], "sqms_topic_id", "i", $params['ngTopic']['id']);
         $res += $this->updateQuestionCol($params["ID"], "sqms_language_id", "i", $params['ngLang']['sqms_language_id']);
@@ -488,7 +490,7 @@ class RequestHandler
     b.name AS 'Topic',
     b.sqms_topic_id AS 'TopicID',
     a.question AS 'Question',
-    a.author AS 'Owner',
+    a.author AS 'owner',
     d.language AS 'Language',
     a.sqms_language_id AS 'LangID',
     a.version AS 'Version',
@@ -513,13 +515,13 @@ ON d.sqms_language_id = a.sqms_language_id;";
     $return['questionlist'] = $r;
     return $return;
   }
-  private function addQuestion($question, $author, $topicID) {
+  private function addQuestion($question, $author, $topicID, $extID, $langID, $quesType) {
     $query = "INSERT INTO `sqms_question` (
   `sqms_language_id`,`sqms_question_state_id`,`question`,`author`,`version`,`id_external`,
   `sqms_question_id_predecessor`,`sqms_question_id_successor`,`sqms_question_type_id`,`sqms_topic_id`)
-  VALUES (1,1,?,?,1,'',0,0,1,?);";
+  VALUES (?,1,?,?,1,?,0,0,?,?);";
     $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("ssi", $question, $author, $topicID); // bind params
+    $stmt->bind_param("issiii", $langID, $question, $author, $extID, $quesType, $topicID); // bind params
     $result = $stmt->execute(); // execute statement
     return $result;
   }

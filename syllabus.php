@@ -243,7 +243,7 @@
             <th style="min-width: 50px;" class="sortable" ng-click="order_q('ID')">ID<span class="sortorder" ng-show="predicate_q === 'ID'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable" ng-click="order_q('Topic')">Topic<span class="sortorder" ng-show="predicate_q === 'Topic'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable" ng-click="order_q('Question')">Question<span class="sortorder" ng-show="predicate_q === 'Question'" ng-class="{reverse:reverse_q}"></span></th>
-            <th class="sortable visible-lg" ng-click="order_q('Owner')">Owner<span class="sortorder" ng-show="predicate_q === 'Owner'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable visible-lg" ng-click="order_q('owner')">Owner<span class="sortorder" ng-show="predicate_q === 'owner'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable visible-lg visible-md" ng-click="order_q('Language')">Language<span class="sortorder" ng-show="predicate_q === 'Language'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable visible-lg visible-md" ng-click="order_q('Version')"  style="width: 50px; text-align: center;" >Version<span class="sortorder" ng-show="predicate_q === 'Version'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable visible-lg" ng-click="order_q('ExtID')">Ext.ID<span class="sortorder" ng-show="predicate_q === 'ExtID'" ng-class="{reverse:reverse_q}"></span></th>
@@ -287,7 +287,7 @@
               </div>
               </small>
             </td>
-            <td class="visible-lg"><small>{{q['Owner']}}</small></td>
+            <td class="visible-lg"><small>{{q['owner']}}</small></td>
             <td class="visible-lg visible-md"><small>{{q['Language']}}</small></td>
             <td style="width: 50px; text-align: center;">{{q['Version']}}</td>
             <td class="visible-lg">{{q['ExtID']}}</td>
