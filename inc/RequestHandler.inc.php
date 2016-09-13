@@ -171,7 +171,18 @@ class RequestHandler
         break;
         
       case 'create_question':
-        return $this->addQuestion($params['question'], $params['author'], $params['topic']['id']);
+        var_dump($params);
+        return $this->addQuestion(
+          $params['Question'],
+          $params['Owner'],
+          $params['ngTopic']['id']
+        );
+        break;
+      
+      case "update_question":
+        $res = $this->updateQuestion($params["ID"], $params["Question"]);
+        $res += $this->setQuestionTopic($params["ID"], $params['ngTopic']['id']);
+        if ($res != 2) return ''; else return $res;
         break;
         
       case 'create_answer':
@@ -192,7 +203,7 @@ class RequestHandler
         // Merge data
         $return = array_merge_recursive($arr0, $arr1, $arr2);
         return json_encode($return);
-        break;
+        break;        
         
       case 'update_answer':
         $res = $this->updateAnswer(
@@ -202,13 +213,7 @@ class RequestHandler
         );
         if ($res != 1) return ''; else return $res;
         break;
-        
-      case "update_question":
-        $res = $this->updateQuestion($params["ID"], $params["name"]);
-        $res += $this->setQuestionTopic($params["ID"], $params["TopicID"]);
-        if ($res != 2) return ''; else return $res;
-        break;
-      
+
       // TODO: Remove...
       case 'delete_answer':
         //$res = $this->delAnswer($params["ID"]);
@@ -486,11 +491,6 @@ class RequestHandler
   
   private function getSyllabusElementsList($id=-1) {
     settype($id, 'integer');
-    /*
-    Feature in future:
-    sqms_syllabus_element_id_predecessor
-    sqms_syllabus_element_id_successor
-    */  
     $query = "SELECT ".
     "sqms_syllabus_element_id, element_order, severity, sqms_syllabus_id,".
     "name, description FROM sqms_syllabus_element";
@@ -533,9 +533,9 @@ class RequestHandler
     b.name AS 'Topic',
     b.sqms_topic_id AS 'TopicID',
     a.question AS 'Question',
-    a.author AS 'Author',
+    a.author AS 'Owner',
     d.language AS 'Language',
-    a.version AS 'Vers',
+    a.version AS 'Version',
     a.id_external AS 'ExtID',
     c.name AS 'Type'
 FROM

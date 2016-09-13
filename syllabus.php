@@ -66,7 +66,7 @@
     <!--
     ########################################## Page: Syllabus 
     -->
-    <div id="pagesyllabus" class="tab-pane active">
+    <div id="pagesyllabus" class="tab-pane">
       <div class="row bg-primary">
         <h2 class="col-sm-3">Syllabus</h2>
         <div class="col-sm-5">
@@ -120,7 +120,7 @@
               <span ng-show="s.state != 'new' && s.SuccID == null"><a ng-click="successorsyllabus(s)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a></span>
             </td>
             <!-- ID -->
-            <td><a ng-click="editsyllabus(s)">{{s['ID']}}</a></td>
+            <td><small><a ng-click="editsyllabus(s)">{{s['ID']}}</a></small></td>
             <!-- Name (inlineediting) -->
             <td>
               <div class="popover-wrapper">
@@ -211,7 +211,7 @@
     <!--
     ########################################## Page: Question 
     -->
-    <div id="pagequestion" class="tab-pane">
+    <div id="pagequestion" class="tab-pane active">
       <!-- Header -->
       <div class="row bg-primary">
         <h2 class="col-sm-3">Question</h2>
@@ -240,15 +240,15 @@
         <thead>
           <tr>
             <th style="min-width: 95px;">&nbsp;</th>
-            <th class="sortable" ng-click="order_q('ID')">ID<span class="sortorder" ng-show="predicate_q === 'ID'" ng-class="{reverse:reverse_q}"></span></th>
+            <th style="min-width: 50px;" class="sortable" ng-click="order_q('ID')">ID<span class="sortorder" ng-show="predicate_q === 'ID'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable" ng-click="order_q('Topic')">Topic<span class="sortorder" ng-show="predicate_q === 'Topic'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable" ng-click="order_q('Question')">Question<span class="sortorder" ng-show="predicate_q === 'Question'" ng-class="{reverse:reverse_q}"></span></th>
-            <th class="sortable" ng-click="order_q('Author')">Author<span class="sortorder" ng-show="predicate_q === 'Author'" ng-class="{reverse:reverse_q}"></span></th>
-            <th class="sortable" ng-click="order_q('Language')">Language<span class="sortorder" ng-show="predicate_q === 'Language'" ng-class="{reverse:reverse_q}"></span></th>
-            <th class="sortable" ng-click="order_q('Vers')">Vers.<span class="sortorder" ng-show="predicate_q === 'Vers'" ng-class="{reverse:reverse_q}"></span></th>
-            <th class="sortable" ng-click="order_q('ExtID')">Ext.ID<span class="sortorder" ng-show="predicate_q === 'ExtID'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable visible-lg" ng-click="order_q('Owner')">Owner<span class="sortorder" ng-show="predicate_q === 'Owner'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable visible-lg visible-md" ng-click="order_q('Language')">Language<span class="sortorder" ng-show="predicate_q === 'Language'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable visible-lg visible-md" ng-click="order_q('Version')"  style="width: 50px; text-align: center;" >Version<span class="sortorder" ng-show="predicate_q === 'Version'" ng-class="{reverse:reverse_q}"></span></th>
+            <th class="sortable visible-lg" ng-click="order_q('ExtID')">Ext.ID<span class="sortorder" ng-show="predicate_q === 'ExtID'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable" ng-click="order_q('Type')">Type<span class="sortorder" ng-show="predicate_q === 'Type'" ng-class="{reverse:reverse_q}"></span></th>
-            <th class="sortable" ng-click="order_q('State')">State<span class="sortorder" ng-show="predicate_q === 'State'" ng-class="{reverse:reverse_q}"></span></th>
+            <th style="width: 90px;" class="sortable" ng-click="order_q('State')">State<span class="sortorder" ng-show="predicate_q === 'State'" ng-class="{reverse:reverse_q}"></span></th>
           </tr>
         </thead>
         <tbody ng-repeat="q in questions | filter:filtertext_qu | orderBy:predicate_q:reverse_q">
@@ -271,7 +271,7 @@
               <span ng-show="q.state != 'new'"><a ng-click="successorquestion(q)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a></span>
             </td>
             <!-- ID -->
-            <td style="width: 50px;">{{q['ID']}}</td>
+            <td><small>{{q['ID']}}</small></td>
             <!-- Topic -->
             <td style="width: 100px;">
               <div class="popover-wrapper">
@@ -280,15 +280,17 @@
               </div>
             </td>
             <!-- Question (inlineediting) -->
-            <td style="width: 250px;">
+            <td>
+              <small>
               <div class="popover-wrapper">
                 <a editable-text="q['Question']" onbeforesave="saveEl(s, $data, 'u_question')" edit-disabled="q.state != 'new'">{{q['Question'] || 'empty' }}</a>
               </div>
+              </small>
             </td>
-            <td><small>{{q['Author']}}</small></td>
-            <td><small>{{q['Language']}}</small></td>
-            <td>{{q['Vers']}}</td>
-            <td>{{q['ExtID']}}</td>
+            <td class="visible-lg"><small>{{q['Owner']}}</small></td>
+            <td class="visible-lg visible-md"><small>{{q['Language']}}</small></td>
+            <td style="width: 50px; text-align: center;">{{q['Version']}}</td>
+            <td class="visible-lg">{{q['ExtID']}}</td>
             <td><small>{{q['Type']}}</small></td>
             <!-- StateMachine Popover -->
             <td>

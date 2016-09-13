@@ -182,16 +182,18 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     // Parse Date
     $scope.object.data.From = new Date($scope.object.data.From);
     $scope.object.data.To = new Date($scope.object.data.To);
-    console.log($scope.object);
+    //console.log($scope.object);
   }
   else if (cmd == 'update_question') {
-    $scope.object.data.ID = $scope.$$prevSibling.actQuestion.ID;
-    $scope.object.data.name = $scope.$$prevSibling.actQuestion.Question;
+    $scope.object.data = $scope.$$prevSibling.actQuestion;
+    console.log($scope.object);
+    //$scope.object.data.ID = $scope.$$prevSibling.actQuestion.ID;
+    //$scope.object.data.name = $scope.$$prevSibling.actQuestion.Question;
     //$scope.object.data.description = $scope.$$prevSibling.actQuestion.description;   
-    $scope.object.data.owner = $scope.$$prevSibling.actQuestion.Author;
-    $scope.object.data.topic = $scope.$$prevSibling.actQuestion.topic;
-    $scope.object.data.lang = $scope.$$prevSibling.actQuestion.Language;
-    $scope.object.data.extid = $scope.$$prevSibling.actQuestion.ExtID;
+    // $scope.object.data.owner = $scope.$$prevSibling.actQuestion.Owner;
+    //$scope.object.data.topic = $scope.$$prevSibling.actQuestion.topic;
+    //$scope.object.data.lang = $scope.$$prevSibling.actQuestion.Language;
+    //$scope.object.data.extid = $scope.$$prevSibling.actQuestion.ExtID;
     //$scope.items = $scope.$$prevSibling.getTopics();
   }
   else if (cmd == 'update_syllabuselement') {
@@ -305,7 +307,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   $scope.editquestion = function(el) {
     $scope.setSelectedQuestion(el);
     if (el.state == 'new')
-      $scope.open('modalEditQuestion.html', 'update_question');
+      $scope.open('modalNewQuestion.html', 'update_question');
   }
   $scope.deleteanswer = function(answer) {
     // the php script will check if it is acually    

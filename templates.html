@@ -153,53 +153,69 @@
   <ng-include src="'modalFooter.html'"></ng-include>
 </script>
 
-<!-- Template Modal "Create Question" -->
+<!-- QUESTION -->
 <script type="text/ng-template" id="modalNewQuestion.html">
   <div class="modal-header">
-    <h3 class="modal-title">Create new Question</h3>
+    <h3 class="modal-title">Question</h3>
   </div>
   <div class="modal-body">
+  
     <form class="form-horizontal">
       <fieldset>
-        <legend>Create question</legend>
-        <label class="control-label">Question text</label>
-        <input ng-model="object.data.question" placeholder="What is the answer to the universe and everything?" class="form-control" type="text" />
-        <label class="control-label">Topic</label>
-        <select class="form-control" ng-options="item as item.name for item in items track by item.id" ng-model="object.data.topic"></select>
-        <label class="control-label">Author</label>
-        <input ng-model="object.data.author" placeholder="Max Mustermann" class="form-control" type="text" />
-        <label class="control-label">Version</label>
-        <input placeholder="1" class="form-control" type="text" disabled/>
-      </fieldset>
-    </form>
-  </div>
-  <ng-include src="'modalFooter.html'"></ng-include>
-</script>
-
-<!-- Template Modal "Edit Question" -->
-<script type="text/ng-template" id="modalEditQuestion.html">
-  <div class="modal-header">
-    <h3 class="modal-title">Edit question</h3>
-  </div>
-  <div class="modal-body">
-    <form class="form-horizontal">
-      <fieldset>
-        <legend>Edit question</legend>
-        <label class="control-label">Question</label>
-        <input ng-model="object.data.name" class="form-control" type="text" />
-        <label class="control-label">Topic</label>
-        <select class="form-control"
-        ng-options="t.name for t in topics"
-        ng-init="getActTopicQuestion()"
-        ng-model="object.data.ngTopic"></select>
-        <label class="control-label">Author</label>
-        <input ng-model="object.data.owner" class="form-control" type="text" />
-        <label class="control-label">Language</label>
-        <input ng-model="object.data.lang" class="form-control" type="text" />
-        <label class="control-label">External ID</label>
-        <input ng-model="object.data.extid" class="form-control" type="text" />
-        <label class="control-label">Version</label>
-        <input placeholder="1" class="form-control" type="text" disabled/>
+        <legend>Question Properties</legend>
+        <!-- Question -->
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Question</label>
+          <div class="col-sm-10">
+            <input class="form-control" ng-model="object.data.Question" type="text" />
+          </div>
+        </div>
+        <!-- Topic / Language -->
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Topic</label>
+          <div class="col-sm-4">
+            <!--<select class="form-control"
+              ng-options="item as item.name for item in items track by item.id"
+              ng-init="getActTopicQuestion()"
+              ng-model="object.data.topic"></select>-->
+            <select class="form-control"
+              ng-options="t.name for t in topics"
+              ng-init="getActTopicQuestion()"
+              ng-model="object.data.ngTopic"></select>
+          </div>
+          <label class="col-sm-2 control-label">Language</label>
+          <div class="col-sm-4">
+            <select class="form-control"
+              ng-options="l.language for l in languages"
+              ng-init="getActLangSyllab()"
+              ng-model="object.data.ngLang"></select>
+          </div>
+        </div>
+        <!-- Author / Version -->
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Owner</label>
+          <div class="col-sm-6">
+            <input ng-model="object.data.Owner" class="form-control" type="text" />
+          </div>
+          <label class="col-sm-2 control-label">Version</label>
+          <div class="col-sm-2">
+            <input ng-model="object.data.Version" class="form-control" type="text" disabled/>
+          </div>
+        </div>
+        <!-- Type / ExtID -->
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Type</label>
+          <div class="col-sm-6">
+            <!--<input ng-model="object.data.author" class="form-control" type="text" />-->
+            <select class="form-control"
+              ng-options="item as item.name for item in items track by item.id"
+              ng-model="object.data.topic"></select>
+          </div>
+          <label class="col-sm-2 control-label">Ext.ID</label>
+          <div class="col-sm-2">
+            <input ng-model="object.data.extid" class="form-control" type="text" />
+          </div>
+        </div>
       </fieldset>
     </form>
   </div>
