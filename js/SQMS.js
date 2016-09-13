@@ -159,6 +159,13 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       }
     }
   }
+  $scope.getActLangQuestion = function() {
+    for (var i = 0; i<$scope.languages.length; i++) {
+      if ($scope.languages[i].sqms_language_id == $scope.$$prevSibling.actQuestion.LangID) {
+        $scope.object.data.ngLang = $scope.languages[i];
+      }
+    }
+  }  
   $scope.getActTopicQuestion = function() {    
     for (var i = 0; i<$scope.topics.length; i++) {
       if ($scope.topics[i].id == $scope.$$prevSibling.actQuestion.TopicID) {
