@@ -85,10 +85,9 @@ class RequestHandler
         @$actStateID = $actstate[0]['id'];
         $arr0 = array("parentID" => $syllabid);
         $arr1 = array("nextstates" => $this->SESy->getNextStates($actStateID)); // Possible next states
-        //$arr2 = $this->getFormDataByState($actStateID); // Form data for actual state
         $arr2 = $this->getSyllabusElementsList($syllabid);
         // Merge data
-        $return = array_merge_recursive($arr0, $arr1, $arr2); // ;, $arr3);
+        $return = array_merge_recursive($arr0, $arr1, $arr2);
         return json_encode($return);
         break;
         
@@ -111,7 +110,6 @@ class RequestHandler
         
       case "update_syllabus":
         $res = 0;
-        //$res += $this->updateSyllabusCol($params["ID"], "sqms_syllabus_id_predecessor", "i", input);
         $res += $this->updateSyllabusCol($params["ID"], "name", "s", $params["Name"]);
         $res += $this->updateSyllabusCol($params["ID"], "sqms_topic_id", "i", $params["TopicID"]);
         $res += $this->updateSyllabusCol($params["ID"], "description", "s", $params["description"]);
@@ -126,12 +124,12 @@ class RequestHandler
         $res = $this->updateSyllabusCol($params["ID"], "name", "s", $params["name"]);
         if ($res != 1) return ''; else return $res;
         break;
-        
+      
       case "update_syllabus_topic":
         $res = $this->updateSyllabusCol($params["ID"], "name", "i", $params["TopicID"]);
         if ($res != 1) return ''; else return $res;
         break;
-                
+      
       case 'create_syllabuselement':
         return $this->addSyllabusElement(
           $params["element_order"],
@@ -163,6 +161,11 @@ class RequestHandler
       
       case 'questions':
         $return = $this->getQuestionList();
+        return json_encode($return);
+        break;
+        
+      case 'questiontypes':
+        $return = $this->getQuestionTypes();
         return json_encode($return);
         break;
         
@@ -436,6 +439,15 @@ class RequestHandler
   
   /********************************************** Question */
   
+  private function getQuestionTypes() {
+    $query = "SELECT
+    sqms_question_type_id AS 'ID',
+    name,
+    description FROM sqms_question_type;";
+    $rows = $this->db->query($query);
+    $return['qtypelist'] = getResultArray($rows);
+    return $return;
+  }  
   private function getQuestionList() {
     $query = "SELECT 
     a.sqms_question_id AS 'ID',

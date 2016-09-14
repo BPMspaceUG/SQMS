@@ -142,6 +142,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   $scope.users = items.users;
   $scope.languages = items.languages;
   $scope.synamelist = items.synamelist;
+  $scope.questypes = items.questypes;
   
   console.log($scope.object);
   
@@ -266,7 +267,8 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
             topics: $scope.topics,
             users: $scope.users,
             languages: $scope.languages,
-            synamelist: $scope.syllabi
+            synamelist: $scope.syllabi,
+            questypes: $scope.questypes            
           };
         }
       }
@@ -384,10 +386,14 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
     $http.get('getjson.php?c=languages').success(function(data) {
       $scope.languages = data.langlist; // store in scope
     });
-    console.log($scope.languages);
     return $scope.languages;
   }
-  
+  $scope.getQTypes = function() {
+    $http.get('getjson.php?c=questiontypes').success(function(data) {
+      $scope.questypes = data.qtypelist; // store in scope
+    });
+    return $scope.questypes;
+  }
   //------------------------------- Syllabus
   $scope.getAllSyllabus = function () {
     $http.get('getjson.php?c=syllabus')
@@ -460,7 +466,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
       case 'u_question_q': c = 'update_question_question'; actEl.Question = data; break;
     }
     // TODO:
-    return $scope.writeData(c, actEl); //$http.post('getjson.php?c='+c, JSON.stringify(actEl)); // send new model
+    return $scope.writeData(c, actEl);
   }
 
   //********************* WRITE data to server
@@ -476,9 +482,12 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
       
       // Statemachine return
       if (command.indexOf("update_syllabus_state") >= 0) {
-        console.log(data);     
-        alert((data.result ? "YES" : "NO") + "\n\n" + data.message);
-      }      
+        /*****************************************
+                   STATE TRANSITION
+        *****************************************/
+        console.log(data);
+        //alert((data.result ? "YES" : "NO") + "\n\n" + data.message);
+      }
       
       console.log("Executed command successfully! Return: " + data);
       // TODO: ... Heavy data ... Make this callback later or at least faster
