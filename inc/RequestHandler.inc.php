@@ -85,10 +85,10 @@ class RequestHandler
         @$actStateID = $actstate[0]['id'];
         $arr0 = array("parentID" => $syllabid);
         $arr1 = array("nextstates" => $this->SESy->getNextStates($actStateID)); // Possible next states
-        $arr2 = $this->getFormDataByState($actStateID); // Form data for actual state
-        $arr3 = $this->getSyllabusElementsList($syllabid);
+        //$arr2 = $this->getFormDataByState($actStateID); // Form data for actual state
+        $arr2 = $this->getSyllabusElementsList($syllabid);
         // Merge data
-        $return = array_merge_recursive($arr0, $arr1, $arr2, $arr3);
+        $return = array_merge_recursive($arr0, $arr1, $arr2); // ;, $arr3);
         return json_encode($return);
         break;
         

@@ -404,17 +404,17 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
           method: "POST",
           data: JSON.stringify($scope.syllabi[i])
         })
-        .success(function(a){
+        .success(function(resp_data){
+          
           // find parent
           for (var k=0;k<$scope.syllabi.length;k++) {
-            if ($scope.syllabi[k].ID == a.parentID) {
+            if ($scope.syllabi[k].ID == resp_data.parentID) {
               // save all data in the element
-              $scope.syllabi[k].availableOptions = a.nextstates; // next states
-              //$scope.syllabi[k].formdata = a.formdata; // formular data
+              $scope.syllabi[k].availableOptions = resp_data.nextstates; // next states
               // if has children
-              if (a.syllabuselements.length > 0) {
+              if (resp_data.syllabuselements.length > 0) {
                 $scope.syllabi[k].HasNoChilds = false; // has now children
-                $scope.syllabi[k].syllabuselements = a.syllabuselements;
+                $scope.syllabi[k].syllabuselements = resp_data.syllabuselements;
                 // Convert Angulartext into real HTML
                 for (var j=0;j<$scope.syllabi[k].syllabuselements.length;j++) {
                   
@@ -430,6 +430,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
               }
             }
           }
+          
         })
       }
     });
