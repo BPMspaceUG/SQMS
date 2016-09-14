@@ -184,25 +184,17 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   
   console.log("Modal opened.");
   
+  
   // TODO: Improve code, so that the indexes remain the same name
   if (cmd == 'update_syllabus') {
     $scope.object.data = $scope.$$prevSibling.actSyllabus;
-    // Parse Date
     $scope.object.data.From = new Date($scope.object.data.From);
     $scope.object.data.To = new Date($scope.object.data.To);
     //console.log($scope.object);
   }
   else if (cmd == 'update_question') {
     $scope.object.data = $scope.$$prevSibling.actQuestion;
-    console.log($scope.object);
-    //$scope.object.data.ID = $scope.$$prevSibling.actQuestion.ID;
-    //$scope.object.data.name = $scope.$$prevSibling.actQuestion.Question;
-    //$scope.object.data.description = $scope.$$prevSibling.actQuestion.description;   
-    // $scope.object.data.owner = $scope.$$prevSibling.actQuestion.Owner;
-    //$scope.object.data.topic = $scope.$$prevSibling.actQuestion.topic;
-    //$scope.object.data.lang = $scope.$$prevSibling.actQuestion.Language;
-    //$scope.object.data.extid = $scope.$$prevSibling.actQuestion.ExtID;
-    //$scope.items = $scope.$$prevSibling.getTopics();
+    //console.log($scope.object);
   }
   else if (cmd == 'update_syllabuselement') {
     $scope.object.data.ID = $scope.$$prevSibling.actSyllabusElement.sqms_syllabus_element_id;
@@ -290,20 +282,17 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   
   
   $scope.editsyllabus = function(el) {
-    $scope.setSelectedSyllabus(el);
-    // Only open edit form in state "new"
-    if (el.state == 'new')
+    $scope.setSelectedSyllabus(el);    
+    if (el.state == 'new') // Only open modal in state "new"
       $scope.open('modalSyllabus.html', 'update_syllabus');
   }
   $scope.successorsyllabus = function(el) {
     $scope.setSelectedSyllabus(el);
-    // not possible in state NEW
-    if (el.state != 'new') {
-      // Ask user for confirmation
+    if (el.state != 'new') { // Create Successor not possible in state NEW
+      // Ask for confirmation
       var res = confirm("Are you sure that you want to create a successor of the Syllabus \n'"+el.Name+
         "'?\n\nInfo: This will create a new Version of this Syllabus and sets the current to DEPRECATED.");
       if (res) {
-        //if OK was clicked
         $scope.writeData('create_successor', el);
       }
     }
@@ -319,7 +308,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   }
   $scope.deleteanswer = function(answer) {
     // the php script will check if it is acually    
-    $scope.writeData('delete_answer', answer);
+    //$scope.writeData('delete_answer', answer);
     console.log(answer.ID);
   }
   // Sorting Tables
