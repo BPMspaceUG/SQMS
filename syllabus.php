@@ -283,7 +283,7 @@
             <td>
               <small>
               <div class="popover-wrapper">
-                <a editable-text="q['Question']" onbeforesave="saveEl(s, $data, 'u_question')" edit-disabled="q.state != 'new'">{{q['Question'] || 'empty' }}</a>
+                <a editable-text="q['Question']" onbeforesave="saveEl(q, $data, 'u_question_q')" edit-disabled="q.state != 'new'">{{q['Question'] || 'empty' }}</a>
               </div>
               </small>
             </td>

@@ -131,12 +131,7 @@ class RequestHandler
         $res = $this->updateSyllabusCol($params["ID"], "name", "i", $params["TopicID"]);
         if ($res != 1) return ''; else return $res;
         break;
-        
-      case "update_question_topic":
-        $res = $this->setQuestionTopic($params["ID"], $params["TopicID"]);
-        if ($res != 1) return ''; else return $res;
-        break;
-        
+                
       case 'create_syllabuselement':
         return $this->addSyllabusElement(
           $params["element_order"],
@@ -189,6 +184,18 @@ class RequestHandler
         $res += $this->updateQuestionCol($params["ID"], "sqms_topic_id", "i", $params['ngTopic']['id']);
         $res += $this->updateQuestionCol($params["ID"], "sqms_language_id", "i", $params['ngLang']['sqms_language_id']);
         if ($res != 5) return ''; else return $res;
+        break;
+        
+      //--- Inline editing
+      
+      case "update_question_question":
+        $res = $this->updateQuestionCol($params["ID"], "question", "s", $params["Question"]);
+        if ($res != 1) return ''; else return $res;
+        break;
+        
+      case "update_question_topic":
+        $res = $this->updateQuestionCol($params["ID"], "sqms_topic_id", "i", $params["TopicID"]);
+        if ($res != 1) return ''; else return $res;
         break;
         
       case 'create_answer':
@@ -283,54 +290,6 @@ class RequestHandler
   }
   
   /********************************************** Syllabus */
-  
-  // TODO: Class
-  /*
-  class Syllabus {
-    private $conn;
-    private $table_name = "sqms_syllabus";
-    // Object Properties
-    public $id;
-    public $name;
-    public $version;
-    public $state_id;
-    public $topic_id;
-    public $owner_id;
-    public $lang_id;
-    public $successor;
-    public $predecessor;
-    public $validfrom;
-    public $validto;
-    public $description;
-    
-    public function __construct($db) {
-      $this->conn = $db;
-    }
-    public function create() {
-      $query = "INSERT INTO ".$this->table_name." (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
-        "validity_period_from, validity_period_to, description) VALUES (?,?,?,?,?,?,?,?,?);";
-      $stmt = $this->conn->prepare($query);
-
-      $this->name = htmlspecialchars(strip_tags($this->name));
-      //$this->price = htmlspecialchars(strip_tags($this->price));
-      $this->description = htmlspecialchars(strip_tags($this->description));
-      //$this->category_id = htmlspecialchars(strip_tags($this->category_id));
-      //$this->timestamp = htmlspecialchars(strip_tags($this->timestamp));
-      
-      $stmt->bindParam(1, $this->name);
-      //$stmt->bindParam(2, $this->price);
-      $stmt->bindParam(3, $this->description);
-      //$stmt->bindParam(4, $this->category_id);
-      //$stmt->bindParam(5, $this->timestamp);
-
-      if($stmt->execute()){
-        return true;
-      } else {
-        return false;
-      }
-    }
-  }
-  */
   
   private function getSyllabusList($shortlist = false) {    
     // Only return topics which are allowed for the actual role
@@ -527,17 +486,7 @@ ON d.sqms_language_id = a.sqms_language_id;";
   }
   
   /********************************************** Answer */
-  
-  /*
-  class Answer {
-    private $conn;
-    private $table_name = "sqms_answer";
-    // Object Properties
-    public $id;
-    public $name;
-  }
-  */
-  
+
   private function getAnswers($questionID) {
     settype($questionID , 'integer');
     $query = "SELECT sqms_answer_id AS 'ID', answer, correct FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
@@ -592,7 +541,6 @@ ON d.sqms_language_id = a.sqms_language_id;";
   }
   
 
-  
   
   // TODO: implement into class StateEngine
   private function setSyllabusState($syllabid, $stateid) {
@@ -664,9 +612,8 @@ ON d.sqms_language_id = a.sqms_language_id;";
   }
   
 
-  
-  
   // TODO: Obsolete!!!
+  /*
   private function getFormDataByState($state) {
     if (!isset($state)) $state = 1;
     settype($state, 'integer');
@@ -677,8 +624,7 @@ ON d.sqms_language_id = a.sqms_language_id;";
     $return['formdata'] = $tmp[0]['form_data'];
     return $return;
   }
-  
-  
+  */  
   
   // ----------------------------------- Reports
   private function getReport_QuestionsWithoutQuestionmarks(){

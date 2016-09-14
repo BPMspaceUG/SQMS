@@ -456,7 +456,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
       case 'u_syllab_n': c = 'update_syllabus_name'; actEl.name = data; break;
       case 'u_syllab_tc': c = 'update_syllabus_topic'; actEl.TopicID = data; break;
       case 'u_question_tc': c = 'update_question_topic'; actEl.TopicID = data; break;
-      case 'u_question_q': c = 'update_question'; actEl.Question = data; break;
+      case 'u_question_q': c = 'update_question_question'; actEl.Question = data; break;
     }
     // TODO:
     return $scope.writeData(c, actEl); //$http.post('getjson.php?c='+c, JSON.stringify(actEl)); // send new model
