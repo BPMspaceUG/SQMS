@@ -224,7 +224,7 @@
             <button type="button" class="btn btn-success menuitem" ng-disabled="!actQuestion || actQuestion.state != 'new'" ng-click="open('modalNewAnswer.html', 'create_answer')">
               <i class="fa fa-plus"></i> New Answer
             </button>
-            <!-- TODO: Export to mitsm Homepage -->
+            <!-- TODO: Button to Export all Questions to mitsm Homepage -->
             <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportQuestions.html', 'export_questions')">
               <i class="fa fa-download"></i> Export
             </button>
