@@ -309,7 +309,7 @@
                     <th>Correct</th>
                   </tr>
                 </thead>
-                <tr ng-repeat="an in q.answers" ng-class="[{danger: !an.correct}, {success: an.correct}]">                  
+                <tr ng-repeat="an in q.answers" ng-class="[{danger: !an.correct}, {success: an.correct}]">
                   <!--<td><a href="#" ng-click="deleteanswer(an)"><i class="fa fa-fw fa-trash-o"></i>Delete</a></td>-->
                   <td>{{an.ID}}</td>
                   <td><a href="#" editable-text="an.answer" onbeforesave="saveEl(an, $data, 'u_answer_t')">{{an.answer || "empty"}}</a></td>
@@ -361,8 +361,6 @@
     </div>
   </div>
 </div>
-<!-- Custom Javascript -->
-<script src="custom/custom.js"></script>
 <!-- Footer -->
 <?php
   include_once("templates.html"); // Include all HTML templates for AngularJS
