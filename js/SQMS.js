@@ -391,8 +391,9 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   $scope.getQTypes = function() {
     $http.get('getjson.php?c=questiontypes').success(function(data) {
       $scope.questypes = data.qtypelist; // store in scope
-    });
-    return $scope.questypes;
+      console.log($scope.questypes);
+    });    
+    return $scope.questypes;    
   }
   //------------------------------- Syllabus
   $scope.getAllSyllabus = function () {
@@ -522,4 +523,5 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   $scope.getTopics();
   $scope.getUsers();
   $scope.getLanguages();
+  $scope.getQTypes();
 }]);
