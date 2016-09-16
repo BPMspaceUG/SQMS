@@ -202,10 +202,10 @@
         <div class="form-group">
           <label class="col-sm-2 control-label">Type</label>
           <div class="col-sm-6">
-            <!--<input ng-model="object.data.author" class="form-control" type="text" />-->
             <select class="form-control"
-              ng-options="item as item.name for item in items track by item.id"
-              ng-model="object.data.topic"></select>
+              ng-options="qt.name for qt in questypes"
+              ng-init="getActQuesType()"
+              ng-model="object.data.ngQuesType"></select>
           </div>
           <label class="col-sm-2 control-label">Ext.ID</label>
           <div class="col-sm-2">

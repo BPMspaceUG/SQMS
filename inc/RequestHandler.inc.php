@@ -176,7 +176,7 @@ class RequestHandler
           $params['ngTopic']['id'],
           $params['ExtID'],
           $params['ngLang']['sqms_language_id'],
-          1 // TODO: $params['ngQType']['id']
+          $params['ngQuesType']['ID']
         );
         break;
       
@@ -186,7 +186,8 @@ class RequestHandler
         $res += $this->updateQuestionCol($params["ID"], "id_external", "i", $params["ExtID"]);
         $res += $this->updateQuestionCol($params["ID"], "sqms_topic_id", "i", $params['ngTopic']['id']);
         $res += $this->updateQuestionCol($params["ID"], "sqms_language_id", "i", $params['ngLang']['sqms_language_id']);
-        if ($res != 5) return ''; else return $res;
+        $res += $this->updateQuestionCol($params["ID"], "sqms_question_type_id", "i", $params['ngQuesType']['ID']);
+        if ($res != 6) return ''; else return $res;
         break;
         
       //--- Inline editing
@@ -459,7 +460,8 @@ class RequestHandler
     a.sqms_language_id AS 'LangID',
     a.version AS 'Version',
     a.id_external AS 'ExtID',
-    c.name AS 'Type'
+    c.name AS 'Type',
+    c.sqms_question_type_id AS 'TypeID'
 FROM
     `sqms_question` AS a LEFT JOIN
     sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id

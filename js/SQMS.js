@@ -121,6 +121,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       ngTopic: {},
       ngOwner: {},
       ngLang: {},
+      ngQuesType: {},
       ngParent: {}
     }
   };
@@ -175,6 +176,13 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       }
     }
   }
+  $scope.getActQuesType = function() {
+    for (var i = 0; i<$scope.questypes.length; i++) {
+      if ($scope.questypes[i].ID == $scope.$$prevSibling.actQuestion.TypeID) {
+        $scope.object.data.ngQuesType = $scope.questypes[i];
+      }
+    }
+  }
   $scope.getActParentSyllabElement = function() {
     for (var i = 0; i<$scope.synamelist.length; i++) {
       if ($scope.synamelist[i].ID == $scope.$$prevSibling.actSyllabus.ID) {
@@ -191,11 +199,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     $scope.object.data = $scope.$$prevSibling.actSyllabus;
     $scope.object.data.From = new Date($scope.object.data.From);
     $scope.object.data.To = new Date($scope.object.data.To);
-    //console.log($scope.object);
   }
   else if (cmd == 'update_question') {
     $scope.object.data = $scope.$$prevSibling.actQuestion;
-    //console.log($scope.object);
   }
   else if (cmd == 'update_syllabuselement') {
     $scope.object.data.ID = $scope.$$prevSibling.actSyllabusElement.sqms_syllabus_element_id;
@@ -207,7 +213,10 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     console.log($scope.object);
   }
   else if (cmd == 'create_answer') {
+    console.log($scope.$$prevSibling.actQuestion);
     $scope.object.data.parentID = $scope.$$prevSibling.actQuestion.ID;
+    console.log("SHEEEEEEESH");
+    console.log($scope.object.data);
   }
    
   // --- [OK] clicked
@@ -223,7 +232,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     if ($scope.object.data.ngLang) {
       $scope.object.data.LangID = $scope.object.data.ngLang.sqms_language_id;
     }
-    if ($scope.object.data.ngParent) {
+    if ($scope.object.data.ngParent && $scope.object.command != "create_answer") {
       $scope.object.data.parentID = $scope.object.data.ngParent.ID;
     }
     // Return result
@@ -391,7 +400,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   $scope.getQTypes = function() {
     $http.get('getjson.php?c=questiontypes').success(function(data) {
       $scope.questypes = data.qtypelist; // store in scope
-      console.log($scope.questypes);
+      //console.log($scope.questypes);
     });    
     return $scope.questypes;    
   }
@@ -498,7 +507,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
       if (command.indexOf("que") >= 0)
         $scope.getAllQuestions(); // Refresh data
     }).
-    error(function(error){      
+    error(function(error) {
       console.log("Error! " + error);
     });
   }
