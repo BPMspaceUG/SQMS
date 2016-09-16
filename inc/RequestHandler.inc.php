@@ -260,7 +260,7 @@ class RequestHandler
       // TODO: Evtl. zusammenfassen zu einem Command
         
       case "update_syllabus_state":
-        return $this->setSyllabusState($params["syllabusid"], $params["stateid"]);
+        return $this->SESy->setState($params["syllabusid"], $params["stateid"]);
         break;
 
       case "update_question_state":
@@ -555,45 +555,7 @@ ON d.sqms_language_id = a.sqms_language_id;";
   }
   
 
-  
-  // TODO: implement into class StateEngine
-  private function setSyllabusState($syllabid, $stateid) {
-    // params
-    settype($syllabid, 'integer');
-    settype($stateid, 'integer');
-    // get actual state from syllabus
-    $actstateObj = $this->SESy->getActState($syllabid);
-    if (count($actstateObj) == 0) return false;
-    $actstateID = $actstateObj[0]["id"];
-    // check transition
-    $trans = $this->SESy->checkTransition($actstateID, $stateid);
-    
-    // check if transition is possible
-    if ($trans) {
-      $newstateObj = $this->SEQu->getStateAsObject($stateid);
-      $scripts = $this->SESy->getTransitionScripts($actstateID, $stateid);
-      // Execute all scripts from database at transistion
-      foreach ($scripts as $script) {
-        // Set path to scripts
-        $scriptpath = "functions/".$script["transistionScript"];
-        
-        // Standard Result
-        $script_result = array("result" => true, "message" => "");
-        
-        // If script exists then load it
-        if (trim($scriptpath) != "functions/" && file_exists($scriptpath))
-          include_once($scriptpath);
-        // update state in DB, when plugin says yes
-        if ($script_result["result"] == true) {
-          $query = "UPDATE sqms_syllabus SET sqms_state_id = $stateid WHERE sqms_syllabus_id = $syllabid;";
-          $res = $this->db->query($query);
-        }
-        // Return
-        return json_encode($script_result);
-      }
-    }
-    return false; // false zurückgeben
-  }
+  // TODO: move into class
   private function setQuestionState($questionid, $stateid) {
     // params
     settype($questionid, 'integer');

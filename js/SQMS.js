@@ -31,7 +31,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   $scope.dateOptions = {
     dateDisabled: disabled,
     formatYear: 'yy',
-    maxDate: new Date(2020, 5, 22),
+    maxDate: new Date(2030, 5, 22),
     minDate: new Date(),
     startingDay: 1
   };
@@ -127,7 +127,6 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   };
   $scope.tinymceOptions = {
     inline: false,
-    /*plugins : 'advlist autolink link image lists charmap print preview',*/
     plugins: [
       'advlist autolink lists link image charmap print preview hr anchor pagebreak',
       'searchreplace wordcount visualblocks visualchars code fullscreen',
@@ -145,7 +144,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   $scope.synamelist = items.synamelist;
   $scope.questypes = items.questypes;
   
-  console.log($scope.object);
+  //console.log($scope.object);
   
   // Set selected item from syllabus 
   $scope.getActTopicSyllab = function() {
@@ -191,9 +190,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     }
   }
   
-  console.log("Modal opened.");
-  
-  
+  console.log("Modal Window opened.");
+
   // TODO: Improve code, so that the indexes remain the same name
   if (cmd == 'update_syllabus') {
     $scope.object.data = $scope.$$prevSibling.actSyllabus;
@@ -210,13 +208,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     $scope.object.data.severity = $scope.$$prevSibling.actSyllabusElement.severity;
     $scope.object.data.element_order = $scope.$$prevSibling.actSyllabusElement.element_order;
     $scope.object.data.parentID = $scope.$$prevSibling.actSyllabusElement.sqms_syllabus_id; 
-    console.log($scope.object);
   }
   else if (cmd == 'create_answer') {
-    console.log($scope.$$prevSibling.actQuestion);
     $scope.object.data.parentID = $scope.$$prevSibling.actQuestion.ID;
-    console.log("SHEEEEEEESH");
-    console.log($scope.object.data);
   }
    
   // --- [OK] clicked
@@ -237,12 +231,12 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     }
     // Return result
     $uibModalInstance.close($scope.object);
-    console.log("Modal ok clicked");
+    console.log("Modal Button OK clicked");
   };
   // --- [Cancel] clicked
   $scope.cancel = function () {
     $uibModalInstance.dismiss('cancel');
-    console.log("Modal cancel clicked");
+    console.log("Modal Button Cancel clicked");
   };
 });
 

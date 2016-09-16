@@ -3,7 +3,6 @@
     S T A T E     E N G I N E  
   ****************************/
   class StateEngine {
-    private $actState = -1;
     private $db;
     // tables
     private $table = 'sqms_syllabus'; // root element
@@ -27,6 +26,13 @@
       $this->colname_stateID = $col_stateID;
       $this->colname_stateID_at_TblStates = $colname_stateID_at_TblStates;
     }
+    private function getResultArray($result) {
+      $results_array = array();
+      while ($row = $result->fetch_assoc()) {
+        $results_array[] = $row;
+      }
+      return $results_array;
+    }
     public function getActState($id) {
       settype($id, 'integer');
       $query = "SELECT a.".$this->colname_stateID." AS 'id', b.".
@@ -34,15 +40,15 @@
         $this->table_states." AS b ON a.".$this->colname_stateID."=b.".$this->colname_stateID_at_TblStates.
         " WHERE ".$this->colname_rootID." = $id;";
       $res = $this->db->query($query);
-      return getResultArray($res);
-    }
+      return $this->getResultArray($res);
+    }    
     public function getStateAsObject($stateid) {
       settype($id, 'integer');
-      $query = "SELECT ".$this->colname_stateID." AS 'id', ".
+      $query = "SELECT ".$this->colname_stateID_at_TblStates." AS 'id', ".
         $this->colname_stateName." AS 'name' FROM ".$this->table_states.
-        " WHERE ".$this->colname_stateID." = $stateid;";        
+        " WHERE ".$this->colname_stateID_at_TblStates." = $stateid;";
       $res = $this->db->query($query);
-      return getResultArray($res);
+      return $this->getResultArray($res);
     }
     public function getNextStates($actstate) {
       settype($actstate, 'integer');
@@ -51,15 +57,43 @@
         $this->table_states." AS b ON a.".$this->colname_to."=b.".$this->colname_stateID_at_TblStates.
         " WHERE ".$this->colname_from." = $actstate;";
       $res = $this->db->query($query);
-      return getResultArray($res);
+      return $this->getResultArray($res);
     }
-    public function setState($db, $stateID) {
-      // TODO: params: tablename
-      // return Transition Scripts
-      $trans_possible = $this->checkTransition($actState, $stateID);
-      if ($trans_possible) {
-        // Write to DB
+    
+    public function setState($SyllabusID, $stateID) {
+      // get actual state from syllabus
+      $actstateObj = $this->getActState($SyllabusID);
+      if (count($actstateObj) == 0) return false;
+      $actstateID = $actstateObj[0]["id"];
+      // check transition, if allowed
+      $trans = $this->checkTransition($actstateID, $stateID);
+      // check if transition is possible
+      if ($trans) {
+        $newstateObj = $this->getStateAsObject($stateID);
+        $scripts = $this->getTransitionScripts($actstateID, $stateID);
+
+        
+        // Execute all scripts from database at transistion
+        foreach ($scripts as $script) {
+          // Set path to scripts
+          $scriptpath = "functions/".$script["transistionScript"];          
+          // Standard Result
+          $script_result = array("result" => true, "message" => "");
+          
+          // If script exists then load it
+          if (trim($scriptpath) != "functions/" && file_exists($scriptpath))
+            include_once($scriptpath);
+          // update state in DB, when plugin says yes
+          if ($script_result["result"] == true) {
+            $query = "UPDATE sqms_syllabus SET sqms_state_id = $stateID WHERE sqms_syllabus_id = $SyllabusID;";
+            $res = $this->db->query($query);
+          }
+          // Return
+          return json_encode($script_result);
+        }
+        
       }
+      return false; // exit
     }
     public function checkTransition($fromID, $toID) {
       settype($fromID, 'integer');
@@ -78,7 +112,7 @@
       "sqms_state_id_FROM = $fromID AND sqms_state_id_TO = $toID;";
       $return = array();
       $res = $this->db->query($query);
-      $return = getResultArray($res);
+      $return = $this->getResultArray($res);
       return $return;
     }
   }
