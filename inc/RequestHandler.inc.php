@@ -408,9 +408,12 @@ class RequestHandler
       (int)$OldQuestion["Version"]+1, // increase version
       $OldQuestion["ID"] // Predecessor
     );
+    // TODO: Copy all answers ...
+    
     // Set Successor of old Question
     $this->updateQuestionCol($OldQuestion["ID"], "sqms_question_id_successor", "i", $newID);
-    // TODO: set state of old Question to deprecated
+    // Set state of old Question to deprecated
+    $this->updateQuestionCol($OldQuestion["ID"], "sqms_question_state_id", "i", 4);
     return $newID;
   }
   private function updateSyllabusCol($id, $column, $type, $content) {
@@ -482,7 +485,8 @@ class RequestHandler
     a.version AS 'Version',
     a.id_external AS 'ExtID',
     c.name AS 'Type',
-    c.sqms_question_type_id AS 'TypeID'
+    c.sqms_question_type_id AS 'TypeID',
+    a.sqms_question_id_successor AS 'SuccID'
 FROM
     `sqms_question` AS a LEFT JOIN
     sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id

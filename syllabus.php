@@ -268,7 +268,9 @@
               <!-- Edit Icon -->
               <span ng-show="q.state == 'new'"><a ng-click="editquestion(q)" title="Edit Question..."><i class="fa fa-fw fa-pencil"></i></a></span>
               <!-- Successor Icon -->
-              <span ng-show="q.state != 'new' && q.SuccID == null"><a ng-click="successorquestion(q)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a></span>
+              <span ng-show="q.state != 'new' && q.SuccID == 0">
+                <a ng-click="successorquestion(q)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a>
+              </span>
             </td>
             <!-- ID -->
             <td><small>{{q['ID']}}</small></td>
