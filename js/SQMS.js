@@ -271,7 +271,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
             users: $scope.users,
             languages: $scope.languages,
             synamelist: $scope.syllabi,
-            questypes: $scope.questypes            
+            questypes: $scope.questypes
           };
         }
       }
@@ -298,7 +298,19 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
       var res = confirm("Are you sure that you want to create a successor of the Syllabus \n'"+el.Name+
         "'?\n\nInfo: This will create a new Version of this Syllabus and sets the current to DEPRECATED.");
       if (res) {
-        $scope.writeData('create_successor', el);
+        $scope.writeData('create_successor_s', el);
+      }
+    }
+  }
+  $scope.successorquestion = function(el) {
+    console.log(el);
+    $scope.setSelectedQuestion(el);
+    if (el.state != 'new') { // Create Successor not possible in state NEW
+      // Ask for confirmation
+      var res = confirm("Are you sure that you want to create a successor of the Question \n'"+el.Question+
+        "'?\n\nInfo: This will create a new Version of this Question and sets the current to DEPRECATED.");
+      if (res) {
+        $scope.writeData('create_successor_q', el);
       }
     }
   }

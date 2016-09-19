@@ -140,9 +140,12 @@ class RequestHandler
         );
         break;
       
-      case "create_successor":
-        // check if current element has no predecessor
-        return $this->createSuccessor($params);
+      case "create_successor_s":
+        return $this->createSuccessor($params); // check if current element has no predecessor
+        break;
+        
+      case "create_successor_q":
+        return $this->createSuccessorQ($params); // check if current element has no predecessor
         break;
         
       case 'update_syllabuselement':
@@ -176,7 +179,8 @@ class RequestHandler
           $params['ngTopic']['id'],
           $params['ExtID'],
           $params['ngLang']['sqms_language_id'],
-          $params['ngQuesType']['ID']
+          $params['ngQuesType']['ID'],
+          1 // Version
         );
         break;
       
@@ -388,8 +392,25 @@ class RequestHandler
     }
     // update Old Syllabus (set Predecessor ID)
     //$this->updateSyllabusPredecessor($OldSyllabus["ID"], $newID);
-    $this->updateSyllabusCol($OldSyllabus["ID"], "sqms_question_id_predecessor", "i", $newID);
+    $this->updateSyllabusCol($OldSyllabus["ID"], "sqms_syllabus_id_predecessor", "i", $newID);
     // TODO: set state of old Syllabus to deprecated
+    return $newID;
+  }
+  private function createSuccessorQ($OldQuestion) {
+    // Copy Question with Successor and new Version
+    $newID = $this->addQuestion(
+      $OldQuestion["Question"],
+      $OldQuestion["owner"],
+      $OldQuestion["TopicID"],
+      $OldQuestion["ExtID"],
+      $OldQuestion["LangID"],
+      $OldQuestion["TypeID"],
+      (int)$OldQuestion["Version"]+1, // increase version
+      $OldQuestion["ID"] // Predecessor
+    );
+    // Set Successor of old Question
+    $this->updateQuestionCol($OldQuestion["ID"], "sqms_question_id_successor", "i", $newID);
+    // TODO: set state of old Question to deprecated
     return $newID;
   }
   private function updateSyllabusCol($id, $column, $type, $content) {
@@ -481,15 +502,28 @@ ON d.sqms_language_id = a.sqms_language_id;";
     $return['questionlist'] = $r;
     return $return;
   }
-  private function addQuestion($question, $author, $topicID, $extID, $langID, $quesType) {
-    $query = "INSERT INTO `sqms_question` (
-  `sqms_language_id`,`sqms_question_state_id`,`question`,`author`,`version`,`id_external`,
-  `sqms_question_id_predecessor`,`sqms_question_id_successor`,`sqms_question_type_id`,`sqms_topic_id`)
-  VALUES (?,1,?,?,1,?,0,0,?,?);";
+  private function addQuestion($question, $author, $topicID, $extID, $langID, $quesType, $version, $predecessorID = 0, $successorID = 0) {
+    $query = "INSERT INTO sqms_question (
+  sqms_question_state_id,
+  sqms_language_id,
+  question,
+  author,
+  version,
+  id_external,
+  sqms_question_id_predecessor,
+  sqms_question_id_successor,
+  sqms_question_type_id,
+  sqms_topic_id)
+  VALUES (1,?,?,?,?,?,?,?,?,?);";
     $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param("issiii", $langID, $question, $author, $extID, $quesType, $topicID); // bind params
-    $result = $stmt->execute(); // execute statement
-    return $result;
+    $stmt->bind_param("issiiiiii", $langID, $question, $author, $version, $extID, $predecessorID, $successorID, $quesType, $topicID); // bind params
+    $result = $stmt->execute();
+    if (!$result) $this->db->error;
+    // Return last inserted ID
+    $res = null;
+    if ($result)
+      $res = $this->db->insert_id;
+    return $res;
   }
   private function updateQuestionCol($id, $column, $type, $content) {
     $query = "UPDATE sqms_question SET $column = ? WHERE sqms_question_id = ?;";
