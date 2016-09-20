@@ -260,15 +260,13 @@ class RequestHandler
         $res = $this->updateTopic($params["ID"], $params["name"]);
         if ($res != 1) return ''; else return $res;
         break;
-        
-      // TODO: Evtl. zusammenfassen zu einem Command
-        
+      
       case "update_syllabus_state":
         return $this->SESy->setState($params["syllabusid"], $params["stateid"]);
         break;
 
       case "update_question_state":
-        return $this->setQuestionState($params["questionid"], $params["stateid"]);
+        return $this->SEQu->setState($params["questionid"], $params["stateid"]);
         break;
 
         //-------- Reports for Dashboard
@@ -591,40 +589,6 @@ ON d.sqms_language_id = a.sqms_language_id;";
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
   }
-  
-
-  // TODO: move into class
-  private function setQuestionState($questionid, $stateid) {
-    // params
-    settype($questionid, 'integer');
-    settype($stateid, 'integer');
-    // get actual state from question
-    $actstateObj = $this->SEQu->getActState($questionid);
-    if (count($actstateObj) == 0) return false;    
-    $actstateID = $actstateObj[0]["id"];
-    // check transition
-    $trans = $this->SEQu->checkTransition($actstateID, $stateid);
-    // check if transition is possible
-    if ($trans) {
-      // update state in DB
-      $query = "UPDATE sqms_question SET sqms_question_state_id = $stateid WHERE sqms_question_id = $questionid;";
-      $res = $this->db->query($query);
-      $scripts = $this->SEQu->getTransitionScripts($actstateID, $stateid);
-      
-      /**** Execute all scripts from database at transistion ****/
-      foreach ($scripts as $script) {
-        // Set path to scripts
-        $scriptpath = "functions/".$script["transistionScript"];
-        // If script is not emptystring and exists
-        if (trim($script["transistionScript"]) != "" && file_exists($scriptpath))
-          include_once($scriptpath);
-      }
-      return true; //$scripts;
-      
-    } else
-      return false;
-  }
-  
 
   // TODO: Obsolete!!!
   /*

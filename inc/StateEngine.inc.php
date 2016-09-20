@@ -60,9 +60,9 @@
       return $this->getResultArray($res);
     }
     
-    public function setState($SyllabusID, $stateID) {
+    public function setState($ElementID, $stateID) {
       // get actual state from syllabus
-      $actstateObj = $this->getActState($SyllabusID);
+      $actstateObj = $this->getActState($ElementID);
       if (count($actstateObj) == 0) return false;
       $actstateID = $actstateObj[0]["id"];
       // check transition, if allowed
@@ -71,7 +71,6 @@
       if ($trans) {
         $newstateObj = $this->getStateAsObject($stateID);
         $scripts = $this->getTransitionScripts($actstateID, $stateID);
-
         
         // Execute all scripts from database at transistion
         foreach ($scripts as $script) {
@@ -85,7 +84,8 @@
             include_once($scriptpath);
           // update state in DB, when plugin says yes
           if ($script_result["result"] == true) {
-            $query = "UPDATE sqms_syllabus SET sqms_state_id = $stateID WHERE sqms_syllabus_id = $SyllabusID;";
+            $query = "UPDATE ".$this->table." SET ".$this->colname_stateID." = ".$stateID.
+              " WHERE ".$this->colname_rootID." = ".$ElementID.";";
             $res = $this->db->query($query);
           }
           // Return
