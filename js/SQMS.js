@@ -132,19 +132,16 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       'searchreplace wordcount visualblocks visualchars code fullscreen',
       'insertdatetime media nonbreaking save table contextmenu directionality',
       'emoticons template paste textcolor colorpicker textpattern imagetools'
-    ],    
+    ],
     skin: 'lightgray',
     theme : 'modern'
   };
-  
-  // Save topics in scope
+
   $scope.topics = items.topics;
   $scope.users = items.users;
   $scope.languages = items.languages;
   $scope.synamelist = items.synamelist;
   $scope.questypes = items.questypes;
-  
-  //console.log($scope.object);
   
   // Set selected item from syllabus 
   $scope.getActTopicSyllab = function() {
@@ -245,7 +242,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
  ***********************************************************/
 module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', function($scope, $http, $sce, $uibModal) {
 
-  // TODO: Make _ONE_ Object Model for Syllabus, Question and Topic => saves code
+  // TODO: Make _ONE_ ObjectModel for Syllabus, Question and Topic => saves code
 
   $scope.setSelectedSyllabus = function (el) {$scope.actSyllabus = el;};
   $scope.setSelectedQuestion = function (el) {$scope.actQuestion = el;};

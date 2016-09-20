@@ -100,7 +100,6 @@
       settype($toID, 'integer');
       $query = "SELECT * FROM ".$this->table_rules." WHERE ".$this->colname_from." = $fromID ".
         "AND ".$this->colname_to." = $toID;";
-      //echo '<pre>'.$query.'</pre>';
       $res = $this->db->query($query);
       $cnt = $res->num_rows;
       return ($cnt > 0);

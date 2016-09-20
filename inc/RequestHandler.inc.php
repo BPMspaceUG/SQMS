@@ -132,30 +132,31 @@ class RequestHandler
       
       case 'create_syllabuselement':
         return $this->addSyllabusElement(
-          $params["element_order"],
-          $params["severity"],
-          $params["parentID"],
+          (int)$params["element_order"],
+          (int)$params["severity"],
+          (int)$params["parentID"],
           $params["name"],
           $params["description"]
         );
         break;
       
       case "create_successor_s":
-        return $this->createSuccessor($params); // check if current element has no predecessor
+        return $this->createSuccessor($params);
         break;
         
       case "create_successor_q":
-        return $this->createSuccessorQ($params); // check if current element has no predecessor
+        return $this->createSuccessorQ($params);
         break;
         
       case 'update_syllabuselement':
+        $parentID = isset($params["parentID"]) ? $params["parentID"] : $params["sqms_syllabus_id"];
         $res = $this->updateSyllabusElement(
           $params["ID"],
           $params["name"],
           $params["description"],
           $params["element_order"],
           $params["severity"],
-          (int)$params["parentID"]
+          $parentID
         );
         if ($res != 1) return ''; else return $res;
         break;
@@ -341,18 +342,18 @@ class RequestHandler
     $return['syllabus'] = $r;
     return $return;
   }
-  private function addSyllabus($name, $owner, $topic, $description, $from, $to, $langID, $version = 1, $successor = null) {
-    if ($successor != null)
+  private function addSyllabus($name, $owner, $topic, $description, $from, $to, $langID, $version = 1, $predecessor = null) {
+    if ($predecessor != null)
       $query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
-        "validity_period_from, validity_period_to, description, sqms_syllabus_id_successor) ".
+        "validity_period_from, validity_period_to, description, sqms_syllabus_id_predecessor) ".
         "VALUES (?,?,?,?,?,?,?,?,?,?);";
     else
       $query = "INSERT INTO sqms_syllabus (name, sqms_state_id, version, sqms_topic_id, owner, sqms_language_id, ".
         "validity_period_from, validity_period_to, description) VALUES (?,?,?,?,?,?,?,?,?);";
     $stmt = $this->db->prepare($query);
     $one = 1;
-    if ($successor != null)
-      $stmt->bind_param("siiisisssi", $name, $one, $version, $topic, $owner, $langID, $from, $to, $description, $successor);
+    if ($predecessor != null)
+      $stmt->bind_param("siiisisssi", $name, $one, $version, $topic, $owner, $langID, $from, $to, $description, $predecessor);
     else
       $stmt->bind_param("siiisisss", $name, $one, $version, $topic, $owner, $langID, $from, $to, $description);
     $result = $stmt->execute();
@@ -362,6 +363,13 @@ class RequestHandler
     if ($result)
       $res = $this->db->insert_id;
     return $res;
+  }
+  private function updateSyllabusCol($id, $column, $type, $content) {
+    $query = "UPDATE sqms_syllabus SET $column = ? WHERE sqms_syllabus_id = ?;";
+    $stmt = $this->db->prepare($query); // prepare statement
+    $stmt->bind_param($type."i", $content, $id); // bind params
+    $result = $stmt->execute(); // execute statement
+    return (!is_null($result) ? 1 : null);
   }
   private function createSuccessor($OldSyllabus) {
     // Copy Syllabus with Successor and new Version
@@ -374,7 +382,7 @@ class RequestHandler
       $OldSyllabus["To"],
       $OldSyllabus["LangID"],
       (int)$OldSyllabus["Version"]+1, // increase version
-      $OldSyllabus["ID"] // Successor
+      $OldSyllabus["ID"] // Predecessor
     );
     // Copy all Syllabus Elements
     $SyElements = $this->getSyllabusElementsList($OldSyllabus["ID"])["syllabuselements"];
@@ -388,38 +396,11 @@ class RequestHandler
         $SE["description"]
       );
     }
-    // update Old Syllabus (set Predecessor ID)
-    //$this->updateSyllabusPredecessor($OldSyllabus["ID"], $newID);
-    $this->updateSyllabusCol($OldSyllabus["ID"], "sqms_syllabus_id_predecessor", "i", $newID);
-    // TODO: set state of old Syllabus to deprecated
+    // Set Successor of old Syllabus
+    $this->updateSyllabusCol($OldSyllabus["ID"], "sqms_syllabus_id_successor", "i", $newID);
+    // Set state of old Syllabus to deprecated
+    $this->updateSyllabusCol($OldSyllabus["ID"], "sqms_state_id", "i", 4);    
     return $newID;
-  }
-  private function createSuccessorQ($OldQuestion) {
-    // Copy Question with Successor and new Version
-    $newID = $this->addQuestion(
-      $OldQuestion["Question"],
-      $OldQuestion["owner"],
-      $OldQuestion["TopicID"],
-      $OldQuestion["ExtID"],
-      $OldQuestion["LangID"],
-      $OldQuestion["TypeID"],
-      (int)$OldQuestion["Version"]+1, // increase version
-      $OldQuestion["ID"] // Predecessor
-    );
-    // TODO: Copy all answers ...
-    
-    // Set Successor of old Question
-    $this->updateQuestionCol($OldQuestion["ID"], "sqms_question_id_successor", "i", $newID);
-    // Set state of old Question to deprecated
-    $this->updateQuestionCol($OldQuestion["ID"], "sqms_question_state_id", "i", 4);
-    return $newID;
-  }
-  private function updateSyllabusCol($id, $column, $type, $content) {
-    $query = "UPDATE sqms_syllabus SET $column = ? WHERE sqms_syllabus_id = ?;";
-    $stmt = $this->db->prepare($query); // prepare statement
-    $stmt->bind_param($type."i", $content, $id); // bind params
-    $result = $stmt->execute(); // execute statement
-    return (!is_null($result) ? 1 : null);
   }
   
   /********************************************** SyllabusElement */
@@ -439,17 +420,17 @@ class RequestHandler
     return $return;
   }  
   private function addSyllabusElement($element_order, $severity, $parentID, $name, $description) {
-    // TODO: Prepare statement
-    $query = "INSERT INTO sqms_syllabus_element ".
-      "(element_order, severity, sqms_syllabus_id, name, description) VALUES (".
-      $element_order.",".
-      $severity.",".
-      $parentID.",".
-      "'".$name."',".
-      "'".$description."');";
-        $result = $this->db->query($query);
+    $query = "INSERT INTO sqms_syllabus_element (element_order, severity, sqms_syllabus_id, name, description) ".
+             "VALUES (?,?,?,?,?);";
+    $stmt = $this->db->prepare($query);
+    $stmt->bind_param("iiiss", $element_order, $severity, $parentID, $name, $description);
+    $result = $stmt->execute();
     if (!$result) $this->db->error;
-    return $result;
+    // Return last inserted ID
+    $res = null;
+    if ($result)
+      $res = $this->db->insert_id;
+    return $res;
   }
   private function updateSyllabusElement($id, $name, $description, $elementorder, $severity, $parentID) {
     $query = "UPDATE sqms_syllabus_element SET name=?, description=?, element_order=?, severity=?, sqms_syllabus_id=? ".
@@ -533,6 +514,26 @@ ON d.sqms_language_id = a.sqms_language_id;";
     $stmt->bind_param($type."i", $content, $id); // bind params
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
+  }
+  private function createSuccessorQ($OldQuestion) {
+    // Copy Question with Successor and new Version
+    $newID = $this->addQuestion(
+      $OldQuestion["Question"],
+      $OldQuestion["owner"],
+      $OldQuestion["TopicID"],
+      $OldQuestion["ExtID"],
+      $OldQuestion["LangID"],
+      $OldQuestion["TypeID"],
+      (int)$OldQuestion["Version"]+1, // increase version
+      $OldQuestion["ID"] // Predecessor
+    );
+    // TODO: Copy all answers ...
+    
+    // Set Successor of old Question
+    $this->updateQuestionCol($OldQuestion["ID"], "sqms_question_id_successor", "i", $newID);
+    // Set state of old Question to deprecated
+    $this->updateQuestionCol($OldQuestion["ID"], "sqms_question_state_id", "i", 4);
+    return $newID;
   }
   
   /********************************************** Answer */
