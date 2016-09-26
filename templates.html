@@ -135,7 +135,7 @@
           <label class="col-sm-2 control-label">Parent</label>
           <div class="col-sm-6">
             <select class="form-control"
-              ng-options="s.Name for s in synamelist"
+              ng-options="s.displTxt group by s.Name for s in synamelist"
               ng-init="getActParentSyllabElement()"
               ng-model="object.data.ngParent"></select>
           </div>

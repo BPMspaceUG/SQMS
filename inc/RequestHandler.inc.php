@@ -113,7 +113,7 @@ class RequestHandler
         $res += $this->updateSyllabusCol($params["ID"], "name", "s", $params["Name"]);
         $res += $this->updateSyllabusCol($params["ID"], "sqms_topic_id", "i", $params["TopicID"]);
         $res += $this->updateSyllabusCol($params["ID"], "description", "s", $params["description"]);
-        $res += $this->updateSyllabusCol($params["ID"], "owner", "s", $params["owner"]);
+        $res += $this->updateSyllabusCol($params["ID"], "owner", "s", $params["Owner"]); // TODO: Change to ID in DB
         $res += $this->updateSyllabusCol($params["ID"], "validity_period_from", "s", $params["From"]);
         $res += $this->updateSyllabusCol($params["ID"], "validity_period_to", "s", $params["To"]);
         $res += $this->updateSyllabusCol($params["ID"], "sqms_language_id", "i", $params["LangID"]);
@@ -321,7 +321,8 @@ class RequestHandler
       c.language AS 'Language',
       c.sqms_language_id AS 'LangID',
       a.sqms_syllabus_id_successor AS 'SuccID',
-      a.sqms_syllabus_id_predecessor AS 'PredID'
+      a.sqms_syllabus_id_predecessor AS 'PredID',
+      CONCAT('Language: ', c.language, ' - Version: ', version) AS displTxt
   FROM
       sqms_syllabus AS a LEFT JOIN sqms_topic AS b
   ON a.sqms_topic_id = b.sqms_topic_id
