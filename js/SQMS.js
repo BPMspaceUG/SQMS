@@ -12,95 +12,16 @@ module.run(function(editableOptions) {
  ***********************************************************/
 module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items, cmd, parentid) {
   // <START>
-  /*
-  $scope.today = function() {
-    $scope.From = new Date();
-  };
-  $scope.today();
-
-  $scope.clear = function() {
-    $scope.dt = null;
-  };
-  */  
-  $scope.inlineOptions = {
-    customClass: getDayClass,
-    minDate: new Date(),
-    showWeeks: true
-  };
-
-  $scope.dateOptions = {
-    dateDisabled: disabled,
-    formatYear: 'yy',
-    maxDate: new Date(2030, 5, 22),
-    minDate: new Date(),
-    startingDay: 1
-  };
-
-  // Disable weekend selection
-  function disabled(data) {
-    var date = data.date,
-      mode = data.mode;
-    return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
-  }
-
-  $scope.toggleMin = function() {
-    $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
-    $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
-  };
-
-  $scope.toggleMin();
-
-  $scope.open1 = function() { $scope.popup1.opened = true; };
-  $scope.open2 = function() { $scope.popup2.opened = true; };
-  $scope.setDate = function(year, month, day) {
-    $scope.dt = new Date(year, month, day);
-  };
-
-  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'yyyy-MM-dd', 'shortDate'];
-  $scope.format = $scope.formats[3];
-  $scope.altInputFormats = ['M!/d!/yyyy'];
-
-  $scope.popup1 = { opened: false };
-  $scope.popup2 = { opened: false };
-
-  var tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  var afterTomorrow = new Date();
-  afterTomorrow.setDate(tomorrow.getDate() + 1);
-  $scope.events = [
-    {
-      date: tomorrow,
-      status: 'full'
-    },
-    {
-      date: afterTomorrow,
-      status: 'partially'
-    }
-  ];
-
-  function getDayClass(data) {
-    var date = data.date,
-      mode = data.mode;
-    if (mode === 'day') {
-      var dayToCheck = new Date(date).setHours(0,0,0,0);
-
-      for (var i = 0; i < $scope.events.length; i++) {
-        var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
-
-        if (dayToCheck === currentDay) {
-          return $scope.events[i].status;
-        }
-      }
-    }
-    return '';
-  }  
+  $scope.format = 'yyyy-MM-dd';
+  $scope.p1 = { opened: false };
+  $scope.p2 = { opened: false };
   // <END>
 
   // Date format when creating
-  var ds = new Date();
+  var ds = new Date();  
   var ds2 = new Date();
   ds2.setYear(ds2.getFullYear() + 1);
-    
+  
   // Initial settings
   $scope.object = {
     command: cmd,
@@ -143,10 +64,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   $scope.synamelist = items.synamelist;
   $scope.questypes = items.questypes;
   
-  /*
-  console.log($scope.users);
+  
+  //console.log($scope.users);
   console.log($scope.$$prevSibling.actSyllabus);
-  */
   
   // Set selected item from syllabus 
   $scope.getActTopicSyllab = function() {
@@ -204,8 +124,12 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   // TODO: Improve code, so that the indexes remain the same name
   if (cmd == 'update_syllabus') {
     $scope.object.data = $scope.$$prevSibling.actSyllabus;
-    $scope.object.data.From = new Date($scope.object.data.From);
-    $scope.object.data.To = new Date($scope.object.data.To);
+    
+    if ($scope.object.data.From != null) 
+      $scope.object.data.From = new Date($scope.object.data.From);
+    
+    if ($scope.object.data.To != null)
+      $scope.object.data.To = new Date($scope.object.data.To);
   }
   else if (cmd == 'update_question') {
     $scope.object.data = $scope.$$prevSibling.actQuestion;
