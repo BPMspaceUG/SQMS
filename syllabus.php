@@ -26,7 +26,7 @@
     <!--
     ########################################## Page: Dashboard 
     -->
-    <div id="pagedashboard" class="tab-pane">
+    <div id="pagedashboard" class="tab-pane active">
       <div class="row bg-primary">
         <div class="col-sm-12">
           <h2>Dashboard</h2>
@@ -45,11 +45,11 @@
                 </div>
                 <div class="col-xs-9 text-right">
                   <div class="huge">{{report.value}}</div>
-                  <div>{{report.attr}}</div>
+                  <div style="height: 50px;">{{report.attr}}</div>
                 </div>
               </div>
             </div>
-            <!-- TODO: Link to Elements
+            <!-- TODO: Link to Elements -->
             <a href="#">
               <div class="panel-footer">
                 <span class="pull-left">View Details</span>
@@ -57,7 +57,6 @@
                 <div class="clearfix"></div>
               </div>
             </a>
-            -->
           </div>
         </div>
       </div>
@@ -77,6 +76,10 @@
             </button>
             <button type="button" class="btn btn-success menuitem" ng-disabled="!actSyllabus || actSyllabus.state != 'new'" ng-click="open('modalSyllabusElement.html', 'create_syllabuselement')">
               <i class="fa fa-plus"></i> New SyllabusElement
+            </button>
+            <!-- TODO: Button to Export all Syllabus to mitsm Homepage -->
+            <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportSyllabus.html', 'export_syllabus')">
+              <i class="fa fa-download"></i> Export
             </button>
           </span>
         </div>
@@ -211,7 +214,7 @@
     <!--
     ########################################## Page: Question 
     -->
-    <div id="pagequestion" class="tab-pane active">
+    <div id="pagequestion" class="tab-pane">
       <!-- Header -->
       <div class="row bg-primary">
         <h2 class="col-sm-3">Question</h2>

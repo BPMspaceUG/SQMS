@@ -143,6 +143,11 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   $scope.synamelist = items.synamelist;
   $scope.questypes = items.questypes;
   
+  /*
+  console.log($scope.users);
+  console.log($scope.$$prevSibling.actSyllabus);
+  */
+  
   // Set selected item from syllabus 
   $scope.getActTopicSyllab = function() {
     for (var i = 0; i<$scope.topics.length; i++) {
@@ -155,6 +160,13 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     for (var i = 0; i<$scope.languages.length; i++) {
       if ($scope.languages[i].sqms_language_id == $scope.$$prevSibling.actSyllabus.LangID) {
         $scope.object.data.ngLang = $scope.languages[i];
+      }
+    }
+  }
+  $scope.getActQwnerSyllab = function() {
+    for (var i = 0; i<$scope.users.length; i++) {
+      if ($scope.users[i].lastname == $scope.$$prevSibling.actSyllabus.Owner) {
+        $scope.object.data.ngOwner = $scope.users[i];
       }
     }
   }

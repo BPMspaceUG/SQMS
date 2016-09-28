@@ -93,7 +93,7 @@
           <div class="col-sm-4">
             <select class="form-control"
               ng-options="u.lastname for u in users"
-              ng-init="object.data.ngOwner = users[0]"
+              ng-init="getActQwnerSyllab()"
               ng-model="object.data.ngOwner"></select>
           </div>
           <label class="col-sm-2 control-label">Version</label>
