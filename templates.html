@@ -130,10 +130,7 @@
         <div class="form-group">
           <label class="col-sm-2 control-label">Parent</label>
           <div class="col-sm-6">
-            <select class="form-control"
-              ng-options="s.displTxt group by s.Name for s in synamelist"
-              ng-init="getActParentSyllabElement()"
-              ng-model="object.data.ngParent"></select>
+            <input class="form-control" ng-init="getActParentSyllabElement()" ng-model="object.data.ngParent.Name" disabled/>
           </div>
           <label class="col-sm-2 control-label">Severity</label>
           <div class="col-sm-2">

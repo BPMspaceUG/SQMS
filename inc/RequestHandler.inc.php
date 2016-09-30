@@ -117,7 +117,7 @@ class RequestHandler
         $res += $this->updateSyllabusCol($params["ID"], "validity_period_from", "s", $params["From"]);
         $res += $this->updateSyllabusCol($params["ID"], "validity_period_to", "s", $params["To"]);
         $res += $this->updateSyllabusCol($params["ID"], "sqms_language_id", "i", $params["LangID"]);
-        if ($res != 7) return ''; else return $res;
+        if ($res != 7) return ''; else return $res; //json_encode(array("ID" => $params["ID"], "cmd" => "update_syllabus")); // return ID of Syllabus
         break;
         
       case "update_syllabus_name":

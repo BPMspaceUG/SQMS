@@ -22,7 +22,6 @@
 <!-- Page -->
 <div class="container">
   <div class="tab-content">
-  
     <!--
     ########################################## Page: Dashboard 
     -->
@@ -32,9 +31,9 @@
           <h2>Dashboard</h2>
         </div>
       </div>
-      <br>    
+      <br>
       <!-- <p>example <a href="http://bootstrapmaster.com/live/perfectum/">Dashboard Example</a></p>-->
-      <div class="row">      
+      <div class="row">
         <!-- Report -->
         <div class="col-lg-3 col-md-6" ng-repeat="report in reports">
           <div class="panel panel-primary">
@@ -60,8 +59,7 @@
           </div>
         </div>
       </div>
-    </div>
-  
+    </div>  
     <!--
     ########################################## Page: Syllabus 
     -->
@@ -141,8 +139,8 @@
             </td>
             <!-- Other Infos -->
             <td style="width: 100px;" class="visible-lg visible-md">{{s['Owner']}}</td>
-            <td style="width: 70px;" class="visible-lg">{{s['From'] | date:'yyyy-MM-dd'}}</td>
-            <td style="width: 70px;" class="visible-lg">{{s['To'] | date:'yyyy-MM-dd'}}</td>
+            <td style="width: 70px;" class="visible-lg"><small>{{s['From'] | date:'yyyy-MM-dd'}}</small></td>
+            <td style="width: 70px;" class="visible-lg"><small>{{s['To'] | date:'yyyy-MM-dd'}}</small></td>
             <td style="width: 100px;" class="visible-lg visible-md">{{s['Language']}}</td>
             <!-- Statemachine -->
             <td>
@@ -167,10 +165,10 @@
                 <tbody>
                   <tr ng-repeat="se in s.syllabuselements">
                     <!-- Edit SyllabusElement -->
-                    <td>
+                    <td class="tablemenu">
                       <!-- Edit Icon -->
                       <span ng-show="s.state == 'new'">
-                        <a class="btn pull-left" ng-click="editsyllabuselement(se)" title="Edit SyllabusElement...">
+                        <a ng-click="editsyllabuselement(se)" title="Edit SyllabusElement...">
                           <i class="fa fa-fw fa-pencil"></i>
                         </a>
                       </span>
@@ -181,7 +179,7 @@
                         </a>
                       </span>
                     </td>
-                    <td>{{se.sqms_syllabus_element_id}}</td>
+                    <td><a ng-click="editsyllabuselement(s)">{{se.sqms_syllabus_element_id}}</a></td>
                     <!-- Order (inlineediting) -->
                     <td>
                       <div class="popover-wrapper">

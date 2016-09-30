@@ -62,8 +62,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   $scope.users = items.users;
   $scope.languages = items.languages;
   $scope.synamelist = items.synamelist;
-  $scope.questypes = items.questypes;
-  
+  $scope.questypes = items.questypes;  
   
   //console.log($scope.users);
   console.log($scope.$$prevSibling.actSyllabus);
@@ -317,7 +316,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
       }
     }
   )};
-  
+
   $scope.getTopics = function() {
     $http.get('getjson.php?c=topics').success(function(data) {
       $scope.topics = data.topiclist; // store in scope
@@ -339,16 +338,34 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   $scope.getQTypes = function() {
     $http.get('getjson.php?c=questiontypes').success(function(data) {
       $scope.questypes = data.qtypelist; // store in scope
-      //console.log($scope.questypes);
     });    
     return $scope.questypes;    
   }
+  
+  $scope.refreshSyllabus = function(ID) {
+    $http.get('getjson.php?c=syllabus')
+    .success(function(data) {
+      var slist = data.syllabus;
+      for (var i=0;i<slist.length;i++){
+        if (slist[i].ID == ID)
+          $scope.syllabi[i] = slist[i];
+      }
+      /*
+      for (s of data.syllabus) {
+        if (syllabus.ID == ID) {
+          console.log($scope.syllabi);
+          //$scope.syllabi = syllabus;
+        }
+      }*/
+    });
+  }
+  
+  
   //------------------------------- Syllabus
   $scope.getAllSyllabus = function () {
     $http.get('getjson.php?c=syllabus')
-    .success(function(data) {      
+    .success(function(data) {
       $scope.syllabi = data.syllabus;
-      $scope.syllabi_cols = Object.keys($scope.syllabi[0]); // get keys from first object
       // get under-elements for each syllabus
       for (var i=0;i<$scope.syllabi.length;i++){
         $scope.syllabi[i].HasNoChilds = true; // default = no children
@@ -359,8 +376,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
           method: "POST",
           data: JSON.stringify($scope.syllabi[i])
         })
-        .success(function(resp_data){
-          
+        .success(function(resp_data){          
           // find parent
           for (var k=0;k<$scope.syllabi.length;k++) {
             if ($scope.syllabi[k].ID == resp_data.parentID) {
@@ -384,8 +400,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
                 }
               }
             }
-          }
-          
+          }          
         })
       }
     });
@@ -398,9 +413,11 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   //********************* Inline editing (can be implemented in writeData() maybe)
   $scope.saveEl = function(actEl, data, cmd) {
     var c;
+    
     console.log(actEl);
     console.log(data);
     console.log(cmd);
+    
     // TODO: Optimize code
     switch (cmd) {
       case 'u_answer_t': c = 'update_answer'; actEl.answer = data; break;
@@ -422,29 +439,42 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
   $scope.writeData = function (command, data) {
     console.log("Sending command ("+command+") ...");
     console.log(data);
+    
     $http({
       url: 'getjson.php?c=' + command,
       method: "POST",
       data: JSON.stringify(data)
     }).
-    success(function(data){
+    success(function(response){
       
       // Statemachine return
       if (command.indexOf("update_syllabus_state") >= 0) {
         /*****************************************
                    STATE TRANSITION
         *****************************************/
-        console.log(data);
+        console.log(response);
         //alert((data.result ? "YES" : "NO") + "\n\n" + data.message);
       }
       
-      console.log("Executed command successfully! Return: " + data);
+      console.log("Executed command successfully! Return: " + response);
+      
       // TODO: ... Heavy data ... Make this callback later or at least faster
       // TODO: Only update at certain commands (create, update, ...)
-      if (command.indexOf("syll") >= 0)
-        $scope.getAllSyllabus(); // Refresh data
+
+      // Refresh syllabus
+      if (command.indexOf("syll") >= 0) {
+        console.log("Refresh this syllabus....");
+        console.log(data);
+        console.log("Refreshing....");
+        $scope.refreshSyllabus(data.ID);
+        console.log("...");
+        //$scope.getAllSyllabus(); // Refresh data
+      }      
+      
       if (command.indexOf("que") >= 0)
         $scope.getAllQuestions(); // Refresh data
+      
+      
     }).
     error(function(error) {
       console.log("Error! " + error);
