@@ -313,7 +313,6 @@
                   </tr>
                 </thead>
                 <tr ng-repeat="an in q.answers" ng-class="[{danger: !an.correct}, {success: an.correct}]">
-                  <!--<td><a href="#" ng-click="deleteanswer(an)"><i class="fa fa-fw fa-trash-o"></i>Delete</a></td>-->
                   <td>{{an.ID}}</td>
                   <td><a href="#" editable-text="an.answer" onbeforesave="saveEl(an, $data, 'u_answer_t')">{{an.answer || "empty"}}</a></td>
                   <td><a href="#" editable-checkbox="an.correct" e-title="Correct?"

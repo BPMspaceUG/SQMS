@@ -1,5 +1,3 @@
-'use strict';
-
 var module = angular.module('SQMSApp', ['ngSanitize', 'xeditable', 'ui.bootstrap', 'ui.tinymce'])
 
 // Needed for inline editing
@@ -175,7 +173,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
 /***********************************************************
  *                    Main Controller                      *
  ***********************************************************/
-module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', function($scope, $http, $sce, $uibModal) {
+module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
+  function($scope, $http, $sce, $uibModal) {
 
   // TODO: Make _ONE_ ObjectModel for Syllabus, Question and Topic => saves code
 
@@ -213,6 +212,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
       $scope.writeData(result.command, result.data); // Send result to server
     }, function () {
       // Cancel Button clicked
+      console.log("Modal Window closed.");
       //$log.info('Modal dismissed at: ' + new Date());
     });
   };
@@ -254,11 +254,6 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
     $scope.setSelectedQuestion(el);
     if (el.state == 'new')
       $scope.open('modalNewQuestion.html', 'update_question');
-  }
-  $scope.deleteanswer = function(answer) {
-    // the php script will check if it is acually    
-    //$scope.writeData('delete_answer', answer);
-    console.log(answer.ID);
   }
   // Sorting Tables
   // TODO: remove redundant code
@@ -347,16 +342,20 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
     .success(function(data) {
       var slist = data.syllabus;
       for (var i=0;i<slist.length;i++){
-        if (slist[i].ID == ID)
-          $scope.syllabi[i] = slist[i];
-      }
-      /*
-      for (s of data.syllabus) {
-        if (syllabus.ID == ID) {
-          console.log($scope.syllabi);
-          //$scope.syllabi = syllabus;
+        if (slist[i].ID == ID) {
+          console.log(slist[i]);
+          // Refresh only this syllabus
+          var tmpKids = $scope.syllabi[i].syllabuselements; // save
+          
+          $scope.syllabi[i] = slist[i]; // replace
+          
+          $scope.syllabi[i].syllabuselements = tmpKids; // re-insert
+          // TODO: only expand when it was expanded before
+          $scope.syllabi[i].showKids = true; // ausklappen
+          $scope.syllabi[i].state = $scope.syllabi[i].state.name;
+          $scope.syllabi[i].HasNoChilds = false;
         }
-      }*/
+      }
     });
   }
   
@@ -389,18 +388,18 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal', fun
                 // Convert Angulartext into real HTML
                 for (var j=0;j<$scope.syllabi[k].syllabuselements.length;j++) {
                   
+                  // filter HTML Tags
                   var html = $scope.syllabi[k].syllabuselements[j].description;
                   var div = document.createElement("div");
                   div.innerHTML = html;
-                  var txt = div.textContent || div.innerText || "";
+                  $scope.syllabi[k].syllabuselements[j].displDescr = div.textContent || div.innerText || "";
                   
-                  $scope.syllabi[k].syllabuselements[j].displDescr = txt;
                   // Format number
                   $scope.syllabi[k].syllabuselements[j].severity = Math.round($scope.syllabi[k].syllabuselements[j].severity);
                 }
               }
             }
-          }          
+          }         
         })
       }
     });
