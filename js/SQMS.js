@@ -60,10 +60,11 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   $scope.users = items.users;
   $scope.languages = items.languages;
   $scope.synamelist = items.synamelist;
-  $scope.questypes = items.questypes;  
+  $scope.questypes = items.questypes;
+  $scope.questions = items.questionlist;
   
   //console.log($scope.users);
-  console.log($scope.$$prevSibling.actSyllabus);
+  console.log($scope);
   
   // Set selected item from syllabus 
   $scope.getActTopicSyllab = function() {
@@ -202,7 +203,8 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
             users: $scope.users,
             languages: $scope.languages,
             synamelist: $scope.syllabi,
-            questypes: $scope.questypes
+            questypes: $scope.questypes,
+            questionlist: $scope.questions
           };
         }
       }

@@ -140,6 +140,13 @@
         <!-- Description -->
         <label class="control-label">Description</label>
         <textarea data-ui-tinymce ui-tinymce="tinymceOptions" ng-model="object.data.description"></textarea>
+        <!-- Questions -->
+        <label class="control-label">Questions</label>
+        <div class="checkbox" ng-repeat="q in questions">
+          <label>
+            <input type="checkbox" value=""> ID: {{q.ID}} - {{q.Question}}
+          </label>
+        </div>
       </fieldset>
     </form>
   </div>
