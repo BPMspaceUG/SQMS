@@ -161,6 +161,11 @@ class RequestHandler
         if ($res != 1) return ''; else return $res;
         break;
         
+      case 'syllabuselementsquestions':
+        $res = $this->getSyllabusElementsQuestions();
+        return json_encode($res);
+        break;
+        
       //----------------------- Questions & Answers
       
       case 'questions':
@@ -440,6 +445,15 @@ class RequestHandler
     $stmt->bind_param("ssiiii", $name, $description, $elementorder, $severity, $parentID, $id); // bind params
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
+  }
+  private function getSyllabusElementsQuestions() {
+    $query = "SELECT
+    sqms_syllabus_element_id AS 'SyllabusElementID',
+    sqms_question_id AS 'QuestionID'
+    FROM sqms_syllabus_element_question;";
+    $rows = $this->db->query($query);
+    $return['sylelem_question_list'] = getResultArray($rows);
+    return $return;
   }
   
   /********************************************** Question */
