@@ -99,7 +99,7 @@ class RequestHandler
       case 'create_syllabus':
         return $this->addSyllabus(
           $params["Name"],
-          $params["Owner"],
+          $params["ngOwner"]["lastname"],
           $params["TopicID"],
           $params["description"],
           $params["From"],
@@ -113,7 +113,7 @@ class RequestHandler
         $res += $this->updateSyllabusCol($params["ID"], "name", "s", $params["Name"]);
         $res += $this->updateSyllabusCol($params["ID"], "sqms_topic_id", "i", $params["TopicID"]);
         $res += $this->updateSyllabusCol($params["ID"], "description", "s", $params["description"]);
-        $res += $this->updateSyllabusCol($params["ID"], "owner", "s", $params["Owner"]); // TODO: Change to ID in DB
+        $res += $this->updateSyllabusCol($params["ID"], "owner", "s", $params["ngOwner"]["lastname"]); // TODO: Change to ID in DB
         $res += $this->updateSyllabusCol($params["ID"], "validity_period_from", "s", $params["From"]);
         $res += $this->updateSyllabusCol($params["ID"], "validity_period_to", "s", $params["To"]);
         $res += $this->updateSyllabusCol($params["ID"], "sqms_language_id", "i", $params["LangID"]);
@@ -179,9 +179,10 @@ class RequestHandler
         break;
         
       case 'create_question':
+        if (!isset($params['ExtID'])) $params['ExtID'] = 0;
         return $this->addQuestion(
           $params['Question'],
-          $params['owner'],
+          $params["ngOwner"]["lastname"],
           $params['ngTopic']['id'],
           $params['ExtID'],
           $params['ngLang']['sqms_language_id'],
@@ -192,7 +193,7 @@ class RequestHandler
       
       case "update_question":
         $res = $this->updateQuestionCol($params["ID"], "question", "s", $params["Question"]);
-        $res += $this->updateQuestionCol($params["ID"], "author", "s", $params["owner"]);
+        $res += $this->updateQuestionCol($params["ID"], "author", "s", $params["ngOwner"]["lastname"]);
         $res += $this->updateQuestionCol($params["ID"], "id_external", "i", $params["ExtID"]);
         $res += $this->updateQuestionCol($params["ID"], "sqms_topic_id", "i", $params['ngTopic']['id']);
         $res += $this->updateQuestionCol($params["ID"], "sqms_language_id", "i", $params['ngLang']['sqms_language_id']);

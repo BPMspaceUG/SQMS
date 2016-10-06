@@ -30,7 +30,6 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       element_order: 1,
       severity: 25,
       answer: '',
-      owner: '',
       Owner: '',
       Version: 1,
       From: ds,
@@ -88,6 +87,13 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       }
     }
   }
+  $scope.getActQwnerQuestion = function() {
+    for (var i = 0; i<$scope.users.length; i++) {
+      if ($scope.users[i].lastname == $scope.$$prevSibling.actQuestion.Owner) {
+        $scope.object.data.ngOwner = $scope.users[i];
+      }
+    }
+  }
   $scope.getActLangQuestion = function() {
     for (var i = 0; i<$scope.languages.length; i++) {
       if ($scope.languages[i].sqms_language_id == $scope.$$prevSibling.actQuestion.LangID) {
@@ -103,6 +109,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     }
   }
   $scope.getActQuesType = function() {
+    $scope.object.data.ngQuesType = $scope.questypes[0]; // default value
     for (var i = 0; i<$scope.questypes.length; i++) {
       if ($scope.questypes[i].ID == $scope.$$prevSibling.actQuestion.TypeID) {
         $scope.object.data.ngQuesType = $scope.questypes[i];
@@ -122,10 +129,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
   // TODO: Improve code, so that the indexes remain the same name
   if (cmd == 'update_syllabus') {
     $scope.object.data = $scope.$$prevSibling.actSyllabus;
-    
+    // DATE Objects
     if ($scope.object.data.From != null) 
-      $scope.object.data.From = new Date($scope.object.data.From);
-    
+      $scope.object.data.From = new Date($scope.object.data.From);    
     if ($scope.object.data.To != null)
       $scope.object.data.To = new Date($scope.object.data.To);
   }
@@ -150,9 +156,6 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
     if ($scope.object.data.ngTopic) {
       $scope.object.data.TopicID = $scope.object.data.ngTopic.id;
       $scope.object.data.Topic = $scope.object.data.ngTopic.name;
-    }
-    if ($scope.object.data.ngOwner) {
-      $scope.object.data.Owner = $scope.object.data.ngOwner.lastname;
     }
     if ($scope.object.data.ngLang) {
       $scope.object.data.LangID = $scope.object.data.ngLang.sqms_language_id;
