@@ -117,7 +117,7 @@ class RequestHandler
         $res += $this->updateSyllabusCol($params["ID"], "validity_period_from", "s", $params["From"]);
         $res += $this->updateSyllabusCol($params["ID"], "validity_period_to", "s", $params["To"]);
         $res += $this->updateSyllabusCol($params["ID"], "sqms_language_id", "i", $params["LangID"]);
-        if ($res != 7) return ''; else return $res; //json_encode(array("ID" => $params["ID"], "cmd" => "update_syllabus")); // return ID of Syllabus
+        if ($res != 7) return ''; else return $res;
         break;
         
       case "update_syllabus_name":
@@ -449,11 +449,11 @@ class RequestHandler
   }
   private function getSyllabusElementsQuestions() {
     $query = "SELECT
-    sqms_syllabus_element_id AS 'SyllabusElementID',
-    sqms_question_id AS 'QuestionID'
+    sqms_syllabus_element_id AS 'SEID',
+    sqms_question_id AS 'QID'
     FROM sqms_syllabus_element_question;";
     $rows = $this->db->query($query);
-    $return['sylelem_question_list'] = getResultArray($rows);
+    $return['se_q_list'] = getResultArray($rows);
     return $return;
   }
   

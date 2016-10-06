@@ -8,12 +8,10 @@ module.run(function(editableOptions) {
 /***********************************************************
  *                 Modal Window Controller                 *
  ***********************************************************/
-module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items, cmd, parentid) {
-  // <START>
+module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstance, items, cmd, parentid) {
   $scope.format = 'yyyy-MM-dd';
   $scope.p1 = { opened: false };
   $scope.p2 = { opened: false };
-  // <END>
 
   // Date format when creating
   var ds = new Date();  
@@ -123,7 +121,29 @@ module.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item
       }
     }
   }
+  $scope.getSE_Q = function() {
+    $http.get('getjson.php?c=syllabuselementsquestions').success(function(data) {
+      console.log(data);
+      $scope.SE_Q = data.se_q_list;
+    });
+    return $scope.SE_Q;
+  }
   
+  // TODO: There is a much easier solution !!!!!
+  // Very much CPU Load needed LOL
+  
+  $scope.isSE_Q_Connected = function(QID, SEID) {
+    console.log(QID + " - " + SEID);
+    for (var i=0;i<$scope.SE_Q.length;i++) {
+      if ($scope.SE_Q[i].SEID == SEID && $scope.SE_Q[i].QID == QID)
+        return true;
+    }
+    return false;
+  }
+  
+  // initial call
+  $scope.getSE_Q();
+  console.log($scope.SE_Q);
   console.log("Modal Window opened.");
 
   // TODO: Improve code, so that the indexes remain the same name
@@ -349,16 +369,25 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       for (var i=0;i<slist.length;i++){
         if (slist[i].ID == ID) {
           console.log(slist[i]);
-          // Refresh only this syllabus
-          var tmpKids = $scope.syllabi[i].syllabuselements; // save
           
-          $scope.syllabi[i] = slist[i]; // replace
-          
-          $scope.syllabi[i].syllabuselements = tmpKids; // re-insert
-          // TODO: only expand when it was expanded before
-          $scope.syllabi[i].showKids = true; // ausklappen
-          $scope.syllabi[i].state = $scope.syllabi[i].state.name;
-          $scope.syllabi[i].HasNoChilds = false;
+          // Refresh only this syllabus if exists
+          if(typeof $scope.syllabi[i] === 'undefined') {
+            // does not exist => created new Element
+            $scope.syllabi.push(slist[i]);
+            $scope.syllabi[$scope.syllabi.length-1].HasNoChilds = true; // Because new
+          }
+          else {
+            // does exist
+            var wasExpanded = $scope.syllabi[i].showKids;
+            var tmpKids = $scope.syllabi[i].syllabuselements; // save
+            
+            $scope.syllabi[i] = slist[i]; // replace
+            $scope.syllabi[i].syllabuselements = tmpKids; // re-insert
+            // only expand when it was expanded before
+            $scope.syllabi[i].showKids = wasExpanded; // ausklappen
+            $scope.syllabi[i].HasNoChilds = false;
+          }          
+          $scope.syllabi[i].state = $scope.syllabi[i].state.name;          
         }
       }
     });
@@ -462,17 +491,17 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       
       console.log("Executed command successfully! Return: " + response);
       
-      // TODO: ... Heavy data ... Make this callback later or at least faster
-      // TODO: Only update at certain commands (create, update, ...)
-
       // Refresh syllabus
       if (command.indexOf("syll") >= 0) {
         console.log("Refresh this syllabus....");
         console.log(data);
+        // Check if created a new one (ID < 0)
+        if (data.ID < 0)
+          data.ID = response; // Set created ID
         console.log("Refreshing....");
         $scope.refreshSyllabus(data.ID);
         console.log("...");
-        //$scope.getAllSyllabus(); // Refresh data
+        //OBSOLETE: $scope.getAllSyllabus(); // Refresh data
       }      
       
       if (command.indexOf("que") >= 0)
