@@ -103,11 +103,14 @@
           </tr>
         </thead>
         <tbody ng-repeat="s in syllabi | filter:filtertext_sy | orderBy:predicate_s:reverse_s">
-          <tr ng-click="setSelectedSyllabus(s)"
+          <tr ng-click="setSelection(s)"
             ng-class="{success: s.state == 'new', danger: s.state == 'deprecated', warning: s.state == 'ready', info: s.state == 'released'}">
             <td class="tablemenu">
               <!-- Tickmark -->
-              <span title="Select Syllabus"><i ng-class="{'fa fa-fw fa-check-square-o': s.ID === actSyllabus.ID, 'fa fa-fw fa-square-o': s.ID != actSyllabus.ID}"></i></span>
+              <span title="Select Syllabus">
+                <i ng-class="{'fa fa-fw fa-check-square-o': (s.ID === actSelection.ID && actSelection.ElementType == 'S'),
+                  'fa fa-fw fa-square-o': !(s.ID === actSelection.ID && actSelection.ElementType == 'S')}"></i>
+              </span>
               <!-- Expand or Collapse -->
               <span ng-hide="s.HasNoChilds" ng-click="displ(s)">
                 <i class="fa fa-fw fa-plus-square" ng-show="!s.showKids" title="Expand"></i>
@@ -144,7 +147,7 @@
             <td style="width: 100px;" class="visible-lg visible-md">{{s['Language']}}</td>
             <!-- Statemachine -->
             <td>
-              <button uib-popover-template="'popoverStatemachineSyllabus.html'" popover-trigger="focus"
+              <button uib-popover-template="'popoverStatemachine.html'" popover-trigger="focus"
                 ng-disabled="s['state'] == 'deprecated'" type="button" class="btn btn-default btn-sm">{{s['state']}}</button>                
             </td>
           </tr>
@@ -179,7 +182,7 @@
                         </a>
                       </span>
                     </td>
-                    <td><a ng-click="editsyllabuselement(s)">{{se.sqms_syllabus_element_id}}</a></td>
+                    <td><a ng-click="editsyllabuselement(s)">{{se.ID}}</a></td>
                     <!-- Order (inlineediting) -->
                     <td>
                       <div class="popover-wrapper">
@@ -254,11 +257,14 @@
         </thead>
         <tbody ng-repeat="q in questions | filter:filtertext_qu | orderBy:predicate_q:reverse_q">
           <tr ng-click="setSelectedQuestion(q)"
-            ng-class="{'seltbl': q.ID === actQuestion.ID, success: q.state == 'new',
-              danger: q.state == 'deprecated', 'warning': q.state == 'ready', 'warning': q.state == 'released'}">
+            ng-class="{'seltbl': q.ID === actQuestion.ID, 'success': q.state == 'new',
+              'danger': q.state == 'deprecated', 'warning': q.state == 'ready', 'info': q.state == 'released'}">
             <td class="tablemenu">
               <!-- Tickmark -->
-              <span title="Select Question"><i ng-class="{'fa fa-fw fa-check-square-o': q.ID === actQuestion.ID, 'fa fa-fw fa-square-o': q.ID != actQuestion.ID}"></i></span>
+              <span title="Select Question">
+                <i ng-class="{'fa fa-fw fa-check-square-o': (q.ID === actSelection.ID && actSelection.ElementType == 'Q'),
+                'fa fa-fw fa-square-o': !(q.ID === actSelection.ID && actSelection.ElementType == 'Q')}"></i>
+              </span>
               <!-- Children -->
               <span ng-hide="q.HasNoChilds" ng-click="displ(q)">
                 <i class="fa fa-fw fa-plus-square" ng-show="!q.showKids"></i>
@@ -297,7 +303,7 @@
             <td><small>{{q['Type']}}</small></td>
             <!-- StateMachine Popover -->
             <td>
-              <button uib-popover-template="'popoverStatemachineQuestion.html'" popover-trigger="focus" ng-disabled="q['state'] == 'deprecated'"
+              <button uib-popover-template="'popoverStatemachine.html'" popover-trigger="focus" ng-disabled="q['state'] == 'deprecated'"
                 type="button" class="btn btn-default btn-sm">{{q['state']}}</button>
             </td>
           </tr>
@@ -312,11 +318,13 @@
                     <th>Correct</th>
                   </tr>
                 </thead>
-                <tr ng-repeat="an in q.answers" ng-class="[{danger: !an.correct}, {success: an.correct}]">
+                <tr
+                  ng-repeat="an in q.answers"
+                  ng-class="{'text-danger': !an.correct, 'text-success': an.correct}">
                   <td>{{an.ID}}</td>
                   <td><a href="#" editable-text="an.answer" onbeforesave="saveEl(an, $data, 'u_answer_t')">{{an.answer || "empty"}}</a></td>
                   <td><a href="#" editable-checkbox="an.correct" e-title="Correct?"
-                    onbeforesave="saveEl(an, $data, 'u_answer_c')">{{an.correct && "☑ Correct" || "☐ Wrong" }}</a></td>
+                    onbeforesave="saveEl(an, $data, 'u_answer_c')">{{an.correct && "Correct" || "Wrong" }}</a></td>
                 </tr>
               </table>
             </td>

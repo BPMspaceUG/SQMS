@@ -149,7 +149,9 @@ class RequestHandler
         break;
         
       case 'update_syllabuselement':
-        $parentID = isset($params["parentID"]) ? $params["parentID"] : $params["sqms_syllabus_id"];
+        // has parent
+        $parentID = isset($params["parentID"]) ? $params["parentID"] : -1;
+        // update
         $res = $this->updateSyllabusElement(
           $params["ID"],
           $params["name"],
@@ -158,7 +160,7 @@ class RequestHandler
           $params["severity"],
           $parentID
         );
-        if ($res != 1) return ''; else return $res;
+        if ($res != 1) return ''; else return 'true';
         break;
         
       case 'syllabuselementsquestions':
@@ -269,11 +271,11 @@ class RequestHandler
         break;
       
       case "update_syllabus_state":
-        return $this->SESy->setState($params["syllabusid"], $params["stateid"]);
+        return $this->SESy->setState($params["elementid"], $params["stateid"]);
         break;
 
       case "update_question_state":
-        return $this->SEQu->setState($params["questionid"], $params["stateid"]);
+        return $this->SEQu->setState($params["elementid"], $params["stateid"]);
         break;
 
         //-------- Reports for Dashboard
@@ -328,7 +330,8 @@ class RequestHandler
       c.sqms_language_id AS 'LangID',
       a.sqms_syllabus_id_successor AS 'SuccID',
       a.sqms_syllabus_id_predecessor AS 'PredID',
-      CONCAT('Language: ', c.language, ' - Version: ', version) AS displTxt
+      CONCAT('Language: ', c.language, ' - Version: ', version) AS displTxt,
+      'S' AS 'ElementType'
   FROM
       sqms_syllabus AS a LEFT JOIN sqms_topic AS b
   ON a.sqms_topic_id = b.sqms_topic_id
@@ -415,8 +418,13 @@ class RequestHandler
   private function getSyllabusElementsList($id=-1) {
     settype($id, 'integer');
     $query = "SELECT ".
-    "sqms_syllabus_element_id, element_order, severity, sqms_syllabus_id,".
-    "name, description FROM sqms_syllabus_element";
+    "sqms_syllabus_element_id AS 'ID',".
+    "element_order,".
+    "severity,".
+    "sqms_syllabus_id AS 'parentID',".
+    "name, description,".
+    "'SE' AS 'ElementType'".
+    " FROM sqms_syllabus_element";
     if ($id > 0) {
       $query .= " WHERE sqms_syllabus_id = $id";
     }
@@ -440,6 +448,7 @@ class RequestHandler
     return $res;
   }
   private function updateSyllabusElement($id, $name, $description, $elementorder, $severity, $parentID) {
+    if ($parentID <= 0) return null;
     $query = "UPDATE sqms_syllabus_element SET name=?, description=?, element_order=?, severity=?, sqms_syllabus_id=? ".
       "WHERE sqms_syllabus_element_id = ?;";
     $stmt = $this->db->prepare($query); // prepare statement
@@ -481,7 +490,8 @@ class RequestHandler
     a.id_external AS 'ExtID',
     c.name AS 'Type',
     c.sqms_question_type_id AS 'TypeID',
-    a.sqms_question_id_successor AS 'SuccID'
+    a.sqms_question_id_successor AS 'SuccID',
+    'Q' AS 'ElementType'
 FROM
     `sqms_question` AS a LEFT JOIN
     sqms_topic AS b ON a.sqms_topic_id = b.sqms_topic_id
@@ -556,7 +566,7 @@ ON d.sqms_language_id = a.sqms_language_id;";
 
   private function getAnswers($questionID) {
     settype($questionID , 'integer');
-    $query = "SELECT sqms_answer_id AS 'ID', answer, correct FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
+    $query = "SELECT sqms_answer_id AS 'ID', answer, correct, 'A' AS 'ElementType' FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
     $res = $this->db->query($query);
     $return['answers'] = getResultArray($res);
     return $return;
@@ -606,20 +616,6 @@ ON d.sqms_language_id = a.sqms_language_id;";
     $result = $stmt->execute(); // execute statement
     return (!is_null($result) ? 1 : null);
   }
-
-  // TODO: Obsolete!!!
-  /*
-  private function getFormDataByState($state) {
-    if (!isset($state)) $state = 1;
-    settype($state, 'integer');
-    $query = "SELECT * FROM sqms_syllabus_state WHERE sqms_syllabus_state_id = $state;";
-    $res = $this->db->query($query);
-    $return = array();
-    $tmp = getResultArray($res);
-    $return['formdata'] = $tmp[0]['form_data'];
-    return $return;
-  }
-  */  
   
   // ----------------------------------- Reports
   private function getReport_QuestionsWithoutQuestionmarks(){

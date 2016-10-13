@@ -42,7 +42,7 @@
           <div class="col-sm-4">
             <select class="form-control"
               ng-options="t.name for t in topics"
-              ng-init="getActTopicSyllab()"
+              ng-init="getActTopic()"
               ng-model="object.data.ngTopic"></select>
           </div>
         </div>
@@ -79,7 +79,7 @@
           <div class="col-sm-4">
             <select class="form-control"
               ng-options="l.language for l in languages"
-              ng-init="getActLangSyllab()"
+              ng-init="getActLang()"
               ng-model="object.data.ngLang"></select>
           </div>
         </div>
@@ -89,7 +89,7 @@
           <div class="col-sm-4">
             <select class="form-control"
               ng-options="u.lastname for u in users"
-              ng-init="getActQwnerSyllab()"
+              ng-init="getActQwner()"
               ng-model="object.data.ngOwner"></select>
           </div>
           <label class="col-sm-2 control-label">Version</label>
@@ -115,26 +115,33 @@
     <form class="form-horizontal">
       <fieldset>
         <legend>SyllabusElement Properties</legend>
-        <!-- Name / Order -->
+        <!-- Name -->
         <div class="form-group">
           <label class="col-sm-2 control-label">Name</label>
-          <div class="col-sm-6">
+          <div class="col-sm-10">
             <input class="form-control" ng-model="object.data.name" type="text" />
+          </div>
+        </div>
+        <!-- ID / Order / Severity -->
+        <div class="form-group">
+          <label class="col-sm-2 control-label">ID</label>
+          <div class="col-sm-2">
+            <input class="form-control" ng-model="object.data.ID" type="text" disabled/>
           </div>
           <label class="col-sm-2 control-label">Order</label>
           <div class="col-sm-2">
             <input class="form-control" ng-model="object.data.element_order" type="text" />
           </div>
+          <label class="col-sm-2 control-label">Severity</label>
+          <div class="col-sm-2">
+            <input class="form-control" ng-model="object.data.severity" min="0" max="100" type="number" />
+          </div>
         </div>
         <!-- Parent / Severity -->
         <div class="form-group">
           <label class="col-sm-2 control-label">Parent</label>
-          <div class="col-sm-6">
+          <div class="col-sm-10">
             <input class="form-control" ng-init="getActParentSyllabElement()" ng-model="object.data.ngParent.Name" disabled/>
-          </div>
-          <label class="col-sm-2 control-label">Severity</label>
-          <div class="col-sm-2">
-            <input class="form-control" ng-model="object.data.severity" min="0" max="100" type="number" />
           </div>
         </div>
         <!-- Description -->
@@ -142,9 +149,9 @@
         <textarea data-ui-tinymce ui-tinymce="tinymceOptions" ng-model="object.data.description"></textarea>
         <!-- Questions -->
         <label class="control-label">Questions</label>
-        <div class="checkbox" ng-repeat="q in questions">
-          <label ng-show="isSE_Q_Connected(q.ID, object.data.ID);">
-            <input type="checkbox" value=""> ID: {{q.ID}} - {{q.Question}}
+        <div class="checkbox" ng-repeat="q in SE_Questions">
+          <label>
+            <input type="checkbox" value=""> ID: {{q}}
           </label>
         </div>
       </fieldset>
@@ -175,14 +182,14 @@
           <div class="col-sm-4">
             <select class="form-control"
               ng-options="t.name for t in topics"
-              ng-init="getActTopicQuestion()"
+              ng-init="getActTopic()"
               ng-model="object.data.ngTopic"></select>
           </div>
           <label class="col-sm-2 control-label">Language</label>
           <div class="col-sm-4">
             <select class="form-control"
               ng-options="l.language for l in languages"
-              ng-init="getActLangQuestion()"
+              ng-init="getActLang()"
               ng-model="object.data.ngLang"></select>
           </div>
         </div>
@@ -192,7 +199,7 @@
           <div class="col-sm-6">
             <select class="form-control"
               ng-options="u.lastname for u in users"
-              ng-init="getActQwnerQuestion()"
+              ng-init="getActQwner()"
               ng-model="object.data.ngOwner"></select>
           </div>
           <label class="col-sm-2 control-label">Version</label>
@@ -238,23 +245,12 @@
   <ng-include src="'modalFooter.html'"></ng-include>
 </script>
 
-<!-- Template: StateMachine Syllabus -->
-<script type="text/ng-template" id="popoverStatemachineSyllabus.html">
+<!-- Template: StateMachine -->
+<script type="text/ng-template" id="popoverStatemachine.html">
   <div><small>goto state<br/><br/></small>
-    <div ng-repeat="state in actSyllabus.availableOptions">
+    <div ng-repeat="state in actSelection.availableOptions">
       <button type="button" style="margin-bottom: 3px;"
-        ng-click="setstate('update_syllabus_state', state.id)"
-        class="btn btn-primary btn-sm">&rarr; {{state.name}}</button>
-    </div>
-  </div>
-</script>
-
-<!-- Template: StateMachine Question -->
-<script type="text/ng-template" id="popoverStatemachineQuestion.html">
-  <div><small>goto state<br/><br/></small>
-    <div ng-repeat="state in actQuestion.availableOptions">
-      <button type="button" style="margin-bottom: 3px;"
-        ng-click="setstate('update_question_state', state.id)"
+        ng-click="setstate(state.id, actSelection)"
         class="btn btn-primary btn-sm">&rarr; {{state.name}}</button>
     </div>
   </div>
