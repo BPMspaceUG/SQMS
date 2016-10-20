@@ -1,4 +1,4 @@
-var module = angular.module('SQMSApp', ['ngSanitize', 'xeditable', 'ui.bootstrap', 'ui.tinymce'])
+var module = angular.module('SQMSApp', ['ngSanitize', 'xeditable', 'ui.bootstrap', 'ui.tinymce', 'ui.select'])
 
 // Needed for inline editing
 module.run(function(editableOptions) {
@@ -10,6 +10,14 @@ module.run(function(editableOptions) {
  ***********************************************************/
 module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstance, items, cmd, Elem) {
   
+  // bugFix because of Angular UI Bug
+  // More info: https://github.com/angular-ui/ui-select/issues/852
+  $scope.bugFix = {};
+  $scope.bugFix.SEQuestions = [];
+  
+  $scope.SE_Q = []; // get Questions by SE-ID
+  $scope.Q_SE = []; // get SyllabusElements by Q-ID
+  
   $scope.format = 'yyyy-MM-dd';
   $scope.p1 = { opened: false };
   $scope.p2 = { opened: false };
@@ -18,6 +26,40 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   var ds = new Date();  
   var ds2 = new Date();
   ds2.setYear(ds2.getFullYear() + 1);
+  
+  $scope.getSE_Q = function() {
+    $http.get('getjson.php?c=syllabuselementsquestions').success(function(data) {
+      var allElms = data.se_q_list;      
+      // loop through elements
+      for (var i=0;i<allElms.length;i++) {
+        var idx1 = allElms[i].SEID;
+        var idx2 = allElms[i].QID;
+        //--- Array 1
+        if (!$scope.SE_Q[idx1])
+          $scope.SE_Q[idx1] = [allElms[i].QID]; // a new array is born
+        else
+          $scope.SE_Q[idx1].push(allElms[i].QID);
+        //--- Array 2
+        if ($scope.Q_SE[idx2])
+          $scope.Q_SE[idx2] = allElms[i].SEID;
+        else
+          $scope.Q_SE[idx2] = allElms[i].SEID;
+      }
+      console.log("---------------------- SE <-> Q");
+      console.log($scope.SE_Q);
+      //console.log($scope.Q_SE);
+      
+      $scope.thisSE_Q = $scope.SE_Q[$scope.Element.ID];
+      if (!$scope.thisSE_Q) $scope.thisSE_Q = []; // empty list
+      
+      // get Questions for SyllabusElement
+      for (var i=0;i<$scope.thisSE_Q.length;i++){
+        var QID = $scope.thisSE_Q[i];
+        $scope.bugFix.SEQuestions.push($scope.allQuestions[QID]);
+      }
+      
+    });
+  }
   
   // Initial settings
   $scope.object = {
@@ -42,6 +84,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
       ngParent: {}
     }
   };
+  
   $scope.tinymceOptions = {
     inline: false,
     plugins: [
@@ -62,15 +105,28 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   $scope.synamelist = items.synamelist;
   $scope.questypes = items.questypes;
   $scope.questions = items.questionlist;
-  $scope.SE_Q = items.SE_Q_list;
   
+  // Order Questions in a new array with IDs as Indices
+  $scope.allQuestions = [];
+  for (var i=0;i<$scope.questions.length;i++) {
+    var idx = $scope.questions[i].ID;
+    $scope.allQuestions[idx] = $scope.questions[i];
+  }
+
+  // only get list of actual SE
+  $scope.getSE_Q();
   
   // Debugging
   console.log("--- Modal Window opened. ---");  
   console.log("Element:");
   console.log($scope.Element);
   console.log("----------------------------");
-  console.log($scope.SE_Q_list);
+  console.log("Items:");
+  console.log(items);
+  console.log("----------------------------");
+  console.log("Scope:");
+  console.log($scope);
+  console.log("----------------------------");
   
   $scope.getActTopic = function() {
     for (var i = 0; i<$scope.topics.length; i++) {
@@ -105,12 +161,13 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
       }
     }
   }
-  
-  // LOAD DATA from Selection
-  $scope.object.data = $scope.Element;
+        
+  // format dates correctly
   if ($scope.object.data.From != null) $scope.object.data.From = new Date($scope.object.data.From);    
   if ($scope.object.data.To != null) $scope.object.data.To = new Date($scope.object.data.To);
-  //$scope.object.data.parentID = $scope.Element.ID;
+  
+  // LOAD DATA
+  $scope.object.data = $scope.Element;
   
   /*
   if (cmd == 'update_syllabus') {
@@ -130,7 +187,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
     $scope.object.data.parentID = $scope.$$prevSibling.actQuestion.ID;
   } 
   */
-  
+      
   // --- [OK] clicked
   $scope.ok = function () {
     
@@ -144,6 +201,12 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
     }
     if ($scope.object.data.ngParent && $scope.object.command != "create_answer") {
       $scope.object.data.parentID = $scope.object.data.ngParent.ID;
+    }
+    
+    // Save all Question IDs from n:m
+    $scope.object.data.QuestionIDs = []; // init new array  
+    for (var i=0;i<$scope.bugFix.SEQuestions.length;i++) {
+      $scope.object.data.QuestionIDs.push($scope.bugFix.SEQuestions[i].ID);
     }
     
     console.log("--- Modal Button OK clicked");    
@@ -162,22 +225,13 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
  ***********************************************************/
 module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   function($scope, $http, $sce, $uibModal) {
-
-  $scope.SE_Q = []; // get Questions by SE-ID
-  $scope.Q_SE = []; // get SyllabusElements by Q-ID
   
-  // TODO: Make _ONE_ ObjectModel for Syllabus, Question and Topic => saves code
-
   $scope.setSelection = function(el){    
-    console.log("--- New Element selected");
-    console.log(el);
+    //console.log("--- New Element selected");
+    //console.log(el);
     $scope.actSelection = el;
   };
   
-  $scope.setSelectedSyllabus = function (el) {$scope.setSelection(el); $scope.actSyllabus = el;};
-  $scope.setSelectedQuestion = function (el) {$scope.setSelection(el); $scope.actQuestion = el;};
-  $scope.setSelectedTopic = function (el) {$scope.setSelection(el); $scope.actTopic = el;};
-
   // Modal Window + Templates Functions
   
   $scope.open = function (TemplateName, command, Element) {
@@ -196,8 +250,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
             languages: $scope.languages,
             synamelist: $scope.syllabi,
             questypes: $scope.questypes,
-            questionlist: $scope.questions,
-            SE_Q_list: $scope.SE_Q
+            questionlist: $scope.questions
           };
         },
         Elem: function () {
@@ -232,21 +285,20 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   }
   
   /******************************************************* Create Successor */
-  $scope.successorsyllabus = function(el) {
-    if (el.state != 'new') {
-      // Ask for confirmation
-      if (confirm("Are you sure that you want to create a successor of the Syllabus \n'"+el.Name+
-        "'?\n\nInfo: This will create a new Version of this Syllabus and sets the current to DEPRECATED.")){
-        $scope.writeData('create_successor_s', el);
+  $scope.createsuccessor = function(el) {
+    if (el.state != 'new') {      
+      var ElemName = "Syllabus";
+      var Command = "create_successor_s";
+      if (el.ElementType == "S") {
+      } else if (el.ElementType == "Q") {
+        ElemName = "Question";
+        Command = "create_successor_q";
       }
-    }
-  }
-  $scope.successorquestion = function(el) {
-    if (el.state != 'new') {
       // Ask for confirmation
-      if (confirm("Are you sure that you want to create a successor of the Question \n'"+el.Question+
-        "'?\n\nInfo: This will create a new Version of this Question and sets the current to DEPRECATED.")) {
-        $scope.writeData('create_successor_q', el);
+      if (confirm("Are you sure that you want to create a successor of this "+ElemName+" \n'"+el.Name+
+        "'?\n\nInfo: This will create a new "+ElemName+
+        " with a higher Version-Number and also sets the current "+ElemName+" to state DEPRECATED.")){
+        $scope.writeData(Command, el);
       }
     }
   }
@@ -286,31 +338,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   
   //--------------------------------------------------
     
-  $scope.getSE_Q = function() {
-    $http.get('getjson.php?c=syllabuselementsquestions').success(function(data) {      
-      allelms = data.se_q_list;      
-      // loop through elements
-      for (var i=0;i<allelms.length;i++) {
-        var idx1 = allelms[i].SEID;
-        var idx2 = allelms[i].QID;
-        //--- Array 1
-        if (!$scope.SE_Q[idx1])
-          $scope.SE_Q[idx1] = [allelms[i].QID]; // a new array is born
-        else
-          $scope.SE_Q[idx1].push(allelms[i].QID);
-        //--- Array 2
-        if ($scope.Q_SE[idx2])
-          $scope.Q_SE[idx2] = allelms[i].SEID;
-        else
-          $scope.Q_SE[idx2] = allelms[i].SEID;
-      }
-      //console.log($scope.SE_Q);
-      //console.log($scope.Q_SE);
-    });
-  }
-  
-  
-  
+
   
   //------------------------------- Dashboard
   $http.get('getjson.php?c=getreports').success(function(data) {
@@ -550,10 +578,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
         console.log("...");
         //OBSOLETE: $scope.getAllSyllabus(); // Refresh data
       }
-      
-      
-      
-      
+
       if (command.indexOf("que") >= 0 || command.indexOf("ans") >= 0)
         $scope.getAllQuestions(); // Refresh data
       
@@ -563,17 +588,9 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       console.log("Error! " + error);
     });
   }
-
   
   
   //--- Initial values
-  /*
-  $scope.actSyllabus = false;
-  $scope.actSyllabusElement = false;
-  $scope.actQuestion = false;
-  $scope.actTopic = false;
-  */
-  // TODO:
   $scope.actSelection = {};
   
   //---- Initial function calls
@@ -584,6 +601,6 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   $scope.getUsers();
   $scope.getLanguages();
   $scope.getQTypes();
-  $scope.getSE_Q();
+  //$scope.getSE_Q();
   
 }]);

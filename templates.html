@@ -148,12 +148,15 @@
         <label class="control-label">Description</label>
         <textarea data-ui-tinymce ui-tinymce="tinymceOptions" ng-model="object.data.description"></textarea>
         <!-- Questions -->
-        <label class="control-label">Questions</label>
-        <div class="checkbox" ng-repeat="q in SE_Q">
-          <label>
-            <input type="checkbox" value=""> ID: {{q}}
-          </label>
-        </div>
+        <label class="control-label">Questions</label>        
+        <ui-select multiple ng-model="bugFix.SEQuestions">
+          <ui-select-match placeholder="Select question...">
+            <span>{{$item.ID}} <b>{{$item.Question}}</b></span>
+          </ui-select-match>
+          <ui-select-choices repeat="item in questions">
+            <small>{{item.ID}} <b>{{item.Question}}</small>
+          </ui-select-choices>
+        </ui-select>        
       </fieldset>
     </form>
   </div>

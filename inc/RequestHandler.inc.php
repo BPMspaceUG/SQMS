@@ -155,7 +155,8 @@ class RequestHandler
           $params["description"],
           $params["element_order"],
           $params["severity"],
-          $params["parentID"] // not important... only if moved to another Syallabus
+          $params["parentID"], // not important... only if moved to another Syallabus
+          $params["QuestionIDs"]
         );
         if ($res != 1) return ''; else return $res;
         break;
@@ -444,12 +445,20 @@ class RequestHandler
       $res = $this->db->insert_id;
     return $res;
   }
-  private function updateSyllabusElement($id, $name, $description, $elementorder, $severity, $parentID) {
+  private function updateSyllabusElement($id, $name, $description, $elementorder, $severity, $parentID, $QuestionIDs) {
+    // Rewire n:m Connections to Questions
+    $query = "INSERT INTO sqms_syllabus_element_question(sqms_question_id, sqms_syllabus_element_id) VALUES(?, ?) ON DUPLICATE KEY UPDATE sqms_question_id = sqms_question_id;";
+    foreach ($QuestionIDs as $QID) {
+      $stmt = $this->db->prepare($query);
+      $stmt->bind_param("ii", $QID, $id);
+      $result = $stmt->execute();      
+    }
+    // Update SyllabusElement Entry
     $query = "UPDATE sqms_syllabus_element SET name=?, description=?, element_order=?, severity=?, sqms_syllabus_id=? ".
       "WHERE sqms_syllabus_element_id = ?;";
     $stmt = $this->db->prepare($query); // prepare statement
     $stmt->bind_param("ssiiii", $name, $description, $elementorder, $severity, $parentID, $id); // bind params
-    $result = $stmt->execute(); // execute statement
+    $result = $stmt->execute(); // execute statement    
     return (!is_null($result) ? 1 : null);
   }
   private function getSyllabusElementsQuestions() {

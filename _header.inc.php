@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="../css/font-awesome.min.css">
   <!--<link rel="stylesheet" href="../css/fuelux.min.css">-->
   <link rel="stylesheet" href="../css/xeditable.css">
+  <link rel="stylesheet" href="../css/select.min.css">
   <link rel="stylesheet" href="css/SQMS.css">
   <!-- JS -->
   <script type="text/javascript" src="../js/angular.min.js"></script>
@@ -34,6 +35,7 @@
   <script type="text/javascript" src="../js/tinymceng.js"></script>
   <script type="text/javascript" src="../js/bootstrap.min.js"></script>
   <script type="text/javascript" src="../js/xeditable.min.js"></script>
+  <script type="text/javascript" src="../js/select.min.js"></script>
   <script type="text/javascript" src="js/SQMS.js"></script>
   <!----- js scripts are loaded in the footer --------------------> 
 </head>

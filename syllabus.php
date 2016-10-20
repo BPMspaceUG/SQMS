@@ -121,7 +121,7 @@
               <!-- Edit Icon -->
               <span ng-show="s.state == 'new'"><a ng-click="editEl(s)" title="Edit Syllabus..."><i class="fa fa-fw fa-pencil"></i></a></span>
               <!-- Successor Icon -->
-              <span ng-show="s.state != 'new' && s.SuccID == null"><a ng-click="successorsyllabus(s)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a></span>
+              <span ng-show="s.state != 'new' && s.SuccID == null"><a ng-click="createsuccessor(s)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a></span>
             </td>
             <!-- ID -->
             <td><small><a ng-click="editEl(s)">{{s['ID']}}</a></small></td>
@@ -256,7 +256,7 @@
           </tr>
         </thead>
         <tbody ng-repeat="q in questions | filter:filtertext_qu | orderBy:predicate_q:reverse_q">
-          <tr ng-click="setSelectedQuestion(q)"
+          <tr ng-click="setSelection(q)"
             ng-class="{'seltbl': q.ID === actQuestion.ID, 'success': q.state == 'new',
               'danger': q.state == 'deprecated', 'warning': q.state == 'ready', 'info': q.state == 'released'}">
             <td class="tablemenu">
@@ -276,7 +276,7 @@
               <span ng-show="q.state == 'new'"><a ng-click="editEl(q)" title="Edit Question..."><i class="fa fa-fw fa-pencil"></i></a></span>
               <!-- Successor Icon -->
               <span ng-show="q.state != 'new' && q.SuccID == 0">
-                <a ng-click="successorquestion(q)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a>
+                <a ng-click="createsuccessor(q)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a>
               </span>
             </td>
             <!-- ID -->
@@ -360,7 +360,7 @@
           </tr>
         </thead>
         <tbody ng-repeat="topic in topics | filter:filtertext"
-          ng-click="setSelectedTopic(topic)"
+          ng-click="setSelection(topic)"
           ng-class="{success: topic.id === actTopic.id}">
           <tr>
             <td>{{topic.id}}</td>
