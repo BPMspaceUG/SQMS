@@ -55,9 +55,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   };
 
   // Important
-  $scope.Element = Elem;
-  console.log($scope.Element);
-  
+  $scope.Element = Elem;  
   $scope.topics = items.topics;
   $scope.users = items.users;
   $scope.languages = items.languages;
@@ -68,27 +66,30 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   
   
   // Debugging
-  console.log("--- Modal Window opened.");  
+  console.log("--- Modal Window opened. ---");  
+  console.log("Element:");
+  console.log($scope.Element);
+  console.log("----------------------------");
+  console.log($scope.SE_Q_list);
   
   $scope.getActTopic = function() {
     for (var i = 0; i<$scope.topics.length; i++) {
       if ($scope.topics[i].id == $scope.Element.TopicID)
         $scope.object.data.ngTopic = $scope.topics[i];
     }
-  }  
+  }
   $scope.getActLang = function() {
     for (var i = 0; i<$scope.languages.length; i++) {
       if ($scope.languages[i].sqms_language_id == $scope.Element.LangID)
         $scope.object.data.ngLang = $scope.languages[i];
     }
-  }  
+  }
   $scope.getActQwner = function() {
     for (var i = 0; i<$scope.users.length; i++) {
       if ($scope.users[i].lastname == $scope.Element.Owner)
         $scope.object.data.ngOwner = $scope.users[i];
     }
-  } 
- 
+  }
   $scope.getActQuesType = function() {
     $scope.object.data.ngQuesType = $scope.questypes[0]; // default value
     for (var i = 0; i<$scope.questypes.length; i++) {
@@ -99,13 +100,11 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   }
   $scope.getActParentSyllabElement = function() {
     for (var i = 0; i<$scope.synamelist.length; i++) {
-      if ($scope.synamelist[i].ID == $scope.Element.ID) {
+      if ($scope.synamelist[i].ID == $scope.Element.parentID) {
         $scope.object.data.ngParent = $scope.synamelist[i];
       }
     }
-  }  
-  
-
+  }
   
   // LOAD DATA from Selection
   $scope.object.data = $scope.Element;
@@ -147,11 +146,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
       $scope.object.data.parentID = $scope.object.data.ngParent.ID;
     }
     
-    console.log("--- Modal Button OK clicked");
-    
+    console.log("--- Modal Button OK clicked");    
     // Return result
     $uibModalInstance.close($scope.object);
-
   };
   // --- [Cancel] clicked
   $scope.cancel = function () {
@@ -217,23 +214,23 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   };
   
   
-  
-  
-  $scope.editsyllabus = function(el) {
-    //$scope.setSelectedSyllabus(el);
-    if (el.state == 'new') // Only open modal in state "new"
-      $scope.open('modalSyllabus.html', 'update_syllabus', el);
+  $scope.editEl = function(el) {
+    // -- Syllabus
+    if (el.ElementType == "S") {
+      if (el.state == 'new') // Only open modal in state "new"
+        $scope.open('modalSyllabus.html', 'update_syllabus', el);
+    }
+    // -- Question
+    else if (el.ElementType == "Q") {
+      if (el.state == 'new')
+        $scope.open('modalNewQuestion.html', 'update_question', el);
+    }
+    // -- SyllabusElement
+    else if (el.ElementType == "SE") {
+      $scope.open('modalSyllabusElement.html', 'update_syllabuselement', el);
+    }
   }
-  $scope.editsyllabuselement = function(el) {
-    //$scope.actSyllabusElement = el;
-    $scope.open('modalSyllabusElement.html', 'update_syllabuselement', el);
-  }
-  $scope.editquestion = function(el) {
-    //$scope.setSelectedQuestion(el);
-    if (el.state == 'new')
-      $scope.open('modalNewQuestion.html', 'update_question', el);
-  }  
-
+  
   /******************************************************* Create Successor */
   $scope.successorsyllabus = function(el) {
     if (el.state != 'new') {
@@ -493,20 +490,32 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   }
 
   
-  
-  
   //********************* WRITE data to server
   $scope.writeData = function (command, data) {
-    console.log("Sending command ("+command+") ...");
-    console.log(data);
+    console.log("--- Sending command ("+command+") ...");
+
+    // JSON --> String
+    seen = [];
+    json = JSON.stringify(data, function(key, val) {
+      if (val != null && typeof val == "object") {
+        if (seen.indexOf(val) >= 0) {
+          return;
+        }
+        seen.push(val);
+      }
+      return val;
+    });    
     
+    // Send Data to Server
     $http({
       url: 'getjson.php?c=' + command,
       method: "POST",
-      data: JSON.stringify(data)
+      data: json
     }).
     success(function(response){
-      
+
+      console.log("--- Executed command successfully! Return: " + response);
+    
       // Statemachine return
       if (command.indexOf("update_syllabus_state") >= 0) {
         /*****************************************
@@ -516,7 +525,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
         //alert((data.result ? "YES" : "NO") + "\n\n" + data.message);
       }
       
-      console.log("Executed command successfully! Return: " + response);
+      
       
       // Refresh syllabus
       if ((command.indexOf("syll") >= 0) && (command.indexOf("element") < 0)) {

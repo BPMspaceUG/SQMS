@@ -149,18 +149,15 @@ class RequestHandler
         break;
         
       case 'update_syllabuselement':
-        // has parent
-        $parentID = isset($params["parentID"]) ? $params["parentID"] : -1;
-        // update
         $res = $this->updateSyllabusElement(
           $params["ID"],
           $params["name"],
           $params["description"],
           $params["element_order"],
           $params["severity"],
-          $parentID
+          $params["parentID"] // not important... only if moved to another Syallabus
         );
-        if ($res != 1) return ''; else return 'true';
+        if ($res != 1) return ''; else return $res;
         break;
         
       case 'syllabuselementsquestions':
@@ -448,7 +445,6 @@ class RequestHandler
     return $res;
   }
   private function updateSyllabusElement($id, $name, $description, $elementorder, $severity, $parentID) {
-    if ($parentID <= 0) return null;
     $query = "UPDATE sqms_syllabus_element SET name=?, description=?, element_order=?, severity=?, sqms_syllabus_id=? ".
       "WHERE sqms_syllabus_element_id = ?;";
     $stmt = $this->db->prepare($query); // prepare statement

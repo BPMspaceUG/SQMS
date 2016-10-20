@@ -1,4 +1,4 @@
-<!-- Footer -->
+<!-- MODAL FOOTER -->
 <script type="text/ng-template" id="modalFooter.html">
   <div class="modal-footer">
     <button class="btn btn-success" type="button" ng-click="ok()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
@@ -149,7 +149,7 @@
         <textarea data-ui-tinymce ui-tinymce="tinymceOptions" ng-model="object.data.description"></textarea>
         <!-- Questions -->
         <label class="control-label">Questions</label>
-        <div class="checkbox" ng-repeat="q in SE_Questions">
+        <div class="checkbox" ng-repeat="q in SE_Q">
           <label>
             <input type="checkbox" value=""> ID: {{q}}
           </label>
@@ -227,7 +227,7 @@
   <ng-include src="'modalFooter.html'"></ng-include>
 </script>
 
-<!-- Template Modal "Create Answer" -->
+<!-- CREATE ANSWER -->
 <script type="text/ng-template" id="modalNewAnswer.html">
   <div class="modal-header">
     <h3 class="modal-title">Create new Answer</h3>
@@ -245,7 +245,7 @@
   <ng-include src="'modalFooter.html'"></ng-include>
 </script>
 
-<!-- Template: StateMachine -->
+<!-- STATE MACHINE -->
 <script type="text/ng-template" id="popoverStatemachine.html">
   <div><small>goto state<br/><br/></small>
     <div ng-repeat="state in actSelection.availableOptions">

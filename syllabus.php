@@ -119,12 +119,12 @@
               <!-- Dummy Icon for design -->
               <span ng-show="s.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></span>
               <!-- Edit Icon -->
-              <span ng-show="s.state == 'new'"><a ng-click="editsyllabus(s)" title="Edit Syllabus..."><i class="fa fa-fw fa-pencil"></i></a></span>
+              <span ng-show="s.state == 'new'"><a ng-click="editEl(s)" title="Edit Syllabus..."><i class="fa fa-fw fa-pencil"></i></a></span>
               <!-- Successor Icon -->
               <span ng-show="s.state != 'new' && s.SuccID == null"><a ng-click="successorsyllabus(s)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a></span>
             </td>
             <!-- ID -->
-            <td><small><a ng-click="editsyllabus(s)">{{s['ID']}}</a></small></td>
+            <td><small><a ng-click="editEl(s)">{{s['ID']}}</a></small></td>
             <!-- Name (inlineediting) -->
             <td>
               <div class="popover-wrapper">
@@ -171,7 +171,7 @@
                     <td class="tablemenu">
                       <!-- Edit Icon -->
                       <span ng-show="s.state == 'new'">
-                        <a ng-click="editsyllabuselement(se)" title="Edit SyllabusElement...">
+                        <a ng-click="editEl(se)" title="Edit SyllabusElement...">
                           <i class="fa fa-fw fa-pencil"></i>
                         </a>
                       </span>
@@ -182,7 +182,7 @@
                         </a>
                       </span>
                     </td>
-                    <td><a ng-click="editsyllabuselement(s)">{{se.ID}}</a></td>
+                    <td><a ng-click="editEl(s)">{{se.ID}}</a></td>
                     <!-- Order (inlineediting) -->
                     <td>
                       <div class="popover-wrapper">
@@ -273,7 +273,7 @@
               <!-- Dummy Icon for design -->
               <span ng-show="q.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></span>
               <!-- Edit Icon -->
-              <span ng-show="q.state == 'new'"><a ng-click="editquestion(q)" title="Edit Question..."><i class="fa fa-fw fa-pencil"></i></a></span>
+              <span ng-show="q.state == 'new'"><a ng-click="editEl(q)" title="Edit Question..."><i class="fa fa-fw fa-pencil"></i></a></span>
               <!-- Successor Icon -->
               <span ng-show="q.state != 'new' && q.SuccID == 0">
                 <a ng-click="successorquestion(q)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a>
