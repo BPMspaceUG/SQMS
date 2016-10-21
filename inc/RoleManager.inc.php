@@ -33,6 +33,13 @@
       $db2->query("SET NAMES utf8");
       $this->dbLIAM = $db2;
     }
+    private function getResultArray($result) {
+      $results_array = array();
+      while ($row = $result->fetch_assoc()) {
+        $results_array[] = $row;
+      }
+      return $results_array;
+    }
     public function getRoleIDsByLIAMid($liamID) {
       $res = null;
       // Read out all roles
@@ -55,13 +62,13 @@
       ON a.sqms_role_id = b.sqms_role_id
       WHERE a.sqms_LIAMUSER_id = $liamID;";
       $res = $this->db->query($query);
-      return getResultArray($res);
+      return $this->getResultArray($res);
     }
     public function getRolenameByRoleID($roleID) {
       settype($liamID, 'integer');
       $query = "SELECT role_name FROM sqms_role WHERE sqms_role_id = $roleID;";
       $res = $this->db->query($query);
-      return getResultArray($res);
+      return $this->getResultArray($res);
     }
     public function isActUserAllowed($area) {
       $result = false;
@@ -80,7 +87,7 @@
       //settype($liamID, 'integer');
       $query = "SELECT * FROM members;";
       $res = $this->dbLIAM->query($query);
-      return getResultArray($res);
+      return $this->getResultArray($res);
     }
     // Here are the rights for each role --> TODO: Maybe add this in the database
     public function isRoleAllowed($roleID, $area) {

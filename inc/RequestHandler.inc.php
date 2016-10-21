@@ -1,19 +1,18 @@
 <?php
-  // Includes
   include_once '../phpSecureLogin/includes/db_connect.inc.php';
   include_once '../phpSecureLogin/includes/functions.inc.php';
   if(!isset($_SESSION)) sec_session_start();
+  
   include_once("StateEngine.inc.php");
   include_once("RoleManager.inc.php");
-
-  function getResultArray($result) {
-    $results_array = array();
-    while ($row = $result->fetch_assoc()) {
-      $results_array[] = $row;
-    }
-    return $results_array;
-  }
-
+  
+/***********************************************
+  RequestHandler
+************************************************
+  Handles all incoming requests from the
+  Client and does all the handling between
+  Database and Server.
+***********************************************/
 class RequestHandler
 {
   private $db;
@@ -66,6 +65,13 @@ class RequestHandler
       'sqms_question_state_id',
       'sqms_question_state_id'
     );
+  }
+  private function getResultArray($result) {
+    $results_array = array();
+    while ($row = $result->fetch_assoc()) {
+      $results_array[] = $row;
+    }
+    return $results_array;
   }
   public function handle($command, $params) {
     
@@ -299,7 +305,7 @@ class RequestHandler
   private function getLanguages() {
     $query = "SELECT sqms_language_id, language FROM sqms_language;";
     $res = $this->db->query($query);
-    return getResultArray($res);
+    return $this->getResultArray($res);
   }
   
   /********************************************** Syllabus */
@@ -338,7 +344,7 @@ class RequestHandler
 
     $return = array();
     $res = $this->db->query($query);
-    $res = getResultArray($res);    
+    $res = $this->getResultArray($res);    
     $r = null;
     
     foreach ($res as $el) {
@@ -429,7 +435,7 @@ class RequestHandler
     $query .= " ORDER BY element_order;";
     $return = array();
     $res = $this->db->query($query);
-    $return['syllabuselements'] = getResultArray($res);
+    $return['syllabuselements'] = $this->getResultArray($res);
     return $return;
   }  
   private function addSyllabusElement($element_order, $severity, $parentID, $name, $description) {
@@ -467,7 +473,7 @@ class RequestHandler
     sqms_question_id AS 'QID'
     FROM sqms_syllabus_element_question;";
     $rows = $this->db->query($query);
-    $return['se_q_list'] = getResultArray($rows);
+    $return['se_q_list'] = $this->getResultArray($rows);
     return $return;
   }
   
@@ -479,7 +485,7 @@ class RequestHandler
     name,
     description FROM sqms_question_type;";
     $rows = $this->db->query($query);
-    $return['qtypelist'] = getResultArray($rows);
+    $return['qtypelist'] = $this->getResultArray($rows);
     return $return;
   }  
   private function getQuestionList() {
@@ -505,7 +511,7 @@ ON a.sqms_question_type_id = c.sqms_question_type_id
 LEFT JOIN sqms_language AS d
 ON d.sqms_language_id = a.sqms_language_id;";
     $rows = $this->db->query($query);
-    $res = getResultArray($rows);
+    $res = $this->getResultArray($rows);
     $r = null;
     foreach ($res as $el) {
       $acts = $this->SEQu->getActState($el["ID"])[0];
@@ -573,7 +579,7 @@ ON d.sqms_language_id = a.sqms_language_id;";
     settype($questionID , 'integer');
     $query = "SELECT sqms_answer_id AS 'ID', answer, correct, 'A' AS 'ElementType' FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
     $res = $this->db->query($query);
-    $return['answers'] = getResultArray($res);
+    $return['answers'] = $this->getResultArray($res);
     return $return;
   }
   private function addAnswer($questionID, $correct, $answer){
@@ -604,7 +610,7 @@ ON d.sqms_language_id = a.sqms_language_id;";
     }
     $query = "SELECT sqms_topic_id AS id, name FROM `sqms_topic`".$suffix;
     $res = $this->db->query($query);
-    $return['topiclist'] = getResultArray($res);
+    $return['topiclist'] = $this->getResultArray($res);
     return $return;
   }  
   private function addTopic($name) {
@@ -627,14 +633,14 @@ ON d.sqms_language_id = a.sqms_language_id;";
     $query = "SELECT 'Questions without Questionmarks' as attr, COUNT(*) AS value, 'fa-question' AS icon FROM sqms_question WHERE question NOT LIKE '%?%';";
     $return = array();
     $res = $this->db->query($query);
-    $return['reports'] = getResultArray($res);
+    $return['reports'] = $this->getResultArray($res);
     return $return;
   }
   private function getReport_QuestionsTotal(){
     $query = "SELECT 'Questions total' as attr, COUNT(*) AS value, 'fa-question' AS icon FROM sqms_question;";
     $return = array();
     $res = $this->db->query($query);
-    $return['reports'] = getResultArray($res);
+    $return['reports'] = $this->getResultArray($res);
     return $return;
   }
   private function getReport_AnswersWhitoutMarks(){
@@ -644,7 +650,7 @@ ON d.sqms_language_id = a.sqms_language_id;";
       "OR answer NOT LIKE '%?%'";
     $return = array();
     $res = $this->db->query($query);
-    $return['reports'] = getResultArray($res);
+    $return['reports'] = $this->getResultArray($res);
     return $return;
   }
 }

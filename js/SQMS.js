@@ -162,30 +162,21 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
     }
   }
         
-  // format dates correctly
-  if ($scope.object.data.From != null) $scope.object.data.From = new Date($scope.object.data.From);    
-  if ($scope.object.data.To != null) $scope.object.data.To = new Date($scope.object.data.To);
-  
   // LOAD DATA
   $scope.object.data = $scope.Element;
   
+  // format dates correctly
+  if ($scope.object.data.From != null) $scope.object.data.From = new Date($scope.object.data.From);    
+  if ($scope.object.data.To != null) $scope.object.data.To = new Date($scope.object.data.To);
+    
   /*
-  if (cmd == 'update_syllabus') {
-    //$scope.object.data = $scope.$$prevSibling.actSyllabus;
-    //$scope.object.data = $scope.Element;    
-    // DATE Objects
-    if ($scope.object.data.From != null) $scope.object.data.From = new Date($scope.object.data.From);    
-    if ($scope.object.data.To != null) $scope.object.data.To = new Date($scope.object.data.To);
-  }
-  else if (cmd == 'update_question') {
-    $scope.object.data = $scope.$$prevSibling.actQuestion;
-  }
-  else if (cmd == 'update_syllabuselement') {
-    $scope.object.data = $scope.$$prevSibling.actSyllabusElement;
-  }
+  
+  TODO:
+  
   else if (cmd == 'create_answer') {
     $scope.object.data.parentID = $scope.$$prevSibling.actQuestion.ID;
   } 
+  
   */
       
   // --- [OK] clicked
@@ -226,9 +217,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
 module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   function($scope, $http, $sce, $uibModal) {
   
-  $scope.setSelection = function(el){    
-    //console.log("--- New Element selected");
-    //console.log(el);
+  $scope.setSelection = function(el){
     $scope.actSelection = el;
   };
   
@@ -265,8 +254,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       console.log('Modal Window closed at: ' + new Date());
     });
   };
-  
-  
+    
   $scope.editEl = function(el) {
     // -- Syllabus
     if (el.ElementType == "S") {
@@ -335,10 +323,6 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
     $scope.reverse_q = ($scope.predicate_q === predicate) ? !$scope.reverse_q : false;
     $scope.predicate_q = predicate;
   };
-  
-  //--------------------------------------------------
-    
-
   
   //------------------------------- Dashboard
   $http.get('getjson.php?c=getreports').success(function(data) {
@@ -488,20 +472,13 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   $scope.displ = function(el){
     el.showKids = !el.showKids;
   }
-  /*
-  $scope.setState = function(newstate) {
-    $scope.actSyllabus.selectedOption = newstate;
-  }
-  */
   
   //********************* Inline editing (can be implemented in writeData() maybe)
   $scope.saveEl = function(actEl, data, cmd) {
-    var c;
-    
+    var c;    
     console.log(actEl);
     console.log(data);
-    console.log(cmd);
-    
+    console.log(cmd);    
     switch (cmd) {
       case 'u_answer_t': c = 'update_answer'; actEl.answer = data; break;
       case 'u_answer_c': c = 'update_answer'; actEl.correct = data; break;
@@ -516,7 +493,6 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
     }
     return $scope.writeData(c, actEl);
   }
-
   
   //********************* WRITE data to server
   $scope.writeData = function (command, data) {
@@ -551,8 +527,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
         *****************************************/
         console.log(response);
         //alert((data.result ? "YES" : "NO") + "\n\n" + data.message);
-      }
-      
+      }      
       
       
       // Refresh syllabus
@@ -588,8 +563,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       console.log("Error! " + error);
     });
   }
-  
-  
+    
   //--- Initial values
   $scope.actSelection = {};
   
@@ -601,6 +575,4 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   $scope.getUsers();
   $scope.getLanguages();
   $scope.getQTypes();
-  //$scope.getSE_Q();
-  
 }]);
