@@ -69,14 +69,15 @@
         <div class="col-sm-5">
           <!-- Menu Buttons -->
           <span>
-            <button type="button" class="btn btn-success menuitem" ng-click="open('modalSyllabus.html', 'create_syllabus')">
+            <button type="button" class="btn btn-success menuitem" ng-click="open('modalSyllabus.html', 'create_syllabus', {})">
               <i class="fa fa-plus"></i> New Syllabus
             </button>
-            <button type="button" class="btn btn-success menuitem" ng-disabled="!actSyllabus || actSyllabus.state != 'new'" ng-click="open('modalSyllabusElement.html', 'create_syllabuselement')">
+            <button type="button" class="btn btn-success menuitem" ng-disabled="(!actSelection || actSelection.ElementType != 'S' || actSelection.state != 'new')"
+              ng-click="open('modalSyllabusElement.html', 'create_syllabuselement', actSelection)">
               <i class="fa fa-plus"></i> New SyllabusElement
             </button>
             <!-- TODO: Button to Export all Syllabus to mitsm Homepage -->
-            <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportSyllabus.html', 'export_syllabus')">
+            <button type="button" class="btn btn-default menuitem" ng-click="open('modalExport.html', 'export_syllabus')">
               <i class="fa fa-download"></i> Export
             </button>
           </span>
@@ -222,10 +223,10 @@
         <div class="col-sm-5">
           <!-- Menu Buttons -->
           <span>
-            <button type="button" class="btn btn-success menuitem" ng-click="open('modalNewQuestion.html', 'create_question')">
+            <button type="button" class="btn btn-success menuitem" ng-click="open('modalNewQuestion.html', 'create_question', {})">
               <i class="fa fa-plus"></i> New Question
             </button>
-            <button type="button" class="btn btn-success menuitem" ng-disabled="!actQuestion || actQuestion.state != 'new'" ng-click="open('modalNewAnswer.html', 'create_answer')">
+            <button type="button" class="btn btn-success menuitem" ng-disabled="(!actSelection || actSelection.ElementType != 'Q' || actSelection.state != 'new')" ng-click="open('modalAnswer.html', 'create_answer', actSelection)">
               <i class="fa fa-plus"></i> New Answer
             </button>
             <!-- TODO: Button to Export all Questions to mitsm Homepage -->

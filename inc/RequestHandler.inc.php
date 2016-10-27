@@ -140,7 +140,7 @@ class RequestHandler
         return $this->addSyllabusElement(
           (int)$params["element_order"],
           (int)$params["severity"],
-          (int)$params["parentID"],
+          (int)$params["ID"], // PARENT => use ID of selection at creation
           $params["name"],
           $params["description"]
         );
@@ -221,7 +221,7 @@ class RequestHandler
         
       case 'create_answer':
         return $this->addAnswer(
-          $params["parentID"],
+          $params["ID"], // PARENT => use ID of selection at creation
           $params["correct"],
           $params["answer"]
         );
