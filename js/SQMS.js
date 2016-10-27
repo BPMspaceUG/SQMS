@@ -66,8 +66,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
     command: cmd,
     data: {
       name: '',
-      ID: -1,
-      //parentID: -1,
+      parentID: -1,
       element_order: 1,
       severity: 25,
       answer: '',
@@ -128,6 +127,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   console.log($scope);
   console.log("----------------------------");
   
+  /*****************************************************
+    Default values should go in here
+   ****************************************************/  
   $scope.getActTopic = function() {
     for (var i = 0; i<$scope.topics.length; i++) {
       if ($scope.topics[i].id == $scope.Element.TopicID)
@@ -156,29 +158,23 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   }
   $scope.getActParentSyllabElement = function() {
     for (var i = 0; i<$scope.synamelist.length; i++) {
-      if ($scope.synamelist[i].ID == $scope.Element.parentID) {
+      if ($scope.synamelist[i].ID == $scope.object.data.parentID) {
         $scope.object.data.ngParent = $scope.synamelist[i];
       }
     }
   }
         
-  // LOAD DATA
-  $scope.object.data = $scope.Element;
+  if (cmd.indexOf("create") >= 0) {
+    // Creating -> use default data, except parent
+    $scope.object.data.parentID = $scope.Element.ID;
+  } else
+    $scope.object.data = $scope.Element; // Load data from selection
   
+
   // format dates correctly
   if ($scope.object.data.From != null) $scope.object.data.From = new Date($scope.object.data.From);    
   if ($scope.object.data.To != null) $scope.object.data.To = new Date($scope.object.data.To);
-    
-  /*
-  
-  TODO:
-  
-  else if (cmd == 'create_answer') {
-    $scope.object.data.parentID = $scope.$$prevSibling.actQuestion.ID;
-  } 
-  
-  */
-      
+
   // --- [OK] clicked
   $scope.ok = function () {
     
@@ -408,18 +404,23 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
     $http.get('getjson.php?c=syllabus')
     .success(function(data) {
       var slist = data.syllabus;
+      console.log("Refresh single syllabus -<"+ID+">- ");
+
       for (var i=0;i<slist.length;i++){
         if (slist[i].ID == ID) {
           
           console.log(slist[i]);
           
-          // Refresh only this syllabus if exists
+          // Add Syllabus
           if(typeof $scope.syllabi[i] === 'undefined') {
             // does not exist => created new Element
             $scope.syllabi.push(slist[i]);
             $scope.syllabi[$scope.syllabi.length-1].HasNoChilds = true; // Because new
           }
-          else {
+          else { // Refresh syllabus
+            console.log("was refreshed!");
+            
+            // TODO: Also refresh SyllabusElements!!!!
             // does exist
             var wasExpanded = $scope.syllabi[i].showKids;
             var tmpKids = $scope.syllabi[i].syllabuselements; // save
@@ -463,16 +464,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
                 $scope.syllabi[k].syllabuselements = resp_data.syllabuselements;
                 // Convert Angulartext into real HTML
                 for (var j=0;j<$scope.syllabi[k].syllabuselements.length;j++) {
-                  
-                  // filter HTML Tags
-                  /*
-                  var html = $scope.syllabi[k].syllabuselements[j].description;
-                  var div = document.createElement("div");
-                  div.innerHTML = html;
-                  $scope.syllabi[k].syllabuselements[j].displDescr = div.textContent || div.innerText || "";
-                  */
                   $scope.syllabi[k].syllabuselements[j].displDescr = filterHTMLTags($scope.syllabi[k].syllabuselements[j].description);
-                  
                   // Format number
                   $scope.syllabi[k].syllabuselements[j].severity = Math.round($scope.syllabi[k].syllabuselements[j].severity);
                 }
@@ -496,7 +488,6 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
     console.log(data);
     console.log(cmd);    
     switch (cmd) {
-      case 'u_answer_t': c = 'update_answer'; actEl.answer = data; break;
       case 'u_answer_c': c = 'update_answer'; actEl.correct = data; break;
       case 'u_syllabel_n': c = 'update_syllabuselement'; actEl.name = data; break;
       case 'u_syllabel_s': c = 'update_syllabuselement'; actEl.severity = data; break;
@@ -505,7 +496,6 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       case 'u_syllab_n': c = 'update_syllabus_name'; actEl.name = data; break;
       case 'u_syllab_tc': c = 'update_syllabus_topic'; actEl.TopicID = data; break;
       case 'u_question_tc': c = 'update_question_topic'; actEl.TopicID = data; break;
-      case 'u_question_q': c = 'update_question_question'; actEl.Question = data; break;
     }
     return $scope.writeData(c, actEl);
   }
@@ -547,26 +537,24 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       
       
       // Refresh syllabus
-      if ((command.indexOf("syll") >= 0) && (command.indexOf("element") < 0)) {
+      if ((command.indexOf("syll") >= 0)) {
         
         console.log("Refresh this syllabus....");
         console.log(data);
         
-        
         // Check if created a new one (ID < 0)
-        if (data.ID < 0)
+        if (command.indexOf("create") >= 0)
           data.ID = response; // Set created ID
         
+        // ---------------------------
+        console.log("---------------------------");
         console.log("Refreshing....");
-        
-        $scope.refreshSyllabus(data.ID);
         // if has parent then refresh the whole parent => SyllabusElement
         if (data.parentID > 0)
           $scope.refreshSyllabus(data.parentID);
-   
-   
-   
-        console.log("...");
+        else
+          $scope.refreshSyllabus(data.ID);
+        console.log("---------------------------");
         //OBSOLETE: $scope.getAllSyllabus(); // Refresh data
       }
 

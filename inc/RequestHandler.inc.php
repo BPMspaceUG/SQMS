@@ -132,7 +132,7 @@ class RequestHandler
         break;
       
       case "update_syllabus_topic":
-        $res = $this->updateSyllabusCol($params["ID"], "name", "i", $params["TopicID"]);
+        $res = $this->updateSyllabusCol($params["ID"], "sqms_topic_id", "i", $params["TopicID"]);
         if ($res != 1) return ''; else return $res;
         break;
       
@@ -140,7 +140,7 @@ class RequestHandler
         return $this->addSyllabusElement(
           (int)$params["element_order"],
           (int)$params["severity"],
-          (int)$params["ID"], // PARENT => use ID of selection at creation
+          (int)$params["parentID"], // PARENT => use ID of selection at creation
           $params["name"],
           $params["description"]
         );
@@ -162,7 +162,7 @@ class RequestHandler
           $params["element_order"],
           $params["severity"],
           $params["parentID"], // not important... only if moved to another Syallabus
-          $params["QuestionIDs"]
+          @$params["QuestionIDs"]
         );
         if ($res != 1) return ''; else return $res;
         break;
@@ -209,11 +209,13 @@ class RequestHandler
         
       //--- Inline editing
       
+      /*
       case "update_question_question":
         $res = $this->updateQuestionCol($params["ID"], "question", "s", $params["Question"]);
         if ($res != 1) return ''; else return $res;
         break;
-        
+      */
+      
       case "update_question_topic":
         $res = $this->updateQuestionCol($params["ID"], "sqms_topic_id", "i", $params["TopicID"]);
         if ($res != 1) return ''; else return $res;
@@ -221,7 +223,7 @@ class RequestHandler
         
       case 'create_answer':
         return $this->addAnswer(
-          $params["ID"], // PARENT => use ID of selection at creation
+          $params["parentID"], // PARENT => use ID of selection at creation
           $params["correct"],
           $params["answer"]
         );
@@ -453,11 +455,13 @@ class RequestHandler
   }
   private function updateSyllabusElement($id, $name, $description, $elementorder, $severity, $parentID, $QuestionIDs) {
     // Rewire n:m Connections to Questions
-    $query = "INSERT INTO sqms_syllabus_element_question(sqms_question_id, sqms_syllabus_element_id) VALUES(?, ?) ON DUPLICATE KEY UPDATE sqms_question_id = sqms_question_id;";
-    foreach ($QuestionIDs as $QID) {
-      $stmt = $this->db->prepare($query);
-      $stmt->bind_param("ii", $QID, $id);
-      $result = $stmt->execute();      
+    if (!is_null($QuestionIDs)) {
+      $query = "INSERT INTO sqms_syllabus_element_question(sqms_question_id, sqms_syllabus_element_id) VALUES(?, ?) ON DUPLICATE KEY UPDATE sqms_question_id = sqms_question_id;";
+      foreach ($QuestionIDs as $QID) {
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $QID, $id);
+        $result = $stmt->execute();      
+      }
     }
     // Update SyllabusElement Entry
     $query = "UPDATE sqms_syllabus_element SET name=?, description=?, element_order=?, severity=?, sqms_syllabus_id=? ".
