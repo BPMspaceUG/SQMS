@@ -291,9 +291,12 @@
             <!-- Question (inlineediting) -->
             <td>
               <small>
+              {{q['QuestionDispl']}}
+              <!--
               <div class="popover-wrapper">
-                <a editable-text="q['Question']" onbeforesave="saveEl(q, $data, 'u_question_q')" edit-disabled="q.state != 'new'">{{q['Question'] || 'empty' }}</a>
+                <a editable-text="q['QuestionDispl']" onbeforesave="saveEl(q, $data, 'u_question_q')" edit-disabled="q.state != 'new'">{{q['QuestionDispl'] || 'empty' }}</a>
               </div>
+              -->
               </small>
             </td>
             <td class="visible-lg"><small>{{q['owner']}}</small></td>
@@ -312,7 +315,7 @@
               <table class="table table-condensed" style="font-size: .85em; margin:0;">
                 <thead>
                   <tr style="font-size: .9em;">
-                    <!--<th style="width:95px;">&nbsp;</th>-->
+                    <th style="width:95px;">&nbsp;</th>
                     <th style="width:95px;">ID</th>
                     <th style="width:75%;">Answer</th>
                     <th>Correct</th>
@@ -321,8 +324,16 @@
                 <tr
                   ng-repeat="an in q.answers"
                   ng-class="{'text-danger': !an.correct, 'text-success': an.correct}">
+                    <td class="tablemenu">
+                      <!-- Edit Icon -->
+                      <span ng-show="q.state == 'new'">
+                        <a ng-click="editEl(an)" title="Edit Answer...">
+                          <i class="fa fa-fw fa-pencil"></i>
+                        </a>
+                      </span>
+                    </td>
                   <td>{{an.ID}}</td>
-                  <td><a href="#" editable-text="an.answer" onbeforesave="saveEl(an, $data, 'u_answer_t')">{{an.answer || "empty"}}</a></td>
+                  <td>{{an.answerDispl}}<!--<a href="#" editable-text="an.answer" onbeforesave="saveEl(an, $data, 'u_answer_t')">{{an.answer || "empty"}}</a>--></td>
                   <td><a href="#" editable-checkbox="an.correct" e-title="Correct?"
                     onbeforesave="saveEl(an, $data, 'u_answer_c')">{{an.correct && "Correct" || "Wrong" }}</a></td>
                 </tr>

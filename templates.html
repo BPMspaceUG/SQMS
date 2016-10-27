@@ -230,18 +230,29 @@
   <ng-include src="'modalFooter.html'"></ng-include>
 </script>
 
-<!-- CREATE ANSWER -->
-<script type="text/ng-template" id="modalNewAnswer.html">
+<!-- ANSWER -->
+<script type="text/ng-template" id="modalAnswer.html">
   <div class="modal-header">
-    <h3 class="modal-title">Create new Answer</h3>
+    <h3 class="modal-title">Answer</h3>
   </div>
-  <div class="modal-body">
+  <div class="modal-body">  
     <form class="form-horizontal">
       <fieldset>
-        <legend>Create answer</legend>
-        <label>Answertext</label>
-        <textarea data-ui-tinymce ui-tinymce="tinymceOptions" ng-model="object.data.answer"></textarea>
-        <label><input type="checkbox" class="form-control" ng-model="object.data.correct"/>Correct</label>
+        <legend>Answer Properties</legend>
+        <!-- Answer -->
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Answer</label>
+          <div class="col-sm-10">
+            <textarea data-ui-tinymce ui-tinymce="tinymceOptions" ng-model="object.data.answer"></textarea>
+          </div>
+        </div>
+        <!-- Checkbox -->
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Is Correct?</label>
+          <div class="col-sm-10">
+            <p><input type="checkbox" ng-model="object.data.correct"/> Correct</p>
+          </div>
+        </div>
       </fieldset>
     </form>
   </div>

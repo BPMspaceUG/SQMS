@@ -270,6 +270,10 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
     else if (el.ElementType == "SE") {
       $scope.open('modalSyllabusElement.html', 'update_syllabuselement', el);
     }
+    // -- Answer
+    else if (el.ElementType == "A") {
+      $scope.open('modalAnswer.html', 'update_answer', el);
+    }
   }
   
   /******************************************************* Create Successor */
@@ -337,6 +341,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       $scope.question_cols = Object.keys($scope.questions[0]); // get keys from first object
       // get answers for each question
       for (var i=0;i<$scope.questions.length;i++){
+        $scope.questions[i].QuestionDispl = filterHTMLTags($scope.questions[i].Question);
         $scope.questions[i].HasNoChilds = true; // default = no children
         $scope.questions[i].state = $scope.questions[i].state.name; // TODO: only display, not replace
         $http({
@@ -356,6 +361,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
                 // Special function --> convert TinyInt to JSBoolean
                 for (var l=0;l<a.answers.length;l++) {
                   a.answers[l].correct = (a.answers[l].correct != 0);
+                  a.answers[l].answerDispl = filterHTMLTags(a.answers[l].answer);
                 }
                 $scope.questions[k].answers = a.answers;
               }
@@ -391,6 +397,13 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
     return $scope.questypes;    
   }
   
+  function filterHTMLTags(html) {
+    //var html = $scope.syllabi[k].syllabuselements[j].description;
+    var div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+  }
+  
   $scope.refreshSyllabus = function(ID) {
     $http.get('getjson.php?c=syllabus')
     .success(function(data) {
@@ -422,7 +435,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       }
     });
   } 
-  
+    
   //------------------------------- Syllabus
   $scope.getAllSyllabus = function () {
     $http.get('getjson.php?c=syllabus')
@@ -452,10 +465,13 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
                 for (var j=0;j<$scope.syllabi[k].syllabuselements.length;j++) {
                   
                   // filter HTML Tags
+                  /*
                   var html = $scope.syllabi[k].syllabuselements[j].description;
                   var div = document.createElement("div");
                   div.innerHTML = html;
                   $scope.syllabi[k].syllabuselements[j].displDescr = div.textContent || div.innerText || "";
+                  */
+                  $scope.syllabi[k].syllabuselements[j].displDescr = filterHTMLTags($scope.syllabi[k].syllabuselements[j].description);
                   
                   // Format number
                   $scope.syllabi[k].syllabuselements[j].severity = Math.round($scope.syllabi[k].syllabuselements[j].severity);
