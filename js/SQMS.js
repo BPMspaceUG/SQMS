@@ -14,6 +14,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   // More info: https://github.com/angular-ui/ui-select/issues/852
   $scope.bugFix = {};
   $scope.bugFix.SEQuestions = [];
+  $scope.bugFix.QSyllabusElements = [];
   
   $scope.SE_Q = []; // get Questions by SE-ID
   $scope.Q_SE = []; // get SyllabusElements by Q-ID
@@ -40,22 +41,33 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
         else
           $scope.SE_Q[idx1].push(allElms[i].QID);
         //--- Array 2
-        if ($scope.Q_SE[idx2])
-          $scope.Q_SE[idx2] = allElms[i].SEID;
+        if (!$scope.Q_SE[idx2])
+          $scope.Q_SE[idx2] = [allElms[i].SEID]; // a new array is born
         else
-          $scope.Q_SE[idx2] = allElms[i].SEID;
+          $scope.Q_SE[idx2].push(allElms[i].SEID);
       }
       console.log("---------------------- SE <-> Q");
       console.log($scope.SE_Q);
-      //console.log($scope.Q_SE);
+      console.log($scope.Q_SE);
+      
+      /******** only select relevant Questions for this Element ********/    
       
       $scope.thisSE_Q = $scope.SE_Q[$scope.Element.ID];
       if (!$scope.thisSE_Q) $scope.thisSE_Q = []; // empty list
       
-      // get Questions for SyllabusElement
+      $scope.thisQ_SE = $scope.Q_SE[$scope.Element.ID];
+      if (!$scope.thisQ_SE) $scope.thisQ_SE = []; // empty list
+      
+      /******  get Questions for SyllabusElement into bugfix Object for Plugin *******/
+      
       for (var i=0;i<$scope.thisSE_Q.length;i++){
         var QID = $scope.thisSE_Q[i];
         $scope.bugFix.SEQuestions.push($scope.allQuestions[QID]);
+      }
+      
+      for (var i=0;i<$scope.thisQ_SE.length;i++){
+        var tmpID = $scope.thisQ_SE[i];
+        $scope.bugFix.QSyllabusElements.push($scope.allSyllabusElements[tmpID]);
       }
       
     });
@@ -102,21 +114,30 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   $scope.users = items.users;
   $scope.languages = items.languages;
   $scope.synamelist = items.synamelist;
+  $scope.syllabuselements = items.syllabuselements;
   $scope.questypes = items.questypes;
   $scope.questions = items.questionlist;
   
   // Order Questions in a new array with IDs as Indices
   $scope.allQuestions = [];
+  $scope.allSyllabusElements = [];
+  
   for (var i=0;i<$scope.questions.length;i++) {
     var idx = $scope.questions[i].ID;
     $scope.allQuestions[idx] = $scope.questions[i];
+  }
+  for (var i=0;i<$scope.syllabuselements.length;i++) {
+    var idx = $scope.syllabuselements[i].ID;
+    $scope.allSyllabusElements[idx] = $scope.syllabuselements[i];
   }
 
   // only get list of actual SE
   $scope.getSE_Q();
   
   // Debugging
-  console.log("--- Modal Window opened. ---");  
+  console.log("============================");
+  console.log("--- Modal Window opened. ---");
+  console.log("============================");
   console.log("Element:");
   console.log($scope.Element);
   console.log("----------------------------");
@@ -195,13 +216,20 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
     for (var i=0;i<$scope.bugFix.SEQuestions.length;i++) {
       $scope.object.data.QuestionIDs.push($scope.bugFix.SEQuestions[i].ID);
     }
+    // Save all SyllabusElement IDs from n:m
+    $scope.object.data.SyllabusElementIDs = []; // init new array  
+    for (var i=0;i<$scope.bugFix.QSyllabusElements.length;i++) {
+      $scope.object.data.SyllabusElementIDs.push($scope.bugFix.QSyllabusElements[i].ID);
+    }
     
+    console.log("============================");
     console.log("--- Modal Button OK clicked");    
     // Return result
     $uibModalInstance.close($scope.object);
   };
   // --- [Cancel] clicked
   $scope.cancel = function () {
+    console.log("============================");
     console.log("--- Modal Button Cancel clicked");
     $uibModalInstance.dismiss('cancel');
   };
@@ -235,6 +263,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
             languages: $scope.languages,
             synamelist: $scope.syllabi,
             questypes: $scope.questypes,
+            syllabuselements: $scope.syllabuselements,
             questionlist: $scope.questions
           };
         },
@@ -373,6 +402,12 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       $scope.topics = data.topiclist; // store in scope
     });
     return $scope.topics;
+  };
+  $scope.getAllSyllabusElements = function() {
+    $http.get('getjson.php?c=syllabuselements').success(function(data) {
+      $scope.syllabuselements = data.syllabuselements; // store in scope
+    });
+    return $scope.syllabuselements;
   };
   $scope.getUsers = function() {
     $http.get('getjson.php?c=users').success(function(data) {
@@ -574,6 +609,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   //---- Initial function calls
   // Load all needed data at page-start
   $scope.getAllSyllabus();
+  $scope.getAllSyllabusElements();
   $scope.getAllQuestions();
   $scope.getTopics();
   $scope.getUsers();

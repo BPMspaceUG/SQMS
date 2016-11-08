@@ -204,7 +204,8 @@ class RequestHandler
         $res += $this->updateQuestionCol($params["ID"], "sqms_topic_id", "i", $params['ngTopic']['id']);
         $res += $this->updateQuestionCol($params["ID"], "sqms_language_id", "i", $params['ngLang']['sqms_language_id']);
         $res += $this->updateQuestionCol($params["ID"], "sqms_question_type_id", "i", $params['ngQuesType']['ID']);
-        if ($res != 6) return ''; else return $res;
+        $res += $this->updateQuestionSEIDs($params["ID"], $params['SyllabusElementIDs']);
+        if ($res != 7) return ''; else return $res;
         break;
         
       //--- Inline editing
@@ -452,6 +453,18 @@ class RequestHandler
     if ($result)
       $res = $this->db->insert_id;
     return $res;
+  }
+  private function updateQuestionSEIDs($QuestionID, $SyllabusElementIDs) {
+    // Rewire n:m Connections to SyllabusElements
+    if (!is_null($SyllabusElementIDs)) {
+      $query = "INSERT INTO sqms_syllabus_element_question(sqms_question_id, sqms_syllabus_element_id) VALUES(?, ?) ON DUPLICATE KEY UPDATE sqms_question_id = sqms_question_id;";
+      foreach ($SyllabusElementIDs as $SEID) {
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $QuestionID, $SEID);
+        $result = $stmt->execute();      
+      }
+    }
+    return (!is_null($result) ? 1 : null);
   }
   private function updateSyllabusElement($id, $name, $description, $elementorder, $severity, $parentID, $QuestionIDs) {
     // Rewire n:m Connections to Questions

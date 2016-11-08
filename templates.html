@@ -150,7 +150,7 @@
         <!-- Questions -->
         <label class="control-label">Questions</label>        
         <ui-select multiple ng-model="bugFix.SEQuestions">
-          <ui-select-match placeholder="Select question...">
+          <ui-select-match placeholder="Select Questions...">
             <span>{{$item.ID}} <b>{{$item.Question}}</b></span>
           </ui-select-match>
           <ui-select-choices repeat="item in questions">
@@ -224,6 +224,16 @@
             <input ng-model="object.data.ExtID" class="form-control" type="text" />
           </div>
         </div>
+        <!-- SyllabusElements -->
+        <label class="control-label">SyllabusElements</label>
+        <ui-select multiple ng-model="bugFix.QSyllabusElements">
+          <ui-select-match placeholder="Select SyllabusElements...">
+            <span>{{$item.ID}} <b>{{$item.name}}</b></span>
+          </ui-select-match>
+          <ui-select-choices repeat="item in syllabuselements">
+            <small>{{item.ID}} <b>{{item.name}}</small>
+          </ui-select-choices>
+        </ui-select>  
       </fieldset>
     </form>
   </div>
