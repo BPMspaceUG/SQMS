@@ -84,7 +84,7 @@ class RequestHandler
         $arr1 = $this->getSyllabusList(); // All data from syllabus
         return json_encode($arr1);
         break;
-
+      /*
       case 'getsyllabusdetails':
         $syllabid = $params["ID"];
         $actstate = $this->SESy->getActState($syllabid);
@@ -96,7 +96,7 @@ class RequestHandler
         $return = array_merge_recursive($arr0, $arr1, $arr2);
         return json_encode($return);
         break;
-        
+      */
       case 'syllabuselements':
         $return = $this->getSyllabusElementsList();
         return json_encode($return);
@@ -207,19 +207,15 @@ class RequestHandler
         $res += $this->updateQuestionSEIDs($params["ID"], $params['SyllabusElementIDs']);
         if ($res != 7) return ''; else return $res;
         break;
-        
-      //--- Inline editing
-      
-      /*
-      case "update_question_question":
-        $res = $this->updateQuestionCol($params["ID"], "question", "s", $params["Question"]);
-        if ($res != 1) return ''; else return $res;
-        break;
-      */
       
       case "update_question_topic":
         $res = $this->updateQuestionCol($params["ID"], "sqms_topic_id", "i", $params["TopicID"]);
         if ($res != 1) return ''; else return $res;
+        break;
+        
+      case 'answers':
+        $return = $this->getAnswers();
+        return json_encode($return);
         break;
         
       case 'create_answer':
@@ -240,7 +236,7 @@ class RequestHandler
         // Merge data
         $return = array_merge_recursive($arr0, $arr1, $arr2);
         return json_encode($return);
-        break;        
+        break;
         
       case 'update_answer':
         $res = $this->updateAnswer(
@@ -533,7 +529,8 @@ ON d.sqms_language_id = a.sqms_language_id;";
     $r = null;
     foreach ($res as $el) {
       $acts = $this->SEQu->getActState($el["ID"])[0];
-      $state = array("state" => $acts);
+      $nexts = $this->SEQu->getNextStates($acts["id"]);
+      $state = array("state" => $acts, "nextstates" => $nexts);
       $x = array_merge_recursive($el, $state);
       $r[] = $x;
     }
@@ -593,9 +590,13 @@ ON d.sqms_language_id = a.sqms_language_id;";
   
   /********************************************** Answer */
 
-  private function getAnswers($questionID) {
+  private function getAnswers($questionID = -1) {
     settype($questionID , 'integer');
-    $query = "SELECT sqms_answer_id AS 'ID', answer, correct, 'A' AS 'ElementType' FROM `sqms_answer` WHERE sqms_question_id = $questionID;";
+    $query = "SELECT ".
+      "sqms_answer_id AS 'ID', answer, correct, 'A' AS 'ElementType',".
+      "sqms_question_id AS 'parentID' FROM `sqms_answer`";
+    if ($questionID > 0)
+      $query .= " WHERE sqms_question_id = $questionID;";
     $res = $this->db->query($query);
     $return['answers'] = $this->getResultArray($res);
     return $return;

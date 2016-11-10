@@ -335,8 +335,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
         stateid: newstate
       }
     );
-  }  
-  
+  }
   
   // Sorting Tables
   // TODO: remove redundant code
@@ -354,17 +353,15 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
     $scope.predicate_q = predicate;
   };
   
-  
-  
   //------------------------------- Dashboard
   $http.get('getjson.php?c=getreports').success(function(data) {
     $scope.reports = data.reports;
   });  
   
   //------------------------------- Question
-  /*
+  
   $scope.expandedQuestionIDs = [];
-  //============================================ Load S
+  //============================================ Load Q
   $scope.getAllQuestions = function () {
     // Save expanded Elements
     if ($scope.questions) {
@@ -375,48 +372,42 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
     .success(function(data) {
       $scope.questions = data.questionlist;
       // When full data is loaded
-      if ($scope.syllabi && $scope.syllabuselements)
-        $scope.assignS2SE();
+      if ($scope.questions && $scope.answers)
+        $scope.assignQ2A();
     });
   }
-  */
-
-  $scope.getAllQuestions = function () {$http.get('getjson.php?c=questions')
-    .success(function(data) {
-      $scope.questions = data.questionlist;
-      $scope.question_cols = Object.keys($scope.questions[0]); // get keys from first object
-      // get answers for each question
-      for (var i=0;i<$scope.questions.length;i++){
-        $scope.questions[i].QuestionDispl = $scope.filterHTMLTags($scope.questions[i].Question);
-        $scope.questions[i].HasNoChilds = true; // default = no children
-        $scope.questions[i].state = $scope.questions[i].state.name; // TODO: only display, not replace
-        $http({
-          url: 'getjson.php?c=getanswers',
-          method: "POST",
-          data: JSON.stringify($scope.questions[i])
-        })
-        .success(function(a) {
-          // find parent
-          for (var k=0;k<$scope.questions.length;k++) {
-            if ($scope.questions[k].ID == a.parentID) {
-              // save all data in the element
-              $scope.questions[k].availableOptions = a.nextstates; // next states
-              // if has children
-              if (a.answers.length > 0) {
-                $scope.questions[k].HasNoChilds = false; // has now children
-                // Special function --> convert TinyInt to JSBoolean
-                for (var l=0;l<a.answers.length;l++) {
-                  a.answers[l].correct = (a.answers[l].correct != 0);
-                  a.answers[l].answerDispl = $scope.filterHTMLTags(a.answers[l].answer);
-                }
-                $scope.questions[k].answers = a.answers;
-              }
-            }
-          }
-        })
+  //============================================ Load A
+  $scope.getAllAnswers = function() {
+    $http.get('getjson.php?c=answers').success(function(data) {
+      $scope.answers = data.answers; // store in scope
+      // When full data is loaded
+      if ($scope.questions && $scope.answers)
+        $scope.assignQ2A();
+    });
+  };
+  //============================================ Assign Q -> A
+  $scope.assignQ2A = function() {
+    // Delete all assignments
+    for (var i=0;i<$scope.questions.length;i++){
+      $scope.questions[i].answers = undefined;
+    }
+    // Loop throug all A
+    for (var i=0;i<$scope.answers.length;i++){
+      // Format param (int -> bool)
+      $scope.answers[i].correct = ($scope.answers[i].correct == 1);
+      // 1. Find Q by ID
+      var QID = $scope.answers[i].parentID;
+      var Q = $scope.questions.find(x => x.ID === QID);
+      // 2. Assign A to Q
+      if (Q) {
+        // if array is undef., create a new one, and/or add to back
+        (Q.answers = Q.answers || []).push($scope.answers[i]);
+        // if it was expanded before then expand again
+        if ($scope.expandedQuestionIDs.indexOf(Q.ID) >= 0)
+          Q.showKids = true;
       }
     }
-  )};
+  }
 
   $scope.getTopics = function() {
     $http.get('getjson.php?c=topics').success(function(data) {
@@ -424,18 +415,21 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
     });
     return $scope.topics;
   };
+  
   $scope.getUsers = function() {
     $http.get('getjson.php?c=users').success(function(data) {
       $scope.users = data.userlist; // store in scope
     });
     return $scope.users;
   }
+  
   $scope.getLanguages = function() {
     $http.get('getjson.php?c=languages').success(function(data) {
       $scope.languages = data.langlist; // store in scope
     });
     return $scope.languages;
   }
+  
   $scope.getQTypes = function() {
     $http.get('getjson.php?c=questiontypes').success(function(data) {
       $scope.questypes = data.qtypelist; // store in scope
@@ -456,7 +450,6 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
     // Save expanded Elements
     if ($scope.syllabi) {
       $scope.expandedSyllabusIDs = $scope.syllabi.filter(x => x.showKids === true).map(x=> x.ID);
-      console.log($scope.expandedSyllabusIDs);
     }
     // Load data from server
     $http.get('getjson.php?c=syllabus')
@@ -475,7 +468,6 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       if ($scope.syllabi && $scope.syllabuselements)
         $scope.assignS2SE();
     });
-    return $scope.syllabuselements;
   };
   //============================================ Assign S -> SE
   $scope.assignS2SE = function() {
@@ -578,11 +570,15 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   $scope.getAllSyllabus();
   $scope.getAllSyllabusElements();
   $scope.getAllQuestions();
+  $scope.getAllAnswers();
+  
   $scope.getTopics();
   $scope.getUsers();
   $scope.getLanguages();
   $scope.getQTypes();
+  
 }]);
+
 module.directive('stringToNumber', function() {
   return {
     require: 'ngModel',

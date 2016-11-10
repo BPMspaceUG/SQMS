@@ -70,11 +70,15 @@
           <!-- Menu Buttons -->
           <span>
             <button type="button" class="btn btn-success menuitem" ng-click="open('modalSyllabus.html', 'create_syllabus', {})">
-              <i class="fa fa-plus"></i> New Syllabus
+              <span class="visible-lg"><i class="fa fa-plus"></i> New Syllabus</span>
+              <span class="visible-md"><i class="fa fa-plus"></i> Syllabus</span>
+              <span class="visible-xs visible-sm"><i class="fa fa-plus"></i> Syll.</span>
             </button>
             <button type="button" class="btn btn-success menuitem" ng-disabled="(!actSelection || actSelection.ElementType != 'S' || actSelection.state.id != 1)"
               ng-click="open('modalSyllabusElement.html', 'create_syllabuselement', actSelection)">
-              <i class="fa fa-plus"></i> New SyllabusElement
+              <span class="visible-lg"><i class="fa fa-plus"></i> New Syllabus-Element</span>
+              <span class="visible-md"><i class="fa fa-plus"></i> Syllabus-Element</span>
+              <span class="visible-xs visible-sm"><i class="fa fa-plus"></i> Syll.-El.</span>
             </button>
             <!-- TODO: Button to Export all Syllabus to mitsm Homepage -->
             <button type="button" class="btn btn-default menuitem" ng-click="open('modalExport.html', 'export_syllabus')">
@@ -154,7 +158,7 @@
                 ng-disabled="s['state'].id == 4" type="button" class="btn btn-default btn-sm">{{s['state'].name}}</button>                
             </td>
           </tr>
-          <tr ng-hide="s.HasNoChilds || !s.showKids">
+          <tr ng-hide="!s.showKids">
             <!-- Nested table -->
             <td colspan="10" style="padding:0; background-color: #ddd;">
               <table class="table table-condensed" style="font-size: .85em; margin:0;">
@@ -224,10 +228,14 @@
           <!-- Menu Buttons -->
           <span>
             <button type="button" class="btn btn-success menuitem" ng-click="open('modalNewQuestion.html', 'create_question', {})">
-              <i class="fa fa-plus"></i> New Question
+              <span class="visible-lg"><i class="fa fa-plus"></i> New Question</span>
+              <span class="visible-md"><i class="fa fa-plus"></i> Question</span>
+              <span class="visible-xs visible-sm"><i class="fa fa-plus"></i> Quest.</span>
             </button>
-            <button type="button" class="btn btn-success menuitem" ng-disabled="(!actSelection || actSelection.ElementType != 'Q' || actSelection.state != 'new')" ng-click="open('modalAnswer.html', 'create_answer', actSelection)">
-              <i class="fa fa-plus"></i> New Answer
+            <button type="button" class="btn btn-success menuitem" ng-disabled="(!actSelection || actSelection.ElementType != 'Q' || actSelection.state.id != 1)" ng-click="open('modalAnswer.html', 'create_answer', actSelection)">
+              <span class="visible-lg"><i class="fa fa-plus"></i> New Answer</span>
+              <span class="visible-md"><i class="fa fa-plus"></i> Answer</span>
+              <span class="visible-xs visible-sm"><i class="fa fa-plus"></i> Answ.</span>
             </button>
             <!-- TODO: Button to Export all Questions to mitsm Homepage -->
             <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportQuestions.html', 'export_questions')">
@@ -258,8 +266,8 @@
         </thead>
         <tbody ng-repeat="q in questions | filter:filtertext_qu | orderBy:predicate_q:reverse_q">
           <tr ng-click="setSelection(q)"
-            ng-class="{'seltbl': q.ID === actQuestion.ID, 'success': q.state == 'new',
-              'danger': q.state == 'deprecated', 'warning': q.state == 'ready', 'info': q.state == 'released'}">
+            ng-class="{'seltbl': q.ID === actSelection.ID, 'success': q.state.id == 1,
+              'danger': q.state.id == 4, 'warning': q.state.id == 2, 'info': q.state.id == 3}">
             <td class="tablemenu">
               <!-- Tickmark -->
               <span title="Select Question">
@@ -267,16 +275,16 @@
                 'fa fa-fw fa-square-o': !(q.ID === actSelection.ID && actSelection.ElementType == 'Q')}"></i>
               </span>
               <!-- Children -->
-              <span ng-hide="q.HasNoChilds" ng-click="displ(q)">
+              <span ng-show="q.answers" ng-click="displ(q)">
                 <i class="fa fa-fw fa-plus-square" ng-show="!q.showKids"></i>
                 <i class="fa fa-fw fa-minus-square" ng-hide="!q.showKids"></i>
               </span>
               <!-- Dummy Icon for design -->
-              <span ng-show="q.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></span>
+              <span ng-hide="q.answers"><i class="fa fa-fw fa-square icon-invisible"></i></span>
               <!-- Edit Icon -->
-              <span ng-show="q.state == 'new'"><a ng-click="editEl(q)" title="Edit Question..."><i class="fa fa-fw fa-pencil"></i></a></span>
+              <span ng-show="q.state.id == 1"><a ng-click="editEl(q)" title="Edit Question..."><i class="fa fa-fw fa-pencil"></i></a></span>
               <!-- Successor Icon -->
-              <span ng-show="q.state != 'new' && q.SuccID == 0">
+              <span ng-show="q.state.id != 1 && q.SuccID == 0">
                 <a ng-click="createsuccessor(q)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a>
               </span>
             </td>
@@ -285,21 +293,12 @@
             <!-- Topic -->
             <td style="width: 100px;">
               <div class="popover-wrapper">
-                <a style="white-space: nowrap;" onbeforesave="saveEl(q, $data, 'u_question_tc')" onshow="getTopics()" edit-disabled="q.state != 'new'"
+                <a style="white-space: nowrap;" onbeforesave="saveEl(q, $data, 'u_question_tc')" onshow="getTopics()" edit-disabled="q.state.id != 1"
                 e-ng-options="t.id as t.name for t in topics" editable-select="q['TopicID']">{{q['Topic'] || "empty"}}</a>
               </div>
             </td>
-            <!-- Question (inlineediting) -->
-            <td>
-              <small>
-              {{q['QuestionDispl']}}
-              <!--
-              <div class="popover-wrapper">
-                <a editable-text="q['QuestionDispl']" onbeforesave="saveEl(q, $data, 'u_question_q')" edit-disabled="q.state != 'new'">{{q['QuestionDispl'] || 'empty' }}</a>
-              </div>
-              -->
-              </small>
-            </td>
+            <!-- Question -->
+            <td><small>{{filterHTMLTags(q['Question'])}}</small></td>
             <td class="visible-lg"><small>{{q['owner']}}</small></td>
             <td class="visible-lg visible-md"><small>{{q['Language']}}</small></td>
             <td style="width: 50px; text-align: center;">{{q['Version']}}</td>
@@ -307,11 +306,11 @@
             <td><small>{{q['Type']}}</small></td>
             <!-- StateMachine Popover -->
             <td>
-              <button uib-popover-template="'popoverStatemachine.html'" popover-trigger="focus" ng-disabled="q['state'] == 'deprecated'"
-                type="button" class="btn btn-default btn-sm">{{q['state']}}</button>
+              <button uib-popover-template="'popoverStatemachine.html'" popover-trigger="focus" ng-disabled="q['state'].id == 4"
+                type="button" class="btn btn-default btn-sm">{{q['state'].name}}</button>
             </td>
           </tr>
-          <tr ng-hide="q.HasNoChilds || !q.showKids">
+          <tr ng-hide="!q.showKids">
             <td colspan="10" style="padding:0; background-color: #ddd; border: 1px solid #ccc;">
               <table class="table table-condensed" style="font-size: .85em; margin:0;">
                 <thead>
@@ -327,14 +326,14 @@
                   ng-class="{'text-danger': !an.correct, 'text-success': an.correct}">
                     <td class="tablemenu">
                       <!-- Edit Icon -->
-                      <span ng-show="q.state == 'new'">
+                      <span ng-show="q.state.id == 1">
                         <a ng-click="editEl(an)" title="Edit Answer...">
                           <i class="fa fa-fw fa-pencil"></i>
                         </a>
                       </span>
                     </td>
                   <td>{{an.ID}}</td>
-                  <td>{{an.answerDispl}}<!--<a href="#" editable-text="an.answer" onbeforesave="saveEl(an, $data, 'u_answer_t')">{{an.answer || "empty"}}</a>--></td>
+                  <td>{{filterHTMLTags(an.answer)}}</td>
                   <td><a href="#" editable-checkbox="an.correct" e-title="Correct?"
                     onbeforesave="saveEl(an, $data, 'u_answer_c')">{{an.correct && "Correct" || "Wrong" }}</a></td>
                 </tr>
