@@ -538,9 +538,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       data: json
     }).
     success(function(response){
-
       console.log("--- Executed command successfully! Return: " + response);
-    
       //========================
       // STATE TRANSITION
       //========================
@@ -548,14 +546,14 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
         console.log(response);
         //alert((data.result ? "YES" : "NO") + "\n\n" + data.message);
       }
-      
-      // Get new data from server
+      //========================
+      // Refresh data
+      // TODO: Only refresh relevant things based on commands
+      //       => but not everytime sure because of dependencies
       $scope.getAllSyllabus();
       $scope.getAllSyllabusElements();
-
-      if (command.indexOf("que") >= 0 || command.indexOf("ans") >= 0)
-        $scope.getAllQuestions(); // Refresh data
-
+      $scope.getAllQuestions();
+      $scope.getAllAnswers();
     }).
     error(function(error) {
       console.log("Error! " + error);

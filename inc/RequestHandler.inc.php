@@ -508,7 +508,7 @@ class RequestHandler
     b.name AS 'Topic',
     b.sqms_topic_id AS 'TopicID',
     a.question AS 'Question',
-    a.author AS 'owner',
+    a.author AS 'Owner',
     d.language AS 'Language',
     a.sqms_language_id AS 'LangID',
     a.version AS 'Version',

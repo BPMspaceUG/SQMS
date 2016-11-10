@@ -299,7 +299,7 @@
             </td>
             <!-- Question -->
             <td><small>{{filterHTMLTags(q['Question'])}}</small></td>
-            <td class="visible-lg"><small>{{q['owner']}}</small></td>
+            <td class="visible-lg"><small>{{q['Owner']}}</small></td>
             <td class="visible-lg visible-md"><small>{{q['Language']}}</small></td>
             <td style="width: 50px; text-align: center;">{{q['Version']}}</td>
             <td class="visible-lg">{{q['ExtID']}}</td>
