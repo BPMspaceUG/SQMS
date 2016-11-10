@@ -352,7 +352,8 @@ class RequestHandler
     
     foreach ($res as $el) {
       $acts = $this->SESy->getActState($el["ID"])[0];
-      $state = array("state" => $acts);
+      $nexts = $this->SESy->getNextStates($acts["id"]);
+      $state = array("state" => $acts, "nextstates" => $nexts);
       $x = array_merge_recursive($el, $state);
       $r[] = $x;
     }
@@ -427,7 +428,7 @@ class RequestHandler
     $query = "SELECT ".
     "sqms_syllabus_element_id AS 'ID',".
     "element_order,".
-    "severity,".
+    "ROUND(severity) AS 'severity',".
     "sqms_syllabus_id AS 'parentID',".
     "name, description,".
     "'SE' AS 'ElementType'".

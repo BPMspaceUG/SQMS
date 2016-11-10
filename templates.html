@@ -134,7 +134,7 @@
           </div>
           <label class="col-sm-2 control-label">Severity</label>
           <div class="col-sm-2">
-            <input class="form-control" ng-model="object.data.severity" min="0" max="100" type="number" />
+            <input class="form-control" string-to-number ng-model="object.data.severity" min="0" max="100" type="number" />
           </div>
         </div>
         <!-- Parent / Severity -->
@@ -271,11 +271,12 @@
 
 <!-- STATE MACHINE -->
 <script type="text/ng-template" id="popoverStatemachine.html">
-  <div><small>goto state<br/><br/></small>
-    <div ng-repeat="state in actSelection.availableOptions">
-      <button type="button" style="margin-bottom: 3px;"
+  <div><small>goto state<br/></small>
+    <div ng-repeat="state in actSelection.nextstates">
+      <button type="button" style="margin-bottom: 3px; width: 100px;"
         ng-click="setstate(state.id, actSelection)"
-        class="btn btn-primary btn-sm">&rarr; {{state.name}}</button>
+        ng-class = "['btn', 'btn-sm', {'btn-success': state.id == 1, 'btn-danger': state.id == 4,
+          'btn-warning': state.id == 2, 'btn-info': state.id == 3}]">{{state.name}}</button>
     </div>
   </div>
 </script>

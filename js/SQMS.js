@@ -281,14 +281,15 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   };
     
   $scope.editEl = function(el) {
+    console.log("--- Edit element clicked...");
     // -- Syllabus
     if (el.ElementType == "S") {
-      if (el.state == 'new') // Only open modal in state "new"
+      if (el.state.id == 1) // Only open modal in state "new"
         $scope.open('modalSyllabus.html', 'update_syllabus', el);
     }
     // -- Question
     else if (el.ElementType == "Q") {
-      if (el.state == 'new')
+      if (el.state.id == 1)
         $scope.open('modalNewQuestion.html', 'update_question', el);
     }
     // -- SyllabusElement
@@ -353,20 +354,40 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
     $scope.predicate_q = predicate;
   };
   
+  
+  
   //------------------------------- Dashboard
   $http.get('getjson.php?c=getreports').success(function(data) {
     $scope.reports = data.reports;
-  });
-  
+  });  
   
   //------------------------------- Question
+  /*
+  $scope.expandedQuestionIDs = [];
+  //============================================ Load S
+  $scope.getAllQuestions = function () {
+    // Save expanded Elements
+    if ($scope.questions) {
+      $scope.expandedQuestionIDs = $scope.questions.filter(x => x.showKids === true).map(x=> x.ID);
+    }
+    // Load data from server
+    $http.get('getjson.php?c=questions')
+    .success(function(data) {
+      $scope.questions = data.questionlist;
+      // When full data is loaded
+      if ($scope.syllabi && $scope.syllabuselements)
+        $scope.assignS2SE();
+    });
+  }
+  */
+
   $scope.getAllQuestions = function () {$http.get('getjson.php?c=questions')
     .success(function(data) {
       $scope.questions = data.questionlist;
       $scope.question_cols = Object.keys($scope.questions[0]); // get keys from first object
       // get answers for each question
       for (var i=0;i<$scope.questions.length;i++){
-        $scope.questions[i].QuestionDispl = filterHTMLTags($scope.questions[i].Question);
+        $scope.questions[i].QuestionDispl = $scope.filterHTMLTags($scope.questions[i].Question);
         $scope.questions[i].HasNoChilds = true; // default = no children
         $scope.questions[i].state = $scope.questions[i].state.name; // TODO: only display, not replace
         $http({
@@ -386,7 +407,7 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
                 // Special function --> convert TinyInt to JSBoolean
                 for (var l=0;l<a.answers.length;l++) {
                   a.answers[l].correct = (a.answers[l].correct != 0);
-                  a.answers[l].answerDispl = filterHTMLTags(a.answers[l].answer);
+                  a.answers[l].answerDispl = $scope.filterHTMLTags(a.answers[l].answer);
                 }
                 $scope.questions[k].answers = a.answers;
               }
@@ -402,12 +423,6 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
       $scope.topics = data.topiclist; // store in scope
     });
     return $scope.topics;
-  };
-  $scope.getAllSyllabusElements = function() {
-    $http.get('getjson.php?c=syllabuselements').success(function(data) {
-      $scope.syllabuselements = data.syllabuselements; // store in scope
-    });
-    return $scope.syllabuselements;
   };
   $scope.getUsers = function() {
     $http.get('getjson.php?c=users').success(function(data) {
@@ -428,87 +443,60 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
     return $scope.questypes;    
   }
   
-  function filterHTMLTags(html) {
-    //var html = $scope.syllabi[k].syllabuselements[j].description;
+  $scope.filterHTMLTags = function(html) {
     var div = document.createElement("div");
     div.innerHTML = html;
     return div.textContent || div.innerText || "";
   }
   
-  $scope.refreshSyllabus = function(ID) {
-    $http.get('getjson.php?c=syllabus')
-    .success(function(data) {
-      var slist = data.syllabus;
-      console.log("Refresh single syllabus -<"+ID+">- ");
-
-      for (var i=0;i<slist.length;i++){
-        if (slist[i].ID == ID) {
-          
-          console.log(slist[i]);
-          
-          // Add Syllabus
-          if(typeof $scope.syllabi[i] === 'undefined') {
-            // does not exist => created new Element
-            $scope.syllabi.push(slist[i]);
-            $scope.syllabi[$scope.syllabi.length-1].HasNoChilds = true; // Because new
-          }
-          else { // Refresh syllabus
-            console.log("was refreshed!");
-            
-            // TODO: Also refresh SyllabusElements!!!!
-            // does exist
-            var wasExpanded = $scope.syllabi[i].showKids;
-            var tmpKids = $scope.syllabi[i].syllabuselements; // save
-            
-            $scope.syllabi[i] = slist[i]; // replace
-            $scope.syllabi[i].syllabuselements = tmpKids; // re-insert
-            // only expand when it was expanded before
-            $scope.syllabi[i].showKids = wasExpanded; // ausklappen
-            $scope.syllabi[i].HasNoChilds = false;
-          }          
-          $scope.syllabi[i].state = $scope.syllabi[i].state.name;          
-        }
-      }
-    });
-  } 
-    
   //------------------------------- Syllabus
+  $scope.expandedSyllabusIDs = [];
+  //============================================ Load S
   $scope.getAllSyllabus = function () {
+    // Save expanded Elements
+    if ($scope.syllabi) {
+      $scope.expandedSyllabusIDs = $scope.syllabi.filter(x => x.showKids === true).map(x=> x.ID);
+      console.log($scope.expandedSyllabusIDs);
+    }
+    // Load data from server
     $http.get('getjson.php?c=syllabus')
     .success(function(data) {
       $scope.syllabi = data.syllabus;
-      // get under-elements for each syllabus
-      for (var i=0;i<$scope.syllabi.length;i++){
-        $scope.syllabi[i].HasNoChilds = true; // default = no children
-        $scope.syllabi[i].state = $scope.syllabi[i].state.name; // TODO: only display, not replace
-        // request details for each syllabus
-        $http({
-          url: 'getjson.php?c=getsyllabusdetails',
-          method: "POST",
-          data: JSON.stringify($scope.syllabi[i])
-        })
-        .success(function(resp_data){          
-          // find parent
-          for (var k=0;k<$scope.syllabi.length;k++) {
-            if ($scope.syllabi[k].ID == resp_data.parentID) {
-              // save all data in the element
-              $scope.syllabi[k].availableOptions = resp_data.nextstates; // next states
-              // if has children
-              if (resp_data.syllabuselements.length > 0) {
-                $scope.syllabi[k].HasNoChilds = false; // has now children
-                $scope.syllabi[k].syllabuselements = resp_data.syllabuselements;
-                // Convert Angulartext into real HTML
-                for (var j=0;j<$scope.syllabi[k].syllabuselements.length;j++) {
-                  $scope.syllabi[k].syllabuselements[j].displDescr = filterHTMLTags($scope.syllabi[k].syllabuselements[j].description);
-                  // Format number
-                  $scope.syllabi[k].syllabuselements[j].severity = Math.round($scope.syllabi[k].syllabuselements[j].severity);
-                }
-              }
-            }
-          }         
-        })
-      }
+      // When full data is loaded
+      if ($scope.syllabi && $scope.syllabuselements)
+        $scope.assignS2SE();
     });
+  }
+  //============================================ Load SE
+  $scope.getAllSyllabusElements = function() {
+    $http.get('getjson.php?c=syllabuselements').success(function(data) {
+      $scope.syllabuselements = data.syllabuselements; // store in scope
+      // When full data is loaded
+      if ($scope.syllabi && $scope.syllabuselements)
+        $scope.assignS2SE();
+    });
+    return $scope.syllabuselements;
+  };
+  //============================================ Assign S -> SE
+  $scope.assignS2SE = function() {
+    // Delete all assignments
+    for (var i=0;i<$scope.syllabi.length;i++){
+      $scope.syllabi[i].syllabuselements = undefined;
+    }
+    // Loop throug all SE
+    for (var i=0;i<$scope.syllabuselements.length;i++){
+      // 1. Find S by ID
+      var SID = $scope.syllabuselements[i].parentID;
+      var S = $scope.syllabi.find(x => x.ID === SID);
+      // 2. Assign SE to S
+      if (S) {
+        // if array is undef., create a new one, and/or add to back
+        (S.syllabuselements = S.syllabuselements || []).push($scope.syllabuselements[i]);
+        // if it was expanded before then expand again
+        if ($scope.expandedSyllabusIDs.indexOf(S.ID) >= 0)
+          S.showKids = true;
+      }
+    }
   }
   
   // Selection function
@@ -561,42 +549,21 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
 
       console.log("--- Executed command successfully! Return: " + response);
     
-      // Statemachine return
-      if (command.indexOf("update_syllabus_state") >= 0) {
-        /*****************************************
-                   STATE TRANSITION
-        *****************************************/
+      //========================
+      // STATE TRANSITION
+      //========================
+      if (command.indexOf("_state") >= 0) {
         console.log(response);
         //alert((data.result ? "YES" : "NO") + "\n\n" + data.message);
-      }      
-      
-      
-      // Refresh syllabus
-      if ((command.indexOf("syll") >= 0)) {
-        
-        console.log("Refresh this syllabus....");
-        console.log(data);
-        
-        // Check if created a new one (ID < 0)
-        if (command.indexOf("create") >= 0)
-          data.ID = response; // Set created ID
-        
-        // ---------------------------
-        console.log("---------------------------");
-        console.log("Refreshing....");
-        // if has parent then refresh the whole parent => SyllabusElement
-        if (data.parentID > 0)
-          $scope.refreshSyllabus(data.parentID);
-        else
-          $scope.refreshSyllabus(data.ID);
-        console.log("---------------------------");
-        //OBSOLETE: $scope.getAllSyllabus(); // Refresh data
       }
+      
+      // Get new data from server
+      $scope.getAllSyllabus();
+      $scope.getAllSyllabusElements();
 
       if (command.indexOf("que") >= 0 || command.indexOf("ans") >= 0)
         $scope.getAllQuestions(); // Refresh data
-      
-      
+
     }).
     error(function(error) {
       console.log("Error! " + error);
@@ -616,3 +583,16 @@ module.controller('SQMSController', ['$scope', '$http', '$sce', '$uibModal',
   $scope.getLanguages();
   $scope.getQTypes();
 }]);
+module.directive('stringToNumber', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModel) {
+      ngModel.$parsers.push(function(value) {
+        return '' + value;
+      });
+      ngModel.$formatters.push(function(value) {
+        return parseFloat(value);
+      });
+    }
+  };
+});

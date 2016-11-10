@@ -72,7 +72,7 @@
             <button type="button" class="btn btn-success menuitem" ng-click="open('modalSyllabus.html', 'create_syllabus', {})">
               <i class="fa fa-plus"></i> New Syllabus
             </button>
-            <button type="button" class="btn btn-success menuitem" ng-disabled="(!actSelection || actSelection.ElementType != 'S' || actSelection.state != 'new')"
+            <button type="button" class="btn btn-success menuitem" ng-disabled="(!actSelection || actSelection.ElementType != 'S' || actSelection.state.id != 1)"
               ng-click="open('modalSyllabusElement.html', 'create_syllabuselement', actSelection)">
               <i class="fa fa-plus"></i> New SyllabusElement
             </button>
@@ -105,7 +105,7 @@
         </thead>
         <tbody ng-repeat="s in syllabi | filter:filtertext_sy | orderBy:predicate_s:reverse_s">
           <tr ng-click="setSelection(s)"
-            ng-class="{success: s.state == 'new', danger: s.state == 'deprecated', warning: s.state == 'ready', info: s.state == 'released'}">
+            ng-class="{success: s['state'].id == 1, danger: s['state'].id == 4, warning: s['state'].id == 2, info: s['state'].id == 3}">
             <td class="tablemenu">
               <!-- Tickmark -->
               <span title="Select Syllabus">
@@ -113,23 +113,25 @@
                   'fa fa-fw fa-square-o': !(s.ID === actSelection.ID && actSelection.ElementType == 'S')}"></i>
               </span>
               <!-- Expand or Collapse -->
-              <span ng-hide="s.HasNoChilds" ng-click="displ(s)">
+              <span ng-show="s.syllabuselements" ng-click="displ(s)">
                 <i class="fa fa-fw fa-plus-square" ng-show="!s.showKids" title="Expand"></i>
                 <i class="fa fa-fw fa-minus-square" ng-hide="!s.showKids" title="Collapse"></i>
               </span>
               <!-- Dummy Icon for design -->
-              <span ng-show="s.HasNoChilds"><i class="fa fa-fw fa-square icon-invisible"></i></span>
+              <span ng-hide="s.syllabuselements">
+                <i class="fa fa-fw fa-square icon-invisible"></i>
+              </span>
               <!-- Edit Icon -->
-              <span ng-show="s.state == 'new'"><a ng-click="editEl(s)" title="Edit Syllabus..."><i class="fa fa-fw fa-pencil"></i></a></span>
+              <span ng-show="s['state'].id == 1"><a ng-click="editEl(s)" title="Edit Syllabus..."><i class="fa fa-fw fa-pencil"></i></a></span>
               <!-- Successor Icon -->
-              <span ng-show="s.state != 'new' && s.SuccID == null"><a ng-click="createsuccessor(s)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a></span>
+              <span ng-show="s['state'].id != 1 && s.SuccID == null"><a ng-click="createsuccessor(s)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a></span>
             </td>
             <!-- ID -->
             <td><small><a ng-click="editEl(s)">{{s['ID']}}</a></small></td>
             <!-- Name (inlineediting) -->
             <td>
               <div class="popover-wrapper">
-                <a editable-text="s['Name']" onbeforesave="saveEl(s, $data, 'u_syllab_n')" edit-disabled="s.state != 'new'">{{s['Name'] || 'empty' }}</a>
+                <a editable-text="s['Name']" onbeforesave="saveEl(s, $data, 'u_syllab_n')" edit-disabled="s['state'].id != 1">{{s['Name'] || 'empty' }}</a>
               </div>
             </td>
             <!-- Version -->
@@ -137,7 +139,7 @@
             <!-- Topic (inlineediting) -->
             <td style="width: 100px;">
               <div class="popover-wrapper">
-                <a onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" edit-disabled="s.state != 'new'"
+                <a onbeforesave="saveEl(s, $data, 'u_syllab_tc')" onshow="getTopics()" edit-disabled="s['state'].id != 1"
                 e-ng-options="t.id as t.name for t in topics" editable-select="s['TopicID']">{{s['Topic'] || "empty"}}</a>
               </div>
             </td>
@@ -149,7 +151,7 @@
             <!-- Statemachine -->
             <td>
               <button uib-popover-template="'popoverStatemachine.html'" popover-trigger="focus"
-                ng-disabled="s['state'] == 'deprecated'" type="button" class="btn btn-default btn-sm">{{s['state']}}</button>                
+                ng-disabled="s['state'].id == 4" type="button" class="btn btn-default btn-sm">{{s['state'].name}}</button>                
             </td>
           </tr>
           <tr ng-hide="s.HasNoChilds || !s.showKids">
@@ -171,38 +173,36 @@
                     <!-- Edit SyllabusElement -->
                     <td class="tablemenu">
                       <!-- Edit Icon -->
-                      <span ng-show="s.state == 'new'">
+                      <span ng-show="s['state'].id == 1">
                         <a ng-click="editEl(se)" title="Edit SyllabusElement...">
                           <i class="fa fa-fw fa-pencil"></i>
                         </a>
                       </span>
-                      <!-- Successor Icon -->
-                      <span ng-show="s.state != 'new'">
-                        <a class="btn pull-left">
-                          <i class="fa fa-fw fa-square icon-invisible"></i>
-                        </a>
+                      <!-- Dummy Icon -->
+                      <span ng-show="s['state'].id != 1">
+                        <a><i class="fa fa-fw fa-square icon-invisible"></i></a>
                       </span>
                     </td>
                     <td><a ng-click="editEl(s)">{{se.ID}}</a></td>
                     <!-- Order (inlineediting) -->
                     <td>
                       <div class="popover-wrapper">
-                        <a editable-text="se.element_order" onbeforesave="saveEl(se, $data, 'u_syllabel_ord')" edit-disabled="s.state != 'new'">{{se.element_order || 'empty' }}</a>
+                        <a editable-text="se.element_order" onbeforesave="saveEl(se, $data, 'u_syllabel_ord')" edit-disabled="s['state'].id != 1">{{se.element_order || 'empty' }}</a>
                       </div>
                     </td>
                     <!-- Name (inlineediting) -->
                     <td>
                       <div class="popover-wrapper">
-                        <a editable-text="se.name" onbeforesave="saveEl(se, $data, 'u_syllabel_n')" edit-disabled="s.state != 'new'">{{se.name || 'empty' }}</a>
+                        <a editable-text="se.name" onbeforesave="saveEl(se, $data, 'u_syllabel_n')" edit-disabled="s['state'].id != 1">{{se.name || 'empty' }}</a>
                       </div>
                     </td>
                     <!-- Description -->
-                    <td><div style="max-height: 60px; overflow: auto;">{{se.displDescr}}</div></td>
+                    <td><div style="max-height: 60px; overflow: auto;">{{filterHTMLTags(se.description);}}</div></td>
                     <!-- Severity -->
                     <td>
                       <div class="popover-wrapper">
                         <a editable-number="se.severity" onbeforesave="saveEl(se, $data, 'u_syllabel_s')"
-                          e-min="1" e-max="100"  edit-disabled="s.state != 'new'">{{se.severity | number:0}}%</a>
+                          e-min="1" e-max="100"  edit-disabled="s['state'].id != 1">{{se.severity | number:0}}%</a>
                       </div>
                     </td>
                   </tr>
