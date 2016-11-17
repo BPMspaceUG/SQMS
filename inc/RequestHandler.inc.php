@@ -84,19 +84,7 @@ class RequestHandler
         $arr1 = $this->getSyllabusList(); // All data from syllabus
         return json_encode($arr1);
         break;
-      /*
-      case 'getsyllabusdetails':
-        $syllabid = $params["ID"];
-        $actstate = $this->SESy->getActState($syllabid);
-        @$actStateID = $actstate[0]['id'];
-        $arr0 = array("parentID" => $syllabid);
-        $arr1 = array("nextstates" => $this->SESy->getNextStates($actStateID)); // Possible next states
-        $arr2 = $this->getSyllabusElementsList($syllabid);
-        // Merge data
-        $return = array_merge_recursive($arr0, $arr1, $arr2);
-        return json_encode($return);
-        break;
-      */
+
       case 'syllabuselements':
         $return = $this->getSyllabusElementsList();
         return json_encode($return);
@@ -421,18 +409,26 @@ class RequestHandler
   
   private function getSyllabusElementsList($id=-1) {
     settype($id, 'integer');
-    $query = "SELECT ".
-    "sqms_syllabus_element_id AS 'ID',".
-    "element_order,".
-    "ROUND(severity) AS 'severity',".
-    "sqms_syllabus_id AS 'parentID',".
-    "name, description,".
-    "'SE' AS 'ElementType'".
-    " FROM sqms_syllabus_element";
+    $query = "SELECT 
+    sqms_syllabus_element_id AS 'ID',
+    element_order,
+    ROUND(severity) AS 'severity',
+    a.sqms_syllabus_id AS 'parentID',
+    a.name,
+    a.description,
+    'SE' AS 'ElementType',
+    b.name AS 'parentName',
+    b.sqms_language_id AS 'LangID',
+    b.sqms_topic_id AS 'TopicID'
+FROM
+    sqms_syllabus_element AS a
+        INNER JOIN
+    sqms_syllabus AS b ON a.sqms_syllabus_id = b.sqms_syllabus_id";
     if ($id > 0) {
-      $query .= " WHERE sqms_syllabus_id = $id";
+      $query .= " WHERE a.sqms_syllabus_id = $id";
     }
     $query .= " ORDER BY element_order;";
+    
     $return = array();
     $res = $this->db->query($query);
     $return['syllabuselements'] = $this->getResultArray($res);

@@ -95,7 +95,7 @@
       <table class="table datalist">
         <thead>
           <tr>
-            <th style="min-width: 95px;">&nbsp;</th>
+            <th style="min-width: 115px;">&nbsp;</th>
             <th style="min-width: 50px;" class="sortable" ng-click="order_s('ID')">ID<span class="sortorder" ng-show="predicate_s === 'ID'" ng-class="{reverse:reverse_s}"></span></th>
             <th style="min-width: 250px;" class="sortable" ng-click="order_s('Name')">Name<span class="sortorder" ng-show="predicate_s === 'Name'" ng-class="{reverse:reverse_s}"></span></th>
             <th style="width: 50px; text-align: center;" class="sortable visible-lg visible-md" ng-click="order_s('Version')">Version<span class="sortorder" ng-show="predicate_s === 'Version'" ng-class="{reverse:reverse_s}"></span></th>
@@ -117,7 +117,7 @@
                   'fa fa-fw fa-square-o': !(s.ID === actSelection.ID && actSelection.ElementType == 'S')}"></i>
               </span>
               <!-- Expand or Collapse -->
-              <span ng-show="s.syllabuselements" ng-click="displ(s)">
+              <span ng-show="s.syllabuselements" ng-click="s.showKids = !s.showKids">
                 <i class="fa fa-fw fa-plus-square" ng-show="!s.showKids" title="Expand"></i>
                 <i class="fa fa-fw fa-minus-square" ng-hide="!s.showKids" title="Collapse"></i>
               </span>
@@ -252,7 +252,7 @@
       <table class="table datalist">
         <thead>
           <tr>
-            <th style="min-width: 95px;">&nbsp;</th>
+            <th style="min-width: 115px;">&nbsp;</th>
             <th style="min-width: 50px;" class="sortable" ng-click="order_q('ID')">ID<span class="sortorder" ng-show="predicate_q === 'ID'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable" ng-click="order_q('Topic')">Topic<span class="sortorder" ng-show="predicate_q === 'Topic'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable" ng-click="order_q('Question')">Question<span class="sortorder" ng-show="predicate_q === 'Question'" ng-class="{reverse:reverse_q}"></span></th>
@@ -275,7 +275,7 @@
                 'fa fa-fw fa-square-o': !(q.ID === actSelection.ID && actSelection.ElementType == 'Q')}"></i>
               </span>
               <!-- Children -->
-              <span ng-show="q.answers" ng-click="displ(q)">
+              <span ng-show="q.answers" ng-click="q.showKids = !q.showKids">
                 <i class="fa fa-fw fa-plus-square" ng-show="!q.showKids"></i>
                 <i class="fa fa-fw fa-minus-square" ng-hide="!q.showKids"></i>
               </span>
@@ -334,8 +334,10 @@
                     </td>
                   <td>{{an.ID}}</td>
                   <td>{{filterHTMLTags(an.answer)}}</td>
-                  <td><a href="#" editable-checkbox="an.correct" e-title="Correct?"
-                    onbeforesave="saveEl(an, $data, 'u_answer_c')">{{an.correct && "Correct" || "Wrong" }}</a></td>
+                  <td style="color:#000;">
+                    <a href="#" editable-checkbox="an.correct" edit-disabled="q.state.id != 1" buttons="no"
+                    e-title="Tick if answer is correct" 
+                    onbeforesave="saveEl(an, $data, 'u_answer_c')">{{an.correct && "✓ Yes" || "✕ No" }}</a></td>
                 </tr>
               </table>
             </td>
