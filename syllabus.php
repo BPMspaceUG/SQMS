@@ -253,7 +253,7 @@
         <thead>
           <tr>
             <th style="min-width: 115px;">&nbsp;</th>
-            <th style="min-width: 50px;" class="sortable" ng-click="order_q('ID')">ID<span class="sortorder" ng-show="predicate_q === 'ID'" ng-class="{reverse:reverse_q}"></span></th>
+            <th style="min-width: 50px;" class="sortable" ng-click="order_q(ID)">ID<span class="sortorder" ng-show="predicate_q === ID" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable" ng-click="order_q('Topic')">Topic<span class="sortorder" ng-show="predicate_q === 'Topic'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable" ng-click="order_q('Question')">Question<span class="sortorder" ng-show="predicate_q === 'Question'" ng-class="{reverse:reverse_q}"></span></th>
             <th class="sortable visible-lg" ng-click="order_q('owner')">Owner<span class="sortorder" ng-show="predicate_q === 'owner'" ng-class="{reverse:reverse_q}"></span></th>

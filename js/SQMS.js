@@ -45,9 +45,11 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
         else
           $scope.Q_SE[idx2].push(allElms[i].SEID);
       }
+      /*
       console.log("---------------------- SE <-> Q");
       console.log($scope.SE_Q);
       console.log($scope.Q_SE);
+      */
       
       /******** only select relevant Questions for this Element ********/    
       
@@ -134,6 +136,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   $scope.getSE_Q();
   
   // Debugging
+  /*
   console.log("============================");
   console.log("--- Modal Window opened. ---");
   console.log("============================");
@@ -146,7 +149,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   console.log("Scope:");
   console.log($scope);
   console.log("----------------------------");
-    
+  */
+  
   /*****************************************************
     Default values should go in here
    ****************************************************/  
@@ -192,18 +196,14 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   
   // Pre-filter syllabuselements list for Assignment Input Field
   $scope.refreshSEFilterdList = function() {
-    console.log("asdf");
-    
     if ($scope.object.data.ngTopic) {
       $scope.object.data.TopicID = $scope.object.data.ngTopic.id;
       $scope.object.data.Topic = $scope.object.data.ngTopic.name;
     }
     if ($scope.object.data.ngLang) {
       $scope.object.data.LangID = $scope.object.data.ngLang.sqms_language_id;
-    }
-    
+    }    
     if ($scope.syllabuselements) {
-      $scope.SElementsFiltered = undefined;
       $scope.SElementsFiltered = [];
       for (var i=0;i<$scope.syllabuselements.length;i++) {
         if (($scope.syllabuselements[i].TopicID == $scope.object.data.TopicID) &&
@@ -212,11 +212,27 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
         }
       }
     }
-    console.log($scope.SElementsFiltered);
+  }
+  $scope.refreshQFilterdList = function() {
+    if ($scope.object.data.ngTopic) {
+      $scope.object.data.TopicID = $scope.object.data.ngTopic.id;
+      $scope.object.data.Topic = $scope.object.data.ngTopic.name;
+    }
+    if ($scope.object.data.ngLang) {
+      $scope.object.data.LangID = $scope.object.data.ngLang.sqms_language_id;
+    }
+    if ($scope.questions) {
+      $scope.QFiltered = [];
+      for (var i=0;i<$scope.questions.length;i++) {
+        if (($scope.questions[i].TopicID == $scope.object.data.TopicID) &&
+            ($scope.questions[i].LangID == $scope.object.data.LangID)) {
+          $scope.QFiltered.push($scope.questions[i]);
+        }
+      }
+    }
   }
   // Call the function
-  $scope.refreshSEFilterdList();  
-
+  $scope.refreshSEFilterdList();
   
   // format dates correctly
   if ($scope.object.data.From != null) $scope.object.data.From = new Date($scope.object.data.From);    
@@ -247,16 +263,19 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
     for (var i=0;i<$scope.bugFix.QSyllabusElements.length;i++) {
       $scope.object.data.SyllabusElementIDs.push($scope.bugFix.QSyllabusElements[i].ID);
     }
-    
+    /*
     console.log("============================");
-    console.log("--- Modal Button OK clicked");    
+    console.log("--- Modal Button OK clicked");
+    */
     // Return result
     $uibModalInstance.close($scope.object);
   };
   // --- [Cancel] clicked
   $scope.cancel = function () {
+    /*
     console.log("============================");
     console.log("--- Modal Button Cancel clicked");
+    */
     $uibModalInstance.dismiss('cancel');
   };
 });
@@ -295,7 +314,6 @@ module.controller('SQMSController',
         }
       });
       modalInstance.result.then(function (result) {
-        console.log(result);
         $scope.writeData(result.command, result.data); // Send result to server
       }, function () {
         console.log('Modal Window closed at: ' + new Date());
@@ -305,7 +323,9 @@ module.controller('SQMSController',
     $scope.setSelection = function(el){ $scope.actSelection = el; };
     //--------------------------------------------------------- Edit Element
     $scope.editEl = function(el) {
+      /*
       console.log("--- Edit element clicked...");
+      */
       // -- Syllabus
       if (el.ElementType == "S") {
         if (el.state.id == 1) // Only open modal in state "new"
@@ -511,10 +531,7 @@ module.controller('SQMSController',
   //--------------------------------------------------------- Inline editing
   // (can be implemented in writeData() maybe)
   $scope.saveEl = function(actEl, data, cmd) {
-    var c;    
-    console.log(actEl);
-    console.log(data);
-    console.log(cmd);    
+    var c; 
     switch (cmd) {
       case 'u_answer_c': c = 'update_answer'; actEl.correct = data; break;
       case 'u_syllabel_n': c = 'update_syllabuselement'; actEl.name = data; break;
