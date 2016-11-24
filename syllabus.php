@@ -96,7 +96,7 @@
         <thead>
           <tr>
             <th style="min-width: 115px;">&nbsp;</th>
-            <th style="min-width: 50px;" class="sortable" ng-click="order_s('ID')">ID<span class="sortorder" ng-show="predicate_s === 'ID'" ng-class="{reverse:reverse_s}"></span></th>
+            <th style="min-width: 50px;" class="sortable" ng-click="order_s(ID)">ID<span class="sortorder" ng-show="predicate_s === ID" ng-class="{reverse:reverse_s}"></span></th>
             <th style="min-width: 250px;" class="sortable" ng-click="order_s('Name')">Name<span class="sortorder" ng-show="predicate_s === 'Name'" ng-class="{reverse:reverse_s}"></span></th>
             <th style="width: 50px; text-align: center;" class="sortable visible-lg visible-md" ng-click="order_s('Version')">Version<span class="sortorder" ng-show="predicate_s === 'Version'" ng-class="{reverse:reverse_s}"></span></th>
             <th class="sortable" ng-click="order_s('Topic')">Topic<span class="sortorder" ng-show="predicate_s === 'Topic'" ng-class="{reverse:reverse_s}"></span></th>
@@ -206,7 +206,7 @@
                     <td>
                       <div class="popover-wrapper">
                         <a editable-number="se.severity" onbeforesave="saveEl(se, $data, 'u_syllabel_s')"
-                          e-min="1" e-max="100"  edit-disabled="s['state'].id != 1">{{se.severity | number:0}}%</a>
+                          e-min="1" e-max="100" edit-disabled="s['state'].id != 1">{{se.severity | number:0}}%</a>
                       </div>
                     </td>
                   </tr>

@@ -74,6 +74,19 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
     });
   }
   
+  $scope.tinymceOptions = {
+    plugins: [
+      'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+      'searchreplace wordcount visualblocks visualchars code fullscreen',
+      'insertdatetime media nonbreaking save table contextmenu directionality',
+      'emoticons template paste textcolor colorpicker textpattern imagetools codesample'
+    ],
+    toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+    toolbar2: 'print preview media | forecolor backcolor emoticons | codesample',
+    image_advtab: true,
+    theme : 'modern'
+  };
+  
   // Initial settings
   $scope.object = {
     command: cmd,
@@ -97,18 +110,6 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
     }
   };
   
-  $scope.tinymceOptions = {
-    inline: false,
-    plugins: [
-      'advlist autolink lists link image charmap print preview hr anchor pagebreak',
-      'searchreplace wordcount visualblocks visualchars code fullscreen',
-      'insertdatetime media nonbreaking save table contextmenu directionality',
-      'emoticons template paste textcolor colorpicker textpattern imagetools'
-    ],
-    skin: 'lightgray',
-    theme : 'modern'
-  };
-
   // Important
   $scope.Element = Elem;  
   $scope.topics = items.topics;
@@ -319,6 +320,7 @@ module.controller('SQMSController',
         console.log('Modal Window closed at: ' + new Date());
       });
     };
+    
     //--------------------------------------------------------- Select Element
     $scope.setSelection = function(el){ $scope.actSelection = el; };
     //--------------------------------------------------------- Edit Element
