@@ -320,7 +320,6 @@ module.controller('SQMSController',
         console.log('Modal Window closed at: ' + new Date());
       });
     };
-    
     //--------------------------------------------------------- Select Element
     $scope.setSelection = function(el){ $scope.actSelection = el; };
     //--------------------------------------------------------- Edit Element

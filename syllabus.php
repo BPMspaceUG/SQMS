@@ -238,7 +238,7 @@
               <span class="visible-xs visible-sm"><i class="fa fa-plus"></i> Answ.</span>
             </button>
             <!-- TODO: Button to Export all Questions to mitsm Homepage -->
-            <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportQuestions.html', 'export_questions')">
+            <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportQuestions.html', '', {})">
               <i class="fa fa-download"></i> Export
             </button>
           </span>
