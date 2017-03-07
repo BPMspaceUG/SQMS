@@ -81,9 +81,9 @@
               <span class="visible-xs visible-sm"><i class="fa fa-plus"></i> Syll.-El.</span>
             </button>
             <!-- TODO: Button to Export all Syllabus to mitsm Homepage -->
-            <button type="button" class="btn btn-default menuitem" ng-click="open('modalExport.html', 'export_syllabus')">
-              <i class="fa fa-download"></i> Export
-            </button>
+            <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportSyllabus.html', '', actSelection)">
+              <i class="fa fa-download"></i> Export:{{actSelection.ID}}
+            </button>	
           </span>
         </div>
         <div class="col-sm-4">
@@ -108,8 +108,8 @@
           </tr>
         </thead>
         <tbody ng-repeat="s in syllabi | filter:filtertext_sy | orderBy:predicate_s:reverse_s">
-          <tr ng-click="setSelection(s)"
-            ng-class="{success: s['state'].id == 1, danger: s['state'].id == 4, warning: s['state'].id == 2, info: s['state'].id == 3}">
+          <tr ng-click="setSelection(s);"
+            ng-class="{success: s['state'].id == 1, danger: s['state'].id == 4, warning: s['state'].id == 2, info: s['state'].id == 3}"> <!-- TODO: Remove getSelection()-->
             <td class="tablemenu">
               <!-- Tickmark -->
               <span title="Select Syllabus">
@@ -238,9 +238,10 @@
               <span class="visible-xs visible-sm"><i class="fa fa-plus"></i> Answ.</span>
             </button>
             <!-- TODO: Button to Export all Questions to mitsm Homepage -->
-            <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportQuestions.html', '', {})">
-              <i class="fa fa-download"></i> Export
+            <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportQuestions.html', '', actSelection)">
+              <i class="fa fa-download"></i> Export/Vorschau
             </button>
+			
           </span>
         </div>
         <div class="col-sm-4">

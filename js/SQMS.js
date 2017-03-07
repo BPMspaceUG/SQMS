@@ -8,7 +8,7 @@ module.run(function(editableOptions) {
 /***********************************************************
  *                 Modal Window Controller                 *
  ***********************************************************/
-module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstance, items, cmd, Elem) {
+module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibModalInstance, items, cmd, Elem) {
   // bugFix because of Angular UI Bug
   // More info: https://github.com/angular-ui/ui-select/issues/852
   $scope.bugFix = {};
@@ -27,6 +27,28 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   var ds2 = new Date();
   ds2.setYear(ds2.getFullYear() + 1);
     
+	// Get authors of syllabus element to topic and save it as Data in $scope.grenze TODO: I think taht the DB Authors is not in the format expected in the live production.
+  $scope.getAuthors = function () {									
+			$http.get('getjson.php?c=authortotopiclist').success(function(data) {
+			$scope.authores = data.authortotopic;
+			$scope.grenze = $scope.authores;
+			return $scope.authores; 	
+			});
+	}
+	// Initialize Authors at modal load. And save act values in grenze.
+	$scope.grenze = {};
+	$scope.getAuthors();
+	
+	// Check if ActTopic == Topic Name of one of the Object Topics (Should be) and if true return the Authors for this Topic.
+  $scope.actAuthor= function(){
+	  for (i=0; i<$scope.grenze.length; i++){
+		  if ($scope.grenze[i].name == $scope.Element['Topic']){
+			  return $scope.grenze[i].role_name; 
+		  }
+	  }
+	  return null;
+  }
+  
   $scope.getSE_Q = function() {
     $http.get('getjson.php?c=syllabuselementsquestions').success(function(data) {
       var allElms = data.se_q_list;      
@@ -110,6 +132,13 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
     }
   };
   
+  // For Question Selection
+  
+  $scope.single = {availableOptions: ["Single","Multi"], selectedOption: "Single"};
+	$scope.myDropDown = 'Single';
+	// HTML to Json 
+	$scope.jsonString = "";
+  
   // Important
   $scope.Element = Elem;  
   $scope.topics = items.topics;
@@ -122,6 +151,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   
   // Order Questions in a new array with IDs as Indices
   $scope.allQuestions = [];
+  
   $scope.allSyllabusElements = [];
   
   for (var i=0;i<$scope.questions.length;i++) {
@@ -132,10 +162,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
     var idx = $scope.syllabuselements[i].ID;
     $scope.allSyllabusElements[idx] = $scope.syllabuselements[i];
   }
-
+  
   // only get list of actual SE
   $scope.getSE_Q();
-  
   // Debugging
   /*
   console.log("============================");
@@ -150,8 +179,10 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   console.log("Scope:");
   console.log($scope);
   console.log("----------------------------");
+  console.log($scope.allQuestions);
+  console.log("----------------------------");
+  console.log($scope.topics);
   */
-  
   /*****************************************************
     Default values should go in here
    ****************************************************/  
@@ -239,6 +270,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
   if ($scope.object.data.From != null) $scope.object.data.From = new Date($scope.object.data.From);    
   if ($scope.object.data.To != null) $scope.object.data.To = new Date($scope.object.data.To);
 
+ 
+  
   // --- [OK] clicked
   $scope.ok = function () {
     
@@ -271,14 +304,162 @@ module.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstanc
     // Return result
     $uibModalInstance.close($scope.object);
   };
+  // If there are Wrong or unfinished Questions be true.
+	$scope.wrong = false;
+  
+    // Copy Syllabus TODO: Assign Button Select and Copy to this one
+    // --- [Copy 2] clicked Aktuell schreibt es die JSON Datei des aktuell ausgewählten Dokuments in die Konsole. Used in Questions Footer
+  $scope.copy2 = function(){
+	if ($scope.Element.answers.length == 3){
+	$scope.user = 
+		{
+			title: "Example Questions",
+			description: "Only one answer is correct.",
+			questions: {
+				 1: {
+					question: $scope.Element.Question,
+					answers: [{
+					answer: ($scope.Element.answers[0].answer),
+					correct: ($scope.Element.answers[0].correct)
+				}, {
+					answer: ($scope.Element.answers[1].answer),
+					correct: ($scope.Element.answers[1].correct)
+				}, {
+					answer: ($scope.Element.answers[2].answer),
+					correct: ($scope.Element.answers[2].correct)
+				}],
+				 
+			}},	
+		};
+	}
+	else if ($scope.Element.answers.length == 2)
+	{
+		$scope.user = {
+		title: "Example Questions",
+		description: "Only one answer is correct.",
+		questions: {
+			 1: {
+				question: $scope.Element.Question,
+				answers: [{
+				answer: ($scope.Element.answers[0].answer),
+				correct: ($scope.Element.answers[0].correct)
+			}, {
+				answer: ($scope.Element.answers[1].answer),
+				correct: ($scope.Element.answers[1].correct)
+			}],
+			
+		}},	
+			};
+	}	
+	else 
+	{
+		// Not enough or oo many Answers
+		$scope.wrong = true;
+		$scope.user = {};
+	}
+	  // Alert if there are unfinished Questions when loading the modal.
+ 	
+	$scope.json = angular.toJson ($scope.user);
+	$scope.jsonString = $scope.json;
+/*	console.log($scope.json);
+	console.log($scope.jsonString);
+	console.log("Copy clicked yes"); 
+*/
+	// Seclet Single Json selectJson delcared on bottom TODO: Get it to angular.
+	selectJson(3);
+	//console.log("Selected: Yes");
+// Trigger songething like this to warn the one whos copying that there are also wrong and unfinished QUestions in the Pool.	
+/* 	if ($scope.wrong == true){
+	  $window.alert("Watch out when copying the Json because there are wrong or unfinished Questions in the current Questionpool!");
+	}  */
+  };
+
+  // Copy Syllabus Question Multi. 
+	
+
+
+ // Transform single Array to required Json String. Used in Questions
+	$scope.toJ = function (a){
+		/* console.log("TOJson Multi " + a['ID']); 
+		console.log(a); */
+
+		if (a.answers.length == 3){
+	$scope.user = 
+		{
+			title: "Example Questions",
+			description: "Only one answer is correct.",
+			questions: {
+				 1: {
+					question: a.Question,
+					answers: [{
+					answer: (a.answers[0].answer),
+					correct: (a.answers[0].correct)
+				}, {
+					answer: (a.answers[1].answer),
+					correct: (a.answers[1].correct)
+				}, {
+					answer: (a.answers[2].answer),
+					correct: (a.answers[2].correct)
+				}],
+				 
+			}},	
+		};
+	}
+	else if (a.answers.length == 2)
+	{
+		$scope.user = {
+		title: "Example Questions",
+		description: "Only one answer is correct.",
+		questions: {
+			 1: {
+				question: a.Question,
+				answers: [{
+				answer: (a.answers[0].answer),
+				correct: (a.answers[0].correct)
+			}, {
+				answer: (a.answers[1].answer),
+				correct: (a.answers[1].correct)
+			}],
+			
+		}},	
+			};
+	}	
+	else 
+	{
+		// Not enough or too many Answers
+		$scope.wrong = true;
+		$scope.user = {};
+	}
+		$scope.json = angular.toJson ($scope.user);
+		$scope.jsonString = $scope.json;
+
+	//	$scope.fullJsonMulti = {}; // Erstmal String zwischenspeicher wieder leeren.
+	//	$scope.fullJsonMulti += $scope.jsonString;
+
+		return $scope.jsonString;
+  }
+
+	
   // --- [Cancel] clicked
   $scope.cancel = function () {
     /*
-    console.log("============================");
+    console.log("============================");*/
     console.log("--- Modal Button Cancel clicked");
-    */
+
+	
     $uibModalInstance.dismiss('cancel');
   };
+  // --- [Export] clicked
+  $scope.export = function () {
+	// TODO: Replace Placeholder with export to maybe Moodle XML
+	console.log("Export button was clicked");
+  };  
+  $scope.filterHTMLTags = function(html) {
+		
+      var div = document.createElement("div");
+      div.innerHTML = html;
+      return div.textContent || div.innerText || "";
+    };
 });
 
 /***********************************************************
@@ -321,7 +502,13 @@ module.controller('SQMSController',
       });
     };
     //--------------------------------------------------------- Select Element
-    $scope.setSelection = function(el){ $scope.actSelection = el; };
+    $scope.setSelection = function(el){ $scope.actSelection = el;};
+	//--------------------------------------------------------- Get Selection
+	$scope.sel = $scope.actSelection;
+	$scope.getSelection = function(){
+		//console.log('Actual selection-id is: ' + $scope.actSelection.ID); // Or ['ID']
+		return $scope.actSelection;
+	}
     //--------------------------------------------------------- Edit Element
     $scope.editEl = function(el) {
       /*
@@ -427,7 +614,9 @@ module.controller('SQMSController',
       });    
       return $scope.questypes;    
     }
+	
     $scope.filterHTMLTags = function(html) {
+	
       var div = document.createElement("div");
       div.innerHTML = html;
       return div.textContent || div.innerText || "";
@@ -449,6 +638,7 @@ module.controller('SQMSController',
           $scope.assignQ2A();
       });
     }
+
     //============================================ Load A
     $scope.getAllAnswers = function() {
       $http.get('getjson.php?c=answers').success(function(data) {
@@ -652,4 +842,19 @@ module.filter('propsFilter', function() {
 
     return out;
   };
+  
 });
+
+
+//Used to select and copy the Json result. TODO: Transform to angular. 
+// TODO: Add something like $window.alert if there are unfinished or wrong Questions that where transformed to Json.
+function selectJson(nfield){
+  var e = document.getElementsByTagName('FIELDSET')[nfield]; <!-- Watch out: If you create a second <fieldset> tag you have to increment [0].-->
+  var r = document.createRange();
+  r.selectNodeContents(e);
+  var s = window.getSelection();
+  s.removeAllRanges();
+  s.addRange(r);
+  document.execCommand("copy");
+  
+}

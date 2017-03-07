@@ -1,8 +1,30 @@
 <!-- MODAL FOOTER -->
 <script type="text/ng-template" id="modalFooter.html">
   <div class="modal-footer">
-    <button class="btn btn-success" type="button" ng-click="ok()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+    <button class="btn btn-success" type="button" ng-click="ok()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button><!-- Der Button heißt nicht OK sondern Save so weit ich sehe. Ich traue mich noch nicht das zu verändern -->
     <button class="btn btn-default" type="button" ng-click="cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
+  </div>
+</script>
+
+<!-- MODAL FOOTER EXPORT-->
+<script type="text/ng-template" id="modalFooterExport.html">
+  <div class="modal-footer">
+	
+	<button class="btn btn-default" type="button" onClick="selectAll()" ng-click="copy()"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
+    <button class="btn btn-success" type="button" ng-click="export()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>
+    <button class="btn btn-default" type="button" ng-click="cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
+	
+  </div>
+</script>
+
+<!-- MODAL FOOTER EXPORT QUESTION-->
+<script type="text/ng-template" id="modalFooterExport2.html">
+  <div class="modal-footer">
+	
+	<button class="btn btn-default" type="button" ng-click="copy2()"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
+    <button class="btn btn-success" type="button" ng-click="export()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>
+    <button class="btn btn-default" type="button" ng-click="cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
+	
   </div>
 </script>
 
@@ -284,10 +306,255 @@
   </div>
 </script>
 
-<!-- EXPORT MODAL -->
+<!-- TODO: Loading the page there is a ngRepeat: dupes error functionality seems to work non the less. -->
+<!-- EXPORT SYLLABUS QUESTIONS MODAL -->
 <script type="text/ng-template" id="modalExportQuestions.html">
-  <div>
-    <p>TEST</p>
+ <div class="modal-header">
+    <h3 class="modal-title">Vorschau / Export</h3>
   </div>
-  <ng-include src="'modalFooter.html'"></ng-include>
+  
+  <div class="modal-body">  
+    <form class="form-horizontal">
+      <fieldset>
+        <legend>Question Selection</legend>
+
+		<div class="form-group">
+		<div class="col-sm-4">
+            
+	<select ng-model="myDropDown" class="form-control">
+          <option value="Single">Single</option>
+          <option value="Multi">Multi</option>
+    </select>
+
+          </div>
+		</div>
+		
+        <!-- Topic / Language -->
+		<div ng-hide="myDropDown == 'Single'">
+      <div >
+		<div class="form-group">
+          <label class="col-sm-2 control-label">Choose Selection from Topics </label>
+		  <!-- <div class="col-sm-4">
+         <input type="text" ng-model="filtertext_sy" class="form-control pull-right menuitem" style="width:200px;" placeholder="filter"> 
+        </div>-->
+          <div class="col-sm-2">
+            <select class="form-control"
+              ng-options="t.name for t in topics"
+              ng-init="getActTopic()"
+              
+              ng-model="topicModel"></select>
+			  
+          </div>
+		  </div>
+		<div class="form-group">
+          <label class="col-sm-2 control-label">Language</label>
+          <div class="col-sm-2">
+            <select class="form-control"
+              ng-options="l.language for l in languages"
+              ng-init="getActLang()"
+              ng-change="refreshSEFilterdList()"
+              ng-model="languageModel"></select>
+			  
+          </div>
+        </div>
+       
+        <!-- Type / ExtID -->
+        
+		<div class="form-group">
+          <label class="col-sm-2 control-label">Type</label>
+          <div class="col-sm-2">
+            <select class="form-control"
+              ng-options="qt.name for qt in questypes"
+              ng-init="getActQuesType()"
+              ng-model="typeModel"></select>
+			  
+          </div>
+        
+		</div>
+	 </div>
+		<div>
+		
+		<!-- TODO: dups error because of duplicate objects in ng-repeat: Suspect is the undefined answers but not sure this could be a problem if two questions have the exact same answers.-->
+		<!-- Syllabus Questions from Topic selection-->
+		<ul ng-repeat="sq in questions| filter:topicModel.name | filter:languageModel.language | filter:typeModel.name track by sq['ID']" class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">
+			
+			<li>Name: {{filterHTMLTags(sq['Name'])}}</li>
+			<li>Topic: {{sq['Topic']}}</li>
+			<li>ID: <label>{{sq['ID']}}</label></li>
+			<li>Author: <label>{{sq['Owner']}}</label></li>
+			<li>Language: <label>{{filterHTMLTags(sq['Language'])}}</label></li>
+			<li>Question: <label>{{filterHTMLTags(sq['Question'])}}</label></li>
+			<li>State ID: <label>{{sq['Type']}}</label></li>
+			<li>Answers:
+		  <table style="border: 1px solid black" border="1">
+			  <thead style="width:50%">
+				<tr>
+					<th style="width:15%">ID</th>
+					<th style="width:75%">Answer</th>
+					<th style="width:10%">Correct</th></tr>
+			  </thead>
+			  <tbody ng-repeat="answer in sq.answers" >
+			  
+			  <tr> 	
+					<td> {{answer.ID}} </td>
+					<td> {{filterHTMLTags(answer.answer)}} </td>
+					<td> {{filterHTMLTags(answer.correct)}} </td> 
+			  </tr>
+			  </tbody>
+		  </table>
+	  </li>
+		</ul>
+		
+		</div>
+		<h3>JSON Conversion:</h3>
+		<button type="button" onClick="selectJson(1)">Select and Copy</button>
+		<br>
+		<fieldset>
+		<!-- TODO: There should be an exception handler for the case of incomplete questions or there as to be a rule where incomplete Questions are not accepted and have to be completed first. -->
+ 		<ul ng-repeat="sl in questions | filter:topicModel.name | filter:languageModel.language | filter:typeModel.name track by $index" class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">	
+		 <li>{{toJ(sl)}}</li>
+		
+		
+		</ul> 
+		<!--{{allQuestions | filter:topicModel.name | filter:languageModel.language | filter:typeModel.name}}-->
+		</fieldset>		
+		</div>
+      </fieldset>
+	  
+    </form>
+  </div>
+<div class= "form-Group" ng-hide="myDropDown == 'Multi'">
+<div class="modal-body"> 
+  <!-- TODO: Add bootstrap for unstyled ul afterwards you can erase style="list-style-type"-->
+  <fieldset>
+  <ul class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">
+	  
+	  <li><label><h3>{{Element['Name']}}</h3></label></li><!-- Schreint noch ncihts zu tun, test ob ein Name überhaupt existiert.-->
+	  <li><label>{{Element['ID']}}</label></li>
+	  <li><label><h4>{{filterHTMLTags(Element['Question'])}}</h4></label></li>
+	  <li>Status: <label>{{Element['state'].name}}</label></li>
+	  <li>State: <label>{{Element['Type']}}</label></li>
+	  <li>Autor/Owner: <label>{{Element['Owner']}}</label></li>
+	  <li><i>Team: <label>{{actAuthor()}}</label></i></li>
+	  <li>Version: <label>{{Element['Version']}}</label></li>
+	  <li><i>Grafik oder Tabelle: <label> Nicht in der Testdatenbank vorhanden.</label></i></li>
+	  <li>
+		  <table style="border: 1px solid black" border="1">
+			  <thead style="width:50%">
+				<tr>
+					<th style="width:15%">ID</th>
+					<th style="width:75%">Answer</th>
+					<th style="width:10%">Correct</th></tr>
+			  </thead>
+			  <tbody>
+				<tr ng-repeat="an in Element.answers">
+					<td>{{an.ID}}</td>
+					<td>{{filterHTMLTags(an.answer)}}</td><!-- Filter HTML Tags-->
+					<td>{{an.correct}}</td>
+				</tr>
+			  </tbody>
+		  </table>
+	  </li>
+	  <li></li>
+  </ul>
+</fieldset>
+  <br> 
+  
+  
+  </div>
+  
+  <label class="col-sm-2 control-label">Json Version</label>
+  <fieldset>
+  {{toJ(Element)}}
+   </fieldset>
+   
+  </div>
+  <ng-include src="'modalFooterExport2.html'"></ng-include>
+</script> 
+
+
+	
+<!-- EXPORT SYLLABUS MODAL -->
+<script type="text/ng-template" id="modalExportSyllabus.html">
+ <div class="modal-header">
+    <h3 class="modal-title">Vorschau / Export</h3>
+  </div>
+  
+  <div class="modal-body"> 
+  <!-- TODO: Add bootstrap for unstyled ul afterwards you can erase style="list-style-type"-->
+
+  <fieldset> 
+  <ul class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">
+	  
+	  <li><label><h4>{{Element['Name']}}</h4></label></li>
+	  <li><i><label>{{Element['Description']}}</label></i></li>
+	  <li>Status: <label>{{Element['state'].name}}</label></li>
+	  <li>Version: <label>{{Element['Version']}}</label></li>
+	  <li>Autor/Owner: <label>{{Element['Owner']}}</label></li>
+	  <li><i>Team: <label>{{actAuthor()}}</label></i></li>
+	  <li>Gültig ab: 	<label>{{Element['From'] | date:'yyyy-MM-dd'}}</label></li>
+	  <li>Gültig bis:	<label>{{Element['To'] | date:'yyyy-MM-dd'}}</label></li>
+	  <li><i>Grafik oder Tabelle: <label>In den Testdaten nicht vorhanden</label></i></li>
+	  <li>
+		  <table style="border: 1px solid black" border="1">
+			  <thead style="width:50%">
+				<tr>
+					<th style="width:20%">Thema</th>
+					<th style="width:5%">%</th>
+					<th style="width:75%">Details</th></tr>
+			  </thead>
+			  <tbody>
+				<tr ng-repeat="se in Element.syllabuselements">
+					<td>{{se.name}}</td>
+					<td>{{se.severity}}%</td>
+					<td>{{filterHTMLTags(se.description)}}</td> <!-- TODO: {{filterHTMLTags(se.description);}} Filter HTML Tags-->
+				</tr>
+			  </tbody>
+		  </table>
+	  </li>
+
+  </ul>
+</fieldset>
+  <br>
+
+    
+
+  <!--<button type="button" onClick="selectAll()">Select and Copy</button>-->
+
+  
+  </div>
+  <ng-include src="'modalFooterExport.html'"></ng-include>
+</script> 
+
+<!--TODO: Convert to Angular if possible, no document. alternative for Angular found yet.-->
+<!-- Used in Syllabus Elements Footer Copy Button -->
+<script>function selectAll(){
+  var e = document.getElementsByTagName('FIELDSET')[0]; <!-- Watch out: If you create a second <fieldset> tag you have to increment [0].-->
+  var r = document.createRange();
+  r.selectNodeContents(e);
+  var s = window.getSelection();
+  s.removeAllRanges();
+  s.addRange(r);
+  document.execCommand("copy");
+}
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

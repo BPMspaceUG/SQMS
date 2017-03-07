@@ -160,6 +160,10 @@ class RequestHandler
         return json_encode($res);
         break;
         
+	  case 'authortotopiclist':
+		$return = $this->getAuthorToTopic();
+		return json_encode($return);
+		break;
       //----------------------- Questions & Answers
       
       case 'questions':
@@ -406,6 +410,8 @@ class RequestHandler
   }
   
   /********************************************** SyllabusElement */
+ 
+  
   
   private function getSyllabusElementsList($id=-1) {
     settype($id, 'integer');
@@ -487,6 +493,17 @@ FROM
     return $return;
   }
   
+  private function getAuthorToTopic () {
+	  $query = "SELECT DISTINCT 
+	  sqms_role.role_name, sqms_topic.name, sqms_syllabus.sqms_topic_id
+FROM sqms_syllabus
+INNER JOIN sqms_topic, sqms_role
+WHERE sqms_syllabus.sqms_topic_id = sqms_topic.sqms_topic_id
+AND sqms_topic.sqms_role_id = sqms_role.sqms_role_id";
+	$rows = $this->db->query($query);
+    $return['authortotopic'] = $this->getResultArray($rows);
+    return $return;  
+  }
   /********************************************** Question */
   
   private function getQuestionTypes() {
