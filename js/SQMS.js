@@ -460,7 +460,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 	  else {
 		  //console.log("Die antwort ist: " + a.answers[nr].answer);
 	  return "<answer fraction=\"" + $scope.fraction(nr) + "\"><text>"
-	  + (a.answers[nr].answer) + "</text></answer>"
+	  + "<![CDATA[" +(a.answers[nr].answer) + "]]>" + "</text></answer>"
 	  }
 	}
 	// Returns the fraction dependent of how many right answers there are for example 2 right answers: return 50 for each right answer and 0 for false answer.
@@ -498,7 +498,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 	  
 	  $scope.question = "<question type=\"multichoice\"><name><text>" 
 	  + "Questionname" + "</text></name><questiontext format=\"html\"><text>"  //TODO: If a question name exists add it at the beginning of the line
-	  + (a.Question) + "</text></questiontext>" 
+	  + "<![CDATA[" + (a.Question)+ "]]>" + "</text></questiontext>" 
 	  + $scope.que(0)
 	  + $scope.que(1)
 	  + $scope.que(2)
