@@ -148,6 +148,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   $scope.syllabuselements = items.syllabuselements;
   $scope.questypes = items.questypes;
   $scope.questions = items.questionlist;
+  $scope.states = items.states;
+  //console.log($scope.states);
+  
   
   // Order Questions in a new array with IDs as Indices
   $scope.allQuestions = [];
@@ -351,9 +354,9 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 		}},	
 			};
 	}	
-	else 
+	else
 	{
-		// Not enough or oo many Answers
+		// Not enough or too many Answers
 		$scope.wrong = true;
 		$scope.user = {};
 	}
@@ -372,17 +375,20 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 /* 	if ($scope.wrong == true){
 	  $window.alert("Watch out when copying the Json because there are wrong or unfinished Questions in the current Questionpool!");
 	}  */
+	// TO XML 
+	json2xml($scope.user, "");
+	
   };
 
   // Copy Syllabus Question Multi. 
-	
+
 
 
  // Transform single Array to required Json String. Used in Questions
 	$scope.toJ = function (a){
 		/* console.log("TOJson Multi " + a['ID']); 
 		console.log(a); */
-
+	
 		if (a.answers.length == 3){
 	$scope.user = 
 		{
@@ -434,11 +440,71 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 		$scope.jsonString = $scope.json;
 
 	//	$scope.fullJsonMulti = {}; // Erstmal String zwischenspeicher wieder leeren.
-	//	$scope.fullJsonMulti += $scope.jsonString;
+	//	$scope.fullJsonMulti += $scope.jsonString; 
 
 		return $scope.jsonString;
   }
-
+// TODO: Write the function to create an XML Export element in Moodle XML.
+  $scope.xmldata = function(a){
+	  //Answers 
+   $scope.que = function(nr){
+	  // TODO: Workaround. Create cases 4 questions and 2 questions ... Der Fehler trat auf wenn que(n) mit zu großem parameter eingetreten ist.
+	  if ( nr > (a.answers.length -1)){
+		//  console.log("Der Fall ist eingetreten" + nr);
+		return "";
+	  } 
+	  else {
+		  //console.log("Die antwort ist: " + a.answers[nr].answer);
+	  return "<answer fraction=\"" + $scope.fraction(nr) + "\"><text>"
+	  + (a.answers[nr].answer) + "</text></answer>"
+	  }
+	}
+	// Returns the fraction dependent of how many right answers there are for example 2 right answers: return 50 for each right answer and 0 for false answer.
+   $scope.fraction = function (nr){
+	   $scope.right = function (){
+		   $scope.a = 0;
+		  // console.log("----------- Correctness 0:" + a.answers[0].correct + " " + typeof a.answers[0].correct);
+		   for(var i=0; i<a.answers.length; i++){
+			   if (a.answers[i].correct == true){
+				   $scope.a += 1;
+			   }
+		   }
+			return $scope.a;
+	   }
+	   // TODO: Create handlers for other cases: 2 questions, 4 ...
+	  if ($scope.right() == 1){
+		  if (a.answers[nr].correct == false){
+		  return "0"}
+		  else return "100";	  
+	  }
+	  else if ($scope.right() == 2){
+		  if (a.answers[nr].correct == false){
+		  return "0"}
+		  else return "50";
+	  }
+	  else if ($scope.right() == 3){
+		  if (a.answers[nr].correct == false){
+		  return "0"}
+		  else return "33.33333";
+	  }
+	  //TODO: Pop up that there are false elements.
+	  else return "too many or few right";
+  }
+	  
+	  
+	  $scope.question = "<question type=\"multichoice\"><name><text>" 
+	  + "Questionname" + "</text></name><questiontext format=\"html\"><text>"  //TODO: If a question name exists add it at the beginning of the line
+	  + (a.Question) + "</text></questiontext>" 
+	  + $scope.que(0)
+	  + $scope.que(1)
+	  + $scope.que(2)
+	  + "<single>false</single></question>";
+	  
+	  //Addition of header tag. Add return $scope.xml
+	  //$scope.xml = "<?xml version=\"1.0\" ?><quiz>" + $scope.question + "</quiz>";
+	  //console.log($scope.xml);
+	  return $scope.question;
+  }
 	
   // --- [Cancel] clicked
   $scope.cancel = function () {
@@ -487,7 +553,9 @@ module.controller('SQMSController',
               synamelist: $scope.syllabi,
               questypes: $scope.questypes,
               syllabuselements: $scope.syllabuselements,
-              questionlist: $scope.questions
+              questionlist: $scope.questions,
+			  states: $scope.states
+			  
             };
           },
           Elem: function () {
@@ -614,7 +682,13 @@ module.controller('SQMSController',
       });    
       return $scope.questypes;    
     }
-	
+	$scope.getStates = function(){
+	  $http.get('getjson.php?c=getStates').success(function(data) {
+        $scope.states = data.statelist; // store in scope
+		//console.log($scope.states,data);
+      });
+	}
+		
     $scope.filterHTMLTags = function(html) {
 	
       var div = document.createElement("div");
@@ -789,6 +863,7 @@ module.controller('SQMSController',
   $scope.getUsers();
   $scope.getLanguages();
   $scope.getQTypes();
+  $scope.getStates();
   
   $scope.getAllSyllabus();
   $scope.getAllSyllabusElements();
@@ -857,4 +932,44 @@ function selectJson(nfield){
   s.addRange(r);
   document.execCommand("copy");
   
+} 
+
+function json2xml(o, tab) {
+   var toXml = function(v, name, ind) {
+      var xml = "";
+/*       if (v instanceof Array) {
+         for (var i=0, n=v.length; i<n; i++)
+            xml += ind + toXml(v[i], name, ind+"\t") + "\n";
+      } */
+      if (typeof(v) == "object" || v instanceof Array) {
+         var hasChild = false;
+         xml += ind + "<" + name;
+         for (var m in v) {
+            if (m.charAt(0) == "@")
+               xml += " " + m.substr(1) + "=\"" + v[m].toString() + "\"";
+            else
+               hasChild = true;
+         }
+         xml += hasChild ? ">" : "/>";
+         if (hasChild) {
+            for (var m in v) {
+               if (m == "#text")
+                  xml += v[m];
+               else if (m == "#cdata")
+                  xml += "<![CDATA[" + v[m] + "]]>";
+               else if (m.charAt(0) != "@")
+                  xml += toXml(v[m], m, ind+"\t");
+            }
+            xml += (xml.charAt(xml.length-1)=="\n"?ind:"") + "</" + name + ">";
+         }
+      }
+      else {
+         xml += ind + "<" + name + ">" + v.toString() +  "</" + name + ">";
+      }
+      return xml;
+   }, xml="";
+   for (var m in o)
+      xml += toXml(o[m], m, "");
+  console.log(tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, ""));
+   return tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
 }

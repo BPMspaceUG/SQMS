@@ -229,6 +229,10 @@ class RequestHandler
         $return = array_merge_recursive($arr0, $arr1, $arr2);
         return json_encode($return);
         break;
+	  case 'getStates':
+		$res= $this->SEQu->getStates();
+		return json_encode(array("statelist" => $res));
+		break;
         
       case 'update_answer':
         $res = $this->updateAnswer(

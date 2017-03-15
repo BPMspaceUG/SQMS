@@ -42,6 +42,12 @@
       $res = $this->db->query($query);
       return $this->getResultArray($res);
     }    
+	public function getStates() {
+        $query = "SELECT name FROM ".$this->table_states; 
+      $res = $this->db->query($query);
+	  //echo json_encode($res);
+      return $this->getResultArray($res);
+    }    
     public function getStateAsObject($stateid) {
       settype($id, 'integer');
       $query = "SELECT ".$this->colname_stateID_at_TblStates." AS 'id', ".
