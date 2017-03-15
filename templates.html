@@ -377,7 +377,7 @@
           <div class="col-sm-2">
             <select class="form-control"
               ng-options="st.name for st in states"
-              ng-init=""
+              ng-init="Element.state.name"
               ng-model="stateModel"></select>
 			  
           </div>
@@ -389,7 +389,7 @@
 		
 		<!-- TODO: Add State: Suspect is the undefined answers but not sure this could be a problem if two questions have the exact same answers.-->
 		<!-- Syllabus Questions from Topic selection-->
-		<ul ng-repeat="sq in questions| filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | filter:stateModel.name track by sq['ID']" class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">
+		<ul ng-repeat="sq in questions| filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | statefilter:stateModel track by sq['ID']" class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">
 			
 			<li>Name: {{filterHTMLTags(sq['Name'])}}</li>
 			<li>Topic: {{sq['Topic']}}</li>
@@ -398,7 +398,7 @@
 			<li>Language: <label>{{filterHTMLTags(sq['Language'])}}</label></li>
 			<li>Question: <label>{{filterHTMLTags(sq['Question'])}}</label></li>
 			<li>Type: <label>{{sq['Type']}}</label></li>
-			<!--<li>State: <label> {{sq['State']}}</label></li>-->
+			<li>State: <label> {{sq.state.name}}</label></li>
 			<li>Answers:
 		  <table style="border: 1px solid black" border="1">
 			  <thead style="width:50%">
@@ -425,7 +425,7 @@
 		<br>
 		<fieldset>
 		<!-- TODO: There should be an exception handler for the case of incomplete questions or there as to be a rule where incomplete Questions are not accepted and have to be completed first. -->
- 		<ul ng-repeat="sl in questions | filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | filter:stateModel.name track by $index" class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">	
+ 		<ul ng-repeat="sl in questions | filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | statefilter:stateModel track by $index" class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">	
 		 <li>Index: {{$index}}, Json: {{toJ(sl)}}</li>
 		 <!--<li>XML: {{xmldata(sl);}}</li>-->
 		
@@ -436,7 +436,7 @@
 		<fieldset>
 		&lt?xml version="1.0" ?&gt;&lt;quiz&gt;
 		<!--{{allQuestions | filter:topicModel.name | filter:languageModel.language | filter:typeModel.name}}-->
-		<ul ng-repeat="sl in questions | filter:topicModel.name | filter:languageModel.language | filter:typeModel.name| filter:stateModel.name track by $index" class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">	
+		<ul ng-repeat="sl in questions | filter:topicModel.name | filter:languageModel.language | filter:typeModel.name| statefilter:stateModel track by $index" class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">	
 		 
 		 <li>{{xmldata(sl)}}</li>
 		

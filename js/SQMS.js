@@ -530,6 +530,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
       div.innerHTML = html;
       return div.textContent || div.innerText || "";
     };
+	
 });
 
 /***********************************************************
@@ -923,6 +924,24 @@ module.filter('propsFilter', function() {
   };
   
 });
+// Filter which filters array after Models selected in the <select> above
+module.filter('statefilter', function(){
+	return function(items, stateModel) {
+		var filtered = [];
+
+		if (!stateModel){
+			// return filtered then nothing is shown until a state is chosen.
+			return items;
+		}
+		for(var i = 0; i< items.length; i++){
+			var item = items[i];
+			if ((item.state.name) == (stateModel.name)){
+				filtered.push(item);
+			}
+		}
+		return filtered;
+	};
+});
 
 
 //Used to select and copy the Json result. TODO: Transform to angular. 
@@ -937,14 +956,15 @@ function selectJson(nfield){
   document.execCommand("copy");
   
 } 
-
+// Reference for developing the xml export.
+/*
 function json2xml(o, tab) {
    var toXml = function(v, name, ind) {
       var xml = "";
-/*       if (v instanceof Array) {
-         for (var i=0, n=v.length; i<n; i++)
-            xml += ind + toXml(v[i], name, ind+"\t") + "\n";
-      } */
+//       if (v instanceof Array) {
+  //       for (var i=0, n=v.length; i<n; i++)
+    //        xml += ind + toXml(v[i], name, ind+"\t") + "\n";
+      //} 
       if (typeof(v) == "object" || v instanceof Array) {
          var hasChild = false;
          xml += ind + "<" + name;
@@ -976,4 +996,4 @@ function json2xml(o, tab) {
       xml += toXml(o[m], m, "");
   console.log(tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, ""));
    return tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
-}
+}*/
