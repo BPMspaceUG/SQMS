@@ -2,18 +2,6 @@
   // Includes
   include_once '_dbconfig.inc.php';
   include_once '_header.inc.php';
-
-  /* presente $help_text when not empty */
-  /*
-  if ($help_text) {
-    echo '<div class="container bg-info 90_percent" >' ;
-    echo "<a data-toggle=\"collapse\" data-target=\"#collapse_help_event\" >PSEUDO CODE FOR EVENT_GRID PHP - Later here will be the helptext&nbsp;<i class=\"fa fa-chevron-down\"></i></a>";
-    echo "<div id=\"collapse_help_event\" class=\"collapse\"> ";
-    include_once 'syllabus_helptxt.inc.php';
-    echo "</div>";
-    echo "</div><p></p><p></p>";
-  }
-  */
 ?>
 <!--------------- SUB MENU --------->
 <div class="clearfix"></div>
@@ -49,13 +37,13 @@
               </div>
             </div>
             <!-- TODO: Link to Elements -->
-            <a href="#">
+            <!--<a href="#">
               <div class="panel-footer">
                 <span class="pull-left">View Details</span>
                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                 <div class="clearfix"></div>
               </div>
-            </a>
+            </a>-->
           </div>
         </div>
       </div>
@@ -74,7 +62,8 @@
               <span class="visible-md"><i class="fa fa-plus"></i> Syllabus</span>
               <span class="visible-xs visible-sm"><i class="fa fa-plus"></i> Syll.</span>
             </button>
-            <button type="button" class="btn btn-success menuitem" ng-disabled="(!actSelection || actSelection.ElementType != 'S' || actSelection.state.id != 1)"
+            <button type="button" class="btn btn-success menuitem"
+              ng-disabled="(!actSelection || actSelection.ElementType != 'S' || actSelection.state.id != 1)"
               ng-click="open('modalSyllabusElement.html', 'create_syllabuselement', actSelection)">
               <span class="visible-lg"><i class="fa fa-plus"></i> New Syllabus-Element</span>
               <span class="visible-md"><i class="fa fa-plus"></i> Syllabus-Element</span>
@@ -240,8 +229,7 @@
             <!-- TODO: Button to Export all Questions to mitsm Homepage -->
             <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportQuestions.html', '', actSelection)">
               <i class="fa fa-download"></i> Export/Vorschau
-            </button>
-			
+            </button>			
           </span>
         </div>
         <div class="col-sm-4">
@@ -352,20 +340,23 @@
     <div id="pagetopic" class="tab-pane">
       <!-- Header -->
       <div class="row bg-primary">
-        <div class="col-sm-4">
-          <h2>Topic</h2>
+        <h2 class="col-sm-3">Topic</h2>
+        <div class="col-sm-5">
+          <!-- Menu Buttons -->
+          <span>
+            <button type="button" class="btn btn-success menuitem" ng-click="open('modalNewTopic.html', 'create_topic', {})">
+              <span class="visible-lg"><i class="fa fa-plus"></i> New Topic</span>
+              <span class="visible-md"><i class="fa fa-plus"></i> Topic</span>
+              <span class="visible-xs visible-sm"><i class="fa fa-plus"></i> Topic</span>
+            </button>
+          </span>
         </div>
         <div class="col-sm-4">
-          <button type="button" class="btn btn-default" ng-click="open('modalNewTopic.html', 'create_topic')">
-            <i class="fa fa-plus"></i> New Topic
-          </button>
-        </div>
-        <div class="col-sm-4">
-          <input type="text" ng-model="filtertext" class="form-control pull-right" style="width:200px;" placeholder="filter">
+          <input type="text" ng-model="filtertext" class="form-control pull-right menuitem" style="width:200px;" placeholder="filter">
         </div>
       </div>
       <br/>
-      <!-- Content -->
+      <!-- Table -->
       <table class="table">
         <thead>
           <tr>

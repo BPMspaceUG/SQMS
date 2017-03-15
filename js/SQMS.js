@@ -51,7 +51,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   
   $scope.getSE_Q = function() {
     $http.get('getjson.php?c=syllabuselementsquestions').success(function(data) {
-      var allElms = data.se_q_list;      
+      var allElms = data.se_q_list;
       // loop through elements
       for (var i=0;i<allElms.length;i++) {
         var idx1 = allElms[i].SEID;
@@ -154,18 +154,22 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   
   // Order Questions in a new array with IDs as Indices
   $scope.allQuestions = [];
-  
   $scope.allSyllabusElements = [];
   
-  for (var i=0;i<$scope.questions.length;i++) {
-    var idx = $scope.questions[i].ID;
-    $scope.allQuestions[idx] = $scope.questions[i];
+  // --------- Reformat Arrays  
+  if ($scope.questions) {
+    for (var i=0;i<$scope.questions.length;i++) {
+      var idx = $scope.questions[i].ID;
+      $scope.allQuestions[idx] = $scope.questions[i];
+    }
   }
-  for (var i=0;i<$scope.syllabuselements.length;i++) {
-    var idx = $scope.syllabuselements[i].ID;
-    $scope.allSyllabusElements[idx] = $scope.syllabuselements[i];
+  if ($scope.syllabuselements) {
+    for (var i=0;i<$scope.syllabuselements.length;i++) {
+      var idx = $scope.syllabuselements[i].ID;
+      $scope.allSyllabusElements[idx] = $scope.syllabuselements[i];
+    }
   }
-  
+
   // only get list of actual SE
   $scope.getSE_Q();
   // Debugging
@@ -277,7 +281,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   
   // --- [OK] clicked
   $scope.ok = function () {
-    
+    console.log("ok btn clicked");
     // Set the new Topic if it has changed
     if ($scope.object.data.ngTopic) {
       $scope.object.data.TopicID = $scope.object.data.ngTopic.id;
