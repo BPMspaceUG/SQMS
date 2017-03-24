@@ -10,7 +10,7 @@
 <script type="text/ng-template" id="modalFooterExport.html">
   <div class="modal-footer">
 	
-	<button class="btn btn-default" type="button" onClick="selectAll()" ng-click="copy()"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
+	<button class="btn btn-default" type="button" onClick="selectAll()"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
     <button class="btn btn-success" type="button" ng-click="export()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>
     <button class="btn btn-default" type="button" ng-click="cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
 	
@@ -22,7 +22,8 @@
   <div class="modal-footer">
 	
 	<button class="btn btn-default" type="button" ng-click="copy2()"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
-    <button class="btn btn-success" type="button" ng-click="export()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>
+    <button class="btn btn-success" uib-popover-template="'exportStatemachine.html'" popover-trigger="focus"
+                type="button" class="btn btn-default btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>
     <button class="btn btn-default" type="button" ng-click="cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
 	
   </div>
@@ -305,8 +306,20 @@
     </div>
   </div>
 </script>
+<!-- TODO: Delete hardcode create states for myDropDown == Single or Multi-->
+<!-- EXPORT STATES -->
+<script type="text/ng-template" id="exportStatemachine.html">
+  <div><small>Export formats:<br/></small>
+    
+      <button class="btn btn-default" type="button" style="margin-bottom: 3px; width: 100px;"
+        ng-click="saveToPc(filteredInput, 'download.json', 0)">JSON</button>
+	  <button class="btn btn-default" type="button" style="margin-bottom: 3px; width: 100px;"
+        ng-click="saveToPc(filteredInput, 'download.xml', 1)">XML</button>
+   
+  </div>
+</script>
 
-<!-- TODO: Loading the page there is a ngRepeat: dupes error functionality seems to work non the less. -->
+
 <!-- EXPORT SYLLABUS QUESTIONS MODAL -->
 <script type="text/ng-template" id="modalExportQuestions.html">
  <div class="modal-header">
@@ -341,8 +354,8 @@
             <select class="form-control"
               ng-options="t.name for t in topics"
               ng-init="getActTopic()"
-              
-              ng-model="topicModel"></select>
+              ng-model="topicModel"
+			  ></select>
 			  
           </div>
 		  </div>
@@ -352,8 +365,8 @@
             <select class="form-control"
               ng-options="l.language for l in languages"
               ng-init="getActLang()"
-              ng-change="refreshSEFilterdList()"
-              ng-model="languageModel"></select>
+              ng-model="languageModel"
+			  ></select>
 			  
           </div>
         </div>
@@ -366,7 +379,8 @@
             <select class="form-control"
               ng-options="qt.name for qt in questypes"
               ng-init="getActQuesType()"
-              ng-model="typeModel"></select>
+              ng-model="typeModel"
+			  ></select>
 			  
           </div>
         
@@ -378,20 +392,19 @@
             <select class="form-control"
               ng-options="st.name for st in states"
               ng-init="Element.state.name"
-              ng-model="stateModel"></select>
+              ng-model="stateModel"
+			  ></select>
 			  
           </div>
         
 		</div>
-		
 	 </div>
 		<div>
 		
 		<!-- TODO: Add State: Suspect is the undefined answers but not sure this could be a problem if two questions have the exact same answers.-->
 		<!-- Syllabus Questions from Topic selection-->
-		<ul ng-repeat="sq in questions| filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | statefilter:stateModel track by sq['ID']" class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">
-			
-			<li>Name: {{filterHTMLTags(sq['Name'])}}</li>
+		<ul class="form-group" style="list-style-type: none" ng-repeat="sq in (filteredInput = (questions| filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | statefilter:stateModel)) track by sq['ID']">
+				
 			<li>Topic: {{sq['Topic']}}</li>
 			<li>ID: <label>{{sq['ID']}}</label></li>
 			<li>Author: <label>{{sq['Owner']}}</label></li>
@@ -400,12 +413,12 @@
 			<li>Type: <label>{{sq['Type']}}</label></li>
 			<li>State: <label> {{sq.state.name}}</label></li>
 			<li>Answers:
-		  <table style="border: 1px solid black" border="1">
-			  <thead style="width:50%">
+		  <table class="table table-fixed table-bordered table-striped table-condensed">
+			  <thead>
 				<tr>
-					<th style="width:15%">ID</th>
-					<th style="width:75%">Answer</th>
-					<th style="width:10%">Correct</th></tr>
+					<th>ID</th>
+					<th>Answer</th>
+					<th>Correct</th></tr>
 			  </thead>
 			  <tbody ng-repeat="answer in sq.answers" >
 			  
@@ -418,31 +431,32 @@
 		  </table>
 	  </li>
 		</ul>
-		
 		</div>
-		<h3>JSON Conversion:</h3>
+		<!-- Don't erase: Could be used later. <h3>JSON Conversion:</h3>
 		<button type="button" onClick="selectJson(1)">Select Json and Copy</button>
 		<br>
+		
 		<fieldset>
-		<!-- TODO: There should be an exception handler for the case of incomplete questions or there as to be a rule where incomplete Questions are not accepted and have to be completed first. -->
+		<!-- TODO: There should be an exception handler for the case of incomplete questions or there as to be a rule where incomplete Questions are not accepted and have to be completed first. ->
  		<ul ng-repeat="sl in questions | filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | statefilter:stateModel track by $index" class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">	
-		 <li>Index: {{$index}}, Json: {{toJ(sl)}}</li>
-		 <!--<li>XML: {{xmldata(sl);}}</li>-->
+		 <!--li> {{jsonString = (questions | filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | statefilter:stateModel)}} </li->
+		<li>{{toJ(sl)}}</li>
 		
 		</ul> 
+		
 		</fieldset>
 		<h3>XML Conversion:</h3>
 		<button type="button" onClick="selectJson(2)">Select XML and Copy</button>
 		<fieldset>
 		&lt?xml version="1.0" ?&gt;&lt;quiz&gt;
-		<!--{{allQuestions | filter:topicModel.name | filter:languageModel.language | filter:typeModel.name}}-->
+		<!--{{allQuestions | filter:topicModel.name | filter:languageModel.language | filter:typeModel.name}}->
 		<ul ng-repeat="sl in questions | filter:topicModel.name | filter:languageModel.language | filter:typeModel.name| statefilter:stateModel track by $index" class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">	
 		 
 		 <li>{{xmldata(sl)}}</li>
 		
 		</ul> 
 		&lt;/quiz&gt;
-		</fieldset>		
+		</fieldset>	-->	
 		</div>
       </fieldset>
 	  
@@ -452,9 +466,9 @@
 <div class="modal-body"> 
   <!-- TODO: Add bootstrap for unstyled ul afterwards you can erase style="list-style-type"-->
   <fieldset>
-  <ul class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">
+  <ul class="form-group" style="list-style-type: none">
 	  
-	  <li><label><h3>{{Element['Name']}}</h3></label></li><!-- Schreint noch ncihts zu tun, test ob ein Name überhaupt existiert.-->
+	  
 	  <li><label>{{Element['ID']}}</label></li>
 	  <li><label><h4>{{filterHTMLTags(Element['Question'])}}</h4></label></li>
 	  <li>Status: <label>{{Element['state'].name}}</label></li>
@@ -464,12 +478,12 @@
 	  <li>Version: <label>{{Element['Version']}}</label></li>
 	  <li><i>Grafik oder Tabelle: <label> Nicht in der Testdatenbank vorhanden.</label></i></li>
 	  <li>
-		  <table style="border: 1px solid black" border="1">
-			  <thead style="width:50%">
+		  <table class="table table-bordered table-striped table-condensed">
+			  <thead>
 				<tr>
-					<th style="width:15%">ID</th>
-					<th style="width:75%">Answer</th>
-					<th style="width:10%">Correct</th></tr>
+					<th>ID</th>
+					<th>Answer</th>
+					<th>Correct</th></tr>
 			  </thead>
 			  <tbody>
 				<tr ng-repeat="an in Element.answers">
@@ -480,19 +494,40 @@
 			  </tbody>
 		  </table>
 	  </li>
-	  <li></li>
+	  
   </ul>
 </fieldset>
   <br> 
   
   
   </div>
-  
-  <label class="col-sm-2 control-label">Json Version</label>
-  <fieldset>
+  <form>
+  <div class="container">
+  <button class="btn btn-default glyphicon glyphicon-copy" type="button" onClick="selectJson(2)"> Copy to Clipboard</button>
+  </div>
+  <br>
+  <div class="container">
+      <label class="col-sm-2 control-label">Json Version</label>
+
+   <fieldset>
   {{toJ(Element)}}
    </fieldset>
-   
+  <br>
+ </div>
+ <div class="container">
+  <button class="btn btn-default glyphicon glyphicon-copy" type="button" onClick="selectJson(3)"> Copy to Clipboard</button>
+  </div>
+  <br>
+ <div class="container">
+  <label class="col-sm-2 control-label">XML Version</label>
+ 
+	<fieldset>
+		&lt?xml version="1.0" ?&gt;&lt;quiz&gt;
+  {{xmldata(Element)}}
+		&lt;/quiz&gt;
+	</fieldset>	
+	</div>
+   </form>
   </div>
   <ng-include src="'modalFooterExport2.html'"></ng-include>
 </script> 
@@ -506,12 +541,11 @@
   </div>
   
   <div class="modal-body"> 
-  <!-- TODO: Add bootstrap for unstyled ul afterwards you can erase style="list-style-type"-->
 
-  <fieldset> 
-  <ul class="list-unstlyed" style="list-style-type: none" style="border: 1px solid black" style="margin: 100px" style="padding: 100px">
+  <fieldset>  
+  <ul class="form-group" style="list-style-type: none">
 	  
-	  <li><label><h4>{{Element['Name']}}</h4></label></li>
+	  <li><label><h4>{{Element['ID']}}</h4></label></li>
 	  <li><i><label>{{Element['Description']}}</label></i></li>
 	  <li>Status: <label>{{Element['state'].name}}</label></li>
 	  <li>Version: <label>{{Element['Version']}}</label></li>
@@ -521,12 +555,12 @@
 	  <li>Gültig bis:	<label>{{Element['To'] | date:'yyyy-MM-dd'}}</label></li>
 	  <li><i>Grafik oder Tabelle: <label>In den Testdaten nicht vorhanden</label></i></li>
 	  <li>
-		  <table style="border: 1px solid black" border="1">
-			  <thead style="width:50%">
+		  <table style="border: 1px solid black" border="1"><!--  class="table table-striped table-condensed" add -->
+			  <thead >
 				<tr>
-					<th style="width:20%">Thema</th>
-					<th style="width:5%">%</th>
-					<th style="width:75%">Details</th></tr>
+					<th>Thema</th>
+					<th>%</th>
+					<th>Details</th></tr>
 			  </thead>
 			  <tbody>
 				<tr ng-repeat="se in Element.syllabuselements">
@@ -541,11 +575,6 @@
   </ul>
 </fieldset>
   <br>
-
-    
-
-  <!--<button type="button" onClick="selectAll()">Select and Copy</button>-->
-
   
   </div>
   <ng-include src="'modalFooterExport.html'"></ng-include>
@@ -553,7 +582,9 @@
 
 <!--TODO: Convert to Angular if possible, no document. alternative for Angular found yet.-->
 <!-- Used in Syllabus Elements Footer Copy Button -->
-<script>function selectAll(){
+<script>
+
+function selectAll(){
   var e = document.getElementsByTagName('FIELDSET')[0]; <!-- Watch out: If you create a second <fieldset> tag you have to increment [0].-->
   var r = document.createRange();
   r.selectNodeContents(e);

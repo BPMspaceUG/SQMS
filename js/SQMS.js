@@ -323,7 +323,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 			title: "Example Questions",
 			description: "Only one answer is correct.",
 			questions: {
-				 1: {
+				 [$scope.Element.ID]: {
 					question: $scope.Element.Question,
 					answers: [{
 					answer: ($scope.Element.answers[0].answer),
@@ -345,7 +345,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 		title: "Example Questions",
 		description: "Only one answer is correct.",
 		questions: {
-			 1: {
+			 [$scope.Element.ID]: {
 				question: $scope.Element.Question,
 				answers: [{
 				answer: ($scope.Element.answers[0].answer),
@@ -373,22 +373,47 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 	console.log("Copy clicked yes"); 
 */
 	// Seclet Single Json selectJson delcared on bottom TODO: Get it to angular.
-	selectJson(3);
+	selectJson(2);
 	//console.log("Selected: Yes");
 // Trigger songething like this to warn the one whos copying that there are also wrong and unfinished QUestions in the Pool.	
 /* 	if ($scope.wrong == true){
 	  $window.alert("Watch out when copying the Json because there are wrong or unfinished Questions in the current Questionpool!");
 	}  */
-	// TO XML 
-	json2xml($scope.user, "");
 	
   };
 
-  // Copy Syllabus Question Multi. 
+	$scope.topicModel = [];
+	$scope.typeModel = [];
+	$scope.languageModel = [];
+	$scope.zwischenspeicher = [];
+	$scope.jsonString = {};
+	$scope.xmlString = "";
 
 
+	// Filtered Input
+	$scope.filteredInput;
+	// Export data, JSON format=0 or XML format=1
+	$scope.exportData = function(format, input){
+	$scope.returns = "";
+		if (format == 0){ // case Json
+		
+			for (var i in $scope.filteredInput){
+					$scope.returns += $scope.toJ(input[i]);
+			}
+		}
+		else if (format == 1){ // case XML
+		$scope.inner = "";
+			for (var i in $scope.filteredInput){
+					// TODO: Add Xml header.
+					
+					$scope.inner += $scope.xmldata(input[i]);
+			}
+			$scope.returns = "<?xml version=\"1.0\" ?><quiz>" + $scope.inner + "</quiz>"
+		}
+		return $scope.returns;
+	}
 
- // Transform single Array to required Json String. Used in Questions
+	// Transform single JSON Objekt to right json format.
 	$scope.toJ = function (a){
 		/* console.log("TOJson Multi " + a['ID']); 
 		console.log(a); */
@@ -399,7 +424,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 			title: "Example Questions",
 			description: "Only one answer is correct.",
 			questions: {
-				 1: {
+				[a.ID] : {
 					question: a.Question,
 					answers: [{
 					answer: (a.answers[0].answer),
@@ -421,7 +446,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 		title: "Example Questions",
 		description: "Only one answer is correct.",
 		questions: {
-			 1: {
+			 [a.ID]: {
 				question: a.Question,
 				answers: [{
 				answer: (a.answers[0].answer),
@@ -448,6 +473,14 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 
 		return $scope.jsonString;
   }
+  	// Escape html in export for security reasons.
+	$scope.escapehtml = function (str){
+		 
+	str = encodeURIComponent(str);
+		return str;
+
+	}
+	 
 // TODO: Write the function to create an XML Export element in Moodle XML.
   $scope.xmldata = function(a){
 	  //Answers 
@@ -460,7 +493,8 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 	  else {
 		  //console.log("Die antwort ist: " + a.answers[nr].answer);
 	  return "<answer fraction=\"" + $scope.fraction(nr) + "\"><text>"
-	  + "<![CDATA[" +(a.answers[nr].answer) + "]]>" + "</text></answer>"
+	  + $scope.escapehtml(a.answers[nr].answer)+ "</text></answer>"
+	 // + "<![CDATA[" +(a.answers[nr].answer) + "]]>" + "</text></answer>"
 	  }
 	}
 	// Returns the fraction dependent of how many right answers there are for example 2 right answers: return 50 for each right answer and 0 for false answer.
@@ -497,9 +531,10 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 	  
 	  
 	  $scope.question = "<question type=\"multichoice\"><name><text>" 
-	  + "Questionname" + "</text></name><questiontext format=\"html\"><text>"  //TODO: If a question name exists add it at the beginning of the line
-	  + "<![CDATA[" + (a.Question)+ "]]>" + "</text></questiontext>" 
-	  + $scope.que(0)
+	  + (a.ID) + "</text></name><questiontext format=\"html\"><text>"  //TODO: If a question name exists add it at the beginning of the line
+	  //+ "<![CDATA[" + (a.Question)+ "]]>" + "</text></questiontext>" 
+	  + $scope.escapehtml(a.Question) + "</text></questiontext>" 
+	  + $scope.que(0) 
 	  + $scope.que(1)
 	  + $scope.que(2)
 	  + "<single>false</single></question>";
@@ -530,6 +565,49 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
       div.innerHTML = html;
       return div.textContent || div.innerText || "";
     };
+	
+	
+  // Function to save data to a file on PC.
+  $scope.saveToPc = function (data, filename, type) {
+
+	  if (!data) {
+		console.error('No data');
+		return;
+	  }
+
+	  if (!filename) {
+		filename = 'download.json';
+	  }
+	  
+	  if (!type) {
+		console.error('No type');
+	  }
+	  var data2 = $scope.exportData(type, data);
+
+	  if (typeof data2 === 'object') {
+		data2 = JSON.stringify(data, undefined, 2);
+	  }
+
+	  var blob = new Blob([data2], {type: 'text/json'});
+
+	  // FOR IE:
+
+	  if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+		  window.navigator.msSaveOrOpenBlob(blob, filename);
+	  }
+	  else{
+		  var e = document.createEvent('MouseEvents'),
+			  a = document.createElement('a');
+
+		  a.download = filename;
+		  a.href = window.URL.createObjectURL(blob);
+		  a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+		  e.initEvent('click', true, false, window,
+			  0, 0, 0, 0, 0, false, false, false, false, 0, null);
+		  a.dispatchEvent(e);
+	  }
+	  // 
+	};
 	
 });
 
