@@ -520,6 +520,15 @@ AND sqms_topic.sqms_role_id = sqms_role.sqms_role_id";
     return $return;
   }  
   private function getQuestionList() {
+    // Only return topics which are allowed for the actual role
+    if ($this->roleIDs) {
+      $suffix = " WHERE ";
+      foreach ($this->roleIDs as $id) {
+        $suffix .= "b.sqms_role_id = ".$id." OR ";
+      }
+      $suffix = substr($suffix, 0, -4); // remove last " OR "
+    }
+
     $query = "SELECT 
     a.sqms_question_id AS 'ID',
     b.name AS 'Topic',
@@ -540,7 +549,8 @@ FROM
 LEFT JOIN sqms_question_type AS c
 ON a.sqms_question_type_id = c.sqms_question_type_id
 LEFT JOIN sqms_language AS d
-ON d.sqms_language_id = a.sqms_language_id;";
+ON d.sqms_language_id = a.sqms_language_id".$suffix.";";
+
     $rows = $this->db->query($query);
     $res = $this->getResultArray($rows);
     $r = null;
