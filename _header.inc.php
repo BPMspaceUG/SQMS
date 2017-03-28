@@ -56,8 +56,7 @@
   <div class="clearfix"></div>
   <!--------------- MAIN MENU --------->
   <?php
-    include_once("inc/RequestHandler.inc.php");
-    
+    include_once("inc/RequestHandler.inc.php");    
     $rm = new RoleManager();
     /*
     $roleIDs = $rm->getRoleIDsByLIAMid($_SESSION['user_id']); // user_id = LIAM ID
@@ -80,8 +79,6 @@
             echo '<li><a title="Show all questions" href="#pagequestion" data-toggle="tab"><i class="fa fa-question"></i>&nbsp;Question</span></a></li>';
           if ($rm->isActUserAllowed("menu_topic"))
             echo '<li><a title="Show all Topics" href="#pagetopic" data-toggle="tab"><i class="fa fa-table"></i>&nbsp;Topic</a></li>';
-          if ($rm->isActUserAllowed("menu_language"))
-            echo '<li><a title="Show all Languages" href="#pagelanguage" data-toggle="tab"><i class="fa fa-language"></i>&nbsp;Language</a></li>';
         ?>
       </ul>
     </nav>
@@ -109,6 +106,4 @@
     }
     */
   ?>
-
-
 
