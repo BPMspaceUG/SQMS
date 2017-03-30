@@ -352,9 +352,9 @@ set syselem_per_syllabus = 10;
 
 set questions_per_syllabus = 3;
 
-set right_answers_per_question = 3;
+set right_answers_per_question = 4;
 
-set wrong_answers_per_question = 3;
+set wrong_answers_per_question = 4;
 
 set actLanguage = 1; -- 1 English, 2 Deutsch
 
@@ -370,13 +370,13 @@ do
     SET @syllabusid = LAST_INSERT_ID();
     while y < syselem_per_syllabus
         do 
-        INSERT INTO `sqms_syllabus_element` (`severity`, `sqms_syllabus_id`, `name`, `description`) VALUES ('10', @syllabusid, CONCAT('This is a Syllabus_Element in Syllabus ', @syllabusid ,'und Topic ', start_topic) , str_random_lipsum(20,30,0));
+        INSERT INTO `sqms_syllabus_element` (`severity`, `sqms_syllabus_id`, `name`, `description`) VALUES ('10', @syllabusid, CONCAT('This is a Syllabus_Element in Syllabus ', @syllabusid ,'and Topic ', start_topic) , str_random_lipsum(20,30,0));
         set y = y+1;
         SET @syselemid = LAST_INSERT_ID();
         
     	while z < questions_per_syllabus
 			do
-            	INSERT INTO `sqms_question` (`sqms_language_id`, `sqms_question_state_id`, `question`, `author`, `version`, `sqms_question_type_id`, sqms_topic_id) VALUES (actLanguage, '3', CONCAT('This is question Nr ', z ,' in Syllabus_Element Nr. ', @syselemid, 'in Syllabus ', @syllabusid ,'and Topic ', start_topic), 'TEST author', '1', '1', start_topic);
+            	INSERT INTO `sqms_question` (`sqms_language_id`, `sqms_question_state_id`, `question`, `author`, `version`, `sqms_question_type_id`, sqms_topic_id) VALUES (actLanguage, '3', CONCAT('This is question Nr ', z+1 ,' in Syllabus_Element with ID ', @syselemid, ' in Syllabus with ID ', @syllabusid ,' and Topic with ID ', start_topic), 'TEST author', '1', '1', start_topic);
                 SET @questionid = LAST_INSERT_ID();
                 INSERT INTO `sqms_syllabus_element_question` (`sqms_question_id`, `sqms_syllabus_element_id`) VALUES (@questionid, @syselemid);
 				set z = z+1;
@@ -427,7 +427,13 @@ INSERT INTO `sqms_role_LIAMUSER` (`sqms_role_LIAMUSER_id`, `sqms_role_id`, `sqms
 
 call demo_data();
 
+UPDATE `sqms_syllabus` set name = CONCAT (sqms_syllabus.name, ' (Syllabus_ID=',sqms_syllabus_id,')') where TRUE;
 
+UPDATE `sqms_syllabus_element` set name = CONCAT (sqms_syllabus_element.name, ' (SyllabusElement_ID=',sqms_syllabus_element_id,')') where TRUE;
+
+UPDATE `sqms_question` set question = CONCAT (sqms_question.question, ' (Question_ID=',sqms_question_id,')') where TRUE;
+
+UPDATE `sqms_answer` set answer = CONCAT (sqms_answer.answer, ' (Answere_ID=',sqms_answer_id,')') where TRUE;
 
 
 UNLOCK TABLES;
