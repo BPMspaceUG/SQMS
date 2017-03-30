@@ -67,14 +67,17 @@
     }
     
     public function setState($ElementID, $stateID) {
+
       // get actual state from syllabus
       $actstateObj = $this->getActState($ElementID);
       if (count($actstateObj) == 0) return false;
       $actstateID = $actstateObj[0]["id"];
+      $db = $this->db;
+
       // check transition, if allowed
       $trans = $this->checkTransition($actstateID, $stateID);
       // check if transition is possible
-      if ($trans) {
+      if ($trans) {        
         $newstateObj = $this->getStateAsObject($stateID);
         $scripts = $this->getTransitionScripts($actstateID, $stateID);
         
@@ -88,12 +91,14 @@
           // If script exists then load it
           if (trim($scriptpath) != "functions/" && file_exists($scriptpath))
             include_once($scriptpath);
+
           // update state in DB, when plugin says yes
-          if ($script_result["result"] == true) {
+          if (@$script_result["allow_transition"] == true) {
             $query = "UPDATE ".$this->table." SET ".$this->colname_stateID." = ".$stateID.
               " WHERE ".$this->colname_rootID." = ".$ElementID.";";
             $res = $this->db->query($query);
           }
+
           // Return
           return json_encode($script_result);
         }

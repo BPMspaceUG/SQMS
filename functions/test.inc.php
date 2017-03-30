@@ -22,5 +22,9 @@
   $message = "Transition from [$actstate] to [$newstate].";
   
   /***********************************************************/
-  $script_result = array("result" => $result, "message" => $message);
+  $script_result = array(
+    "allow_transition" => $result, // Transition allowed?
+    "show_message" => false,
+    "message" => $message
+  );
 ?>

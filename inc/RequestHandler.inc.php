@@ -598,7 +598,7 @@ ON d.sqms_language_id = a.sqms_language_id".$suffix.";";
     // Copy Question with Successor and new Version
     $newID = $this->addQuestion(
       $OldQuestion["Question"],
-      $OldQuestion["owner"],
+      $OldQuestion["Owner"],
       $OldQuestion["TopicID"],
       $OldQuestion["ExtID"],
       $OldQuestion["LangID"],
@@ -606,8 +606,13 @@ ON d.sqms_language_id = a.sqms_language_id".$suffix.";";
       (int)$OldQuestion["Version"]+1, // increase version
       $OldQuestion["ID"] // Predecessor
     );
-    // TODO: Copy all answers ...
-    
+    // Copy all answers ...
+    $Answers = $this->getAnswers($OldQuestion["ID"])["answers"];
+    foreach ($Answers as $An) {
+      // Add Answer
+      $this->addAnswer($newID, $An["correct"], $An["answer"]);
+    }
+
     // Set Successor of old Question
     $this->updateQuestionCol($OldQuestion["ID"], "sqms_question_id_successor", "i", $newID);
     // Set state of old Question to deprecated
