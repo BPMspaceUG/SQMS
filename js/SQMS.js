@@ -700,9 +700,7 @@ module.controller('SQMSController',
           Name = el.Question;
         }
         // Ask for confirmation
-        if (confirm("Are you sure that you want to create a successor of this "+ElemName+"\n\n'"+Name+
-          "'?\n\nInfo: This will create a new "+ElemName+
-          " with a higher Version-Number and also sets the current "+ElemName+" to state DEPRECATED.")){
+        if (confirm("Are you sure that you want to create a successor of this "+ElemName+"\n\n'"+Name+"'?")){
           $scope.writeData(Command, el);
         }
       }
@@ -926,11 +924,11 @@ module.controller('SQMSController',
       //========================
       if (command.indexOf("_state") >= 0) {
         console.log(response);
-        // If not allowed -> feedback to user
-        if (response.show_message) {
+        // feedback to user
+        if (response.show_message)
           alert(response.message);
+        if (!response.allow_transition)
           return // do not refresh anything
-        }
       }
       //========================
       // Refresh data

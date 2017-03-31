@@ -409,7 +409,7 @@ class RequestHandler
     // Set Successor of old Syllabus
     $this->updateSyllabusCol($OldSyllabus["ID"], "sqms_syllabus_id_successor", "i", $newID);
     // Set state of old Syllabus to deprecated
-    $this->updateSyllabusCol($OldSyllabus["ID"], "sqms_state_id", "i", 4);    
+    //$this->updateSyllabusCol($OldSyllabus["ID"], "sqms_state_id", "i", 4);    
     return $newID;
   }
   
@@ -616,7 +616,7 @@ ON d.sqms_language_id = a.sqms_language_id".$suffix.";";
     // Set Successor of old Question
     $this->updateQuestionCol($OldQuestion["ID"], "sqms_question_id_successor", "i", $newID);
     // Set state of old Question to deprecated
-    $this->updateQuestionCol($OldQuestion["ID"], "sqms_question_state_id", "i", 4);
+    //$this->updateQuestionCol($OldQuestion["ID"], "sqms_question_state_id", "i", 4);
     return $newID;
   }
   
