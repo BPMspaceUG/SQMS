@@ -424,8 +424,75 @@ INSERT INTO `sqms_topic` (`sqms_topic_id`, `name`, `sqms_role_id`) VALUES ('3', 
 INSERT INTO `sqms_role_LIAMUSER` (`sqms_role_LIAMUSER_id`, `sqms_role_id`, `sqms_LIAMUSER_id`) VALUES ('3', '3', '1');
 INSERT INTO `sqms_role_LIAMUSER` (`sqms_role_LIAMUSER_id`, `sqms_role_id`, `sqms_LIAMUSER_id`) VALUES ('4', '4', '1');
 
-
 call demo_data();
+
+INSERT INTO sqms_question VALUES (NULL,1,1,'This is a question with 2 wrong answers','BPMspace',1,NULL,NULL,NULL,2,1);
+SET @lastid = LAST_INSERT_ID();
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+
+INSERT INTO sqms_question VALUES (NULL,1,1,'This is a question with 3 wrong answers','BPMspace',1,NULL,NULL,NULL,2,1);
+SET @lastid = LAST_INSERT_ID();
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+
+INSERT INTO sqms_question VALUES (NULL,1,1,'This is a question with 1 wrong answers and 1 right answers','BPMspace',1,NULL,NULL,NULL,2,1);
+SET @lastid = LAST_INSERT_ID();
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+
+INSERT INTO sqms_question VALUES (NULL,1,1,'This is a question with 2 wrong answers and 2 right answers','BPMspace',1,NULL,NULL,NULL,2,1);
+SET @lastid = LAST_INSERT_ID();
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+
+INSERT INTO sqms_question VALUES (NULL,1,1,'This is a question with 4 wrong answers and 4 right answers','BPMspace',1,NULL,NULL,NULL,2,1);
+SET @lastid = LAST_INSERT_ID();
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+
+INSERT INTO sqms_question VALUES (NULL,1,1,'This is a question with 4 wrong answers and 4 right answers - unsortet','BPMspace',1,NULL,NULL,NULL,2,1);
+SET @lastid = LAST_INSERT_ID();
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+
+
+INSERT INTO sqms_question VALUES (NULL,1,1,'This is a question with 1 wrong answers and 7 right answers','BPMspace',1,NULL,NULL,NULL,2,1);
+SET @lastid = LAST_INSERT_ID();
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+
+INSERT INTO sqms_question VALUES (NULL,1,1,'This is a question with 1 wrong answers and 7 right answers - unsortet','BPMspace',1,NULL,NULL,NULL,2,1);
+SET @lastid = LAST_INSERT_ID();
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'right answer',1,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
+INSERT INTO sqms_answer VALUES (NULL,'wrong answer',0,@lastid);
 
 UPDATE `sqms_syllabus` set name = CONCAT (sqms_syllabus.name, ' (Syllabus_ID=',sqms_syllabus_id,')') where TRUE;
 
@@ -434,6 +501,5 @@ UPDATE `sqms_syllabus_element` set name = CONCAT (sqms_syllabus_element.name, ' 
 UPDATE `sqms_question` set question = CONCAT (sqms_question.question, ' (Question_ID=',sqms_question_id,')') where TRUE;
 
 UPDATE `sqms_answer` set answer = CONCAT (sqms_answer.answer, ' (Answere_ID=',sqms_answer_id,')') where TRUE;
-
 
 UNLOCK TABLES;
