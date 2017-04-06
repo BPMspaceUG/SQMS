@@ -409,7 +409,7 @@ class RequestHandler
     // Set Successor of old Syllabus
     $this->updateSyllabusCol($OldSyllabus["ID"], "sqms_syllabus_id_successor", "i", $newID);
     // Set state of old Syllabus to deprecated
-    $this->updateSyllabusCol($OldSyllabus["ID"], "sqms_state_id", "i", 4);    
+    //$this->updateSyllabusCol($OldSyllabus["ID"], "sqms_state_id", "i", 4);    
     return $newID;
   }
   
@@ -532,6 +532,15 @@ AND sqms_topic.sqms_role_id = sqms_role.sqms_role_id";
     return $return;
   }  
   private function getQuestionList() {
+    // Only return topics which are allowed for the actual role
+    if ($this->roleIDs) {
+      $suffix = " WHERE ";
+      foreach ($this->roleIDs as $id) {
+        $suffix .= "b.sqms_role_id = ".$id." OR ";
+      }
+      $suffix = substr($suffix, 0, -4); // remove last " OR "
+    }
+
     $query = "SELECT 
     a.sqms_question_id AS 'ID',
     b.name AS 'Topic',
@@ -552,7 +561,8 @@ FROM
 LEFT JOIN sqms_question_type AS c
 ON a.sqms_question_type_id = c.sqms_question_type_id
 LEFT JOIN sqms_language AS d
-ON d.sqms_language_id = a.sqms_language_id;";
+ON d.sqms_language_id = a.sqms_language_id".$suffix.";";
+
     $rows = $this->db->query($query);
     $res = $this->getResultArray($rows);
     $r = null;
@@ -600,7 +610,7 @@ ON d.sqms_language_id = a.sqms_language_id;";
     // Copy Question with Successor and new Version
     $newID = $this->addQuestion(
       $OldQuestion["Question"],
-      $OldQuestion["owner"],
+      $OldQuestion["Owner"],
       $OldQuestion["TopicID"],
       $OldQuestion["ExtID"],
       $OldQuestion["LangID"],
@@ -608,12 +618,17 @@ ON d.sqms_language_id = a.sqms_language_id;";
       (int)$OldQuestion["Version"]+1, // increase version
       $OldQuestion["ID"] // Predecessor
     );
-    // TODO: Copy all answers ...
-    
+    // Copy all answers ...
+    $Answers = $this->getAnswers($OldQuestion["ID"])["answers"];
+    foreach ($Answers as $An) {
+      // Add Answer
+      $this->addAnswer($newID, $An["correct"], $An["answer"]);
+    }
+
     // Set Successor of old Question
     $this->updateQuestionCol($OldQuestion["ID"], "sqms_question_id_successor", "i", $newID);
     // Set state of old Question to deprecated
-    $this->updateQuestionCol($OldQuestion["ID"], "sqms_question_state_id", "i", 4);
+    //$this->updateQuestionCol($OldQuestion["ID"], "sqms_question_state_id", "i", 4);
     return $newID;
   }
   

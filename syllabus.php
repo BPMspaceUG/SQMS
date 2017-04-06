@@ -273,8 +273,10 @@
               <!-- Edit Icon -->
               <span ng-show="q.state.id == 1"><a ng-click="editEl(q)" title="Edit Question..."><i class="fa fa-fw fa-pencil"></i></a></span>
               <!-- Successor Icon -->
-              <span ng-show="q.state.id != 1 && q.SuccID == 0">
-                <a ng-click="createsuccessor(q)" title="Create Successor..."><i class="fa fa-fw fa-share"></i></a>
+              <span ng-show="q.state.id != 1 && q.SuccID == null">
+                <a ng-click="createsuccessor(q)" title="Create Successor...">
+                  <i class="fa fa-fw fa-share"></i>
+                </a>
               </span>
             </td>
             <!-- ID -->

@@ -696,18 +696,21 @@ module.controller('SQMSController',
     }
     //--------------------------------------------------------- Create Successor
     $scope.createsuccessor = function(el) {
-      if (el.state != 'new') {      
+      console.log("Create Nachfolger....", el);
+      // Element should not be in state NEW
+      if (el.state != 'new') {
+        // Syllabus
         var ElemName = "Syllabus";
         var Command = "create_successor_s";
-        if (el.ElementType == "S") {
-        } else if (el.ElementType == "Q") {
+        var Name = el.Name;
+        // Question
+        if (el.ElementType == "Q") {
           ElemName = "Question";
           Command = "create_successor_q";
+          Name = el.Question;
         }
         // Ask for confirmation
-        if (confirm("Are you sure that you want to create a successor of this "+ElemName+" \n'"+el.Name+
-          "'?\n\nInfo: This will create a new "+ElemName+
-          " with a higher Version-Number and also sets the current "+ElemName+" to state DEPRECATED.")){
+        if (confirm("Are you sure that you want to create a successor of this "+ElemName+"\n\n'"+Name+"'?")){
           $scope.writeData(Command, el);
         }
       }
@@ -933,7 +936,11 @@ module.controller('SQMSController',
       //========================
       if (command.indexOf("_state") >= 0) {
         console.log(response);
-        //alert((data.result ? "YES" : "NO") + "\n\n" + data.message);
+        // feedback to user
+        if (response.show_message)
+          alert(response.message);
+        if (!response.allow_transition)
+          return // do not refresh anything
       }
       //========================
       // Refresh data
