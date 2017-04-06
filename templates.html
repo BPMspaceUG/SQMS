@@ -10,8 +10,8 @@
 <script type="text/ng-template" id="modalFooterExport.html">
   <div class="modal-footer">
 	
-	<button class="btn btn-default" type="button" onClick="selectAll()"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
-    <button class="btn btn-success" type="button" ng-click="export()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>
+	<button class="btn btn-default glyphicon glyphicon-copy" type="button" onClick="selectAll()"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
+   <!-- <button class="btn btn-success" type="button" ng-click="export()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>-->
     <button class="btn btn-default" type="button" ng-click="cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
 	
   </div>
@@ -21,7 +21,7 @@
 <script type="text/ng-template" id="modalFooterExport2.html">
   <div class="modal-footer">
 	
-	<button class="btn btn-default" type="button" ng-click="copy2()"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
+<!--	<button class="btn btn-default" type="button" ng-click="copy2()"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
     <button class="btn btn-success" uib-popover-template="'exportStatemachine.html'" popover-trigger="focus"
                 type="button" class="btn btn-default btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>
     <button class="btn btn-default" type="button" ng-click="cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
@@ -355,7 +355,9 @@
               ng-options="t.name for t in topics"
               ng-init="getActTopic()"
               ng-model="topicModel"
-			  ></select>
+			  >
+			  <option value=""></option>
+			  </select>
 			  
           </div>
 		  </div>
@@ -366,7 +368,9 @@
               ng-options="l.language for l in languages"
               ng-init="getActLang()"
               ng-model="languageModel"
-			  ></select>
+			  >
+			  <option value=""></option>
+			  </select>
 			  
           </div>
         </div>
@@ -380,7 +384,9 @@
               ng-options="qt.name for qt in questypes"
               ng-init="getActQuesType()"
               ng-model="typeModel"
-			  ></select>
+			  >
+			  <option value=""></option>
+			  </select>
 			  
           </div>
         
@@ -393,7 +399,9 @@
               ng-options="st.name for st in states"
               ng-init="Element.state.name"
               ng-model="stateModel"
-			  ></select>
+			  >
+			  <option value=""></option>
+			  </select>
 			  
           </div>
         
@@ -405,7 +413,10 @@
 		<!-- Syllabus Questions from Topic selection-->
 		<ul class="form-group" style="list-style-type: none" ng-repeat="sq in (filteredInput = (questions| filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | statefilter:stateModel)) track by sq['ID']">
 				
+				<!-- TODO: Topic and Authors could be put at the top, because for every element the same. -->
 			<li>Topic: {{sq['Topic']}}</li>
+			<li>Authors: {{actAuthor(sq)}}</li>
+			
 			<li>ID: <label>{{sq['ID']}}</label></li>
 			<li>Author: <label>{{sq['Owner']}}</label></li>
 			<li>Language: <label>{{filterHTMLTags(sq['Language'])}}</label></li>
@@ -474,9 +485,9 @@
 	  <li>Status: <label>{{Element['state'].name}}</label></li>
 	  <li>State: <label>{{Element['Type']}}</label></li>
 	  <li>Autor/Owner: <label>{{Element['Owner']}}</label></li>
-	  <li><i>Team: <label>{{actAuthor()}}</label></i></li>
+	  <li><i>Team: <label>{{actAuthor(Element)}}</label></i></li>
 	  <li>Version: <label>{{Element['Version']}}</label></li>
-	  <li><i>Grafik oder Tabelle: <label> Nicht in der Testdatenbank vorhanden.</label></i></li>
+	 <!-- <li><i>Grafik oder Tabelle: <label> Nicht in der Testdatenbank vorhanden.</label></i></li>-->
 	  <li>
 		  <table class="table table-bordered table-striped table-condensed">
 			  <thead>
@@ -532,8 +543,6 @@
   <ng-include src="'modalFooterExport2.html'"></ng-include>
 </script> 
 
-
-	
 <!-- EXPORT SYLLABUS MODAL -->
 <script type="text/ng-template" id="modalExportSyllabus.html">
  <div class="modal-header">
@@ -550,10 +559,10 @@
 	  <li>Status: <label>{{Element['state'].name}}</label></li>
 	  <li>Version: <label>{{Element['Version']}}</label></li>
 	  <li>Autor/Owner: <label>{{Element['Owner']}}</label></li>
-	  <li><i>Team: <label>{{actAuthor()}}</label></i></li>
+	  <li><i>Team: <label>{{actAuthor(Element)}}</label></i></li>
 	  <li>Gültig ab: 	<label>{{Element['From'] | date:'yyyy-MM-dd'}}</label></li>
 	  <li>Gültig bis:	<label>{{Element['To'] | date:'yyyy-MM-dd'}}</label></li>
-	  <li><i>Grafik oder Tabelle: <label>In den Testdaten nicht vorhanden</label></i></li>
+	  <li>Description: <label>{{filterHTMLTags(Element['description'])}}</label></li>
 	  <li>
 		  <table style="border: 1px solid black" border="1"><!--  class="table table-striped table-condensed" add -->
 			  <thead >
@@ -566,7 +575,7 @@
 				<tr ng-repeat="se in Element.syllabuselements">
 					<td>{{se.name}}</td>
 					<td>{{se.severity}}%</td>
-					<td>{{filterHTMLTags(se.description)}}</td> <!-- TODO: {{filterHTMLTags(se.description);}} Filter HTML Tags-->
+					<td>{{filterHTMLTags(se.description)}}</td>
 				</tr>
 			  </tbody>
 		  </table>
@@ -594,23 +603,3 @@ function selectAll(){
   document.execCommand("copy");
 }
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

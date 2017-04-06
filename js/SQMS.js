@@ -39,15 +39,24 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 	$scope.grenze = {};
 	$scope.getAuthors();
 	
-	// Check if ActTopic == Topic Name of one of the Object Topics (Should be) and if true return the Authors for this Topic.
-  $scope.actAuthor= function(){
-	  for (i=0; i<$scope.grenze.length; i++){
-		  if ($scope.grenze[i].name == $scope.Element['Topic']){
-			  return $scope.grenze[i].role_name; 
-		  }
-	  }
-	  return null;
-  }
+	// Check if ActTopic == Topic Name of one of the Object Topics (should be) and if true return the Authors for this Topic.
+  $scope.actAuthor = function(Element){
+	  arr = [];
+	  for (i =0; i<$scope.grenze.length; i++){
+		  if ($scope.grenze[i].name == Element['Topic']){
+			  zw = $scope.grenze[i].sqms_LIAMUSER_id;
+				for (j = 0; j <$scope.users.length; j++){
+					if (zw == ($scope.users[j].id)){
+						zw = $scope.users[j].lastname;
+					}
+				}
+			  if (zw != Element['Owner']){
+			  arr.push(zw);
+			  }
+		}
+	}
+	return arr.join(', ');
+  } 
   
   $scope.getSE_Q = function() {
     $http.get('getjson.php?c=syllabuselementsquestions').success(function(data) {
@@ -143,6 +152,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   $scope.Element = Elem;  
   $scope.topics = items.topics;
   $scope.users = items.users;
+  console.log($scope.users);
   $scope.languages = items.languages;
   $scope.synamelist = items.synamelist;
   $scope.syllabuselements = items.syllabuselements;
@@ -741,6 +751,8 @@ module.controller('SQMSController',
       return $scope.reports;
     }
     //--------------------------------------------------------- Get Data Functions
+	
+	
     $scope.getTopics = function() {
       $http.get('getjson.php?c=topics').success(function(data) {
         $scope.topics = data.topiclist; // store in scope
@@ -1025,7 +1037,7 @@ module.filter('statefilter', function(){
 //Used to select and copy the Json result. TODO: Transform to angular. 
 // TODO: Add something like $window.alert if there are unfinished or wrong Questions that where transformed to Json.
 function selectJson(nfield){
-  var e = document.getElementsByTagName('FIELDSET')[nfield]; <!-- Watch out: If you create a second <fieldset> tag you have to increment [0].-->
+  var e = document.getElementsByTagName('FIELDSET')[nfield]; // Watch out: If you create a second <fieldset> tag you have to increment [0].
   var r = document.createRange();
   r.selectNodeContents(e);
   var s = window.getSelection();
@@ -1034,44 +1046,4 @@ function selectJson(nfield){
   document.execCommand("copy");
   
 } 
-// Reference for developing the xml export.
-/*
-function json2xml(o, tab) {
-   var toXml = function(v, name, ind) {
-      var xml = "";
-//       if (v instanceof Array) {
-  //       for (var i=0, n=v.length; i<n; i++)
-    //        xml += ind + toXml(v[i], name, ind+"\t") + "\n";
-      //} 
-      if (typeof(v) == "object" || v instanceof Array) {
-         var hasChild = false;
-         xml += ind + "<" + name;
-         for (var m in v) {
-            if (m.charAt(0) == "@")
-               xml += " " + m.substr(1) + "=\"" + v[m].toString() + "\"";
-            else
-               hasChild = true;
-         }
-         xml += hasChild ? ">" : "/>";
-         if (hasChild) {
-            for (var m in v) {
-               if (m == "#text")
-                  xml += v[m];
-               else if (m == "#cdata")
-                  xml += "<![CDATA[" + v[m] + "]]>";
-               else if (m.charAt(0) != "@")
-                  xml += toXml(v[m], m, ind+"\t");
-            }
-            xml += (xml.charAt(xml.length-1)=="\n"?ind:"") + "</" + name + ">";
-         }
-      }
-      else {
-         xml += ind + "<" + name + ">" + v.toString() +  "</" + name + ">";
-      }
-      return xml;
-   }, xml="";
-   for (var m in o)
-      xml += toXml(o[m], m, "");
-  console.log(tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, ""));
-   return tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
-}*/
+
