@@ -15,15 +15,11 @@
   // Read out state info
   $actstate = $actstateObj[0]["name"];
   $newstate = $newstateObj[0]["name"];
-    
-  // TODO: Check parameters like if entered text is valid
-  
-  $result = true; // if false, then transition not possible
   $message = "Transition from [$actstate] to [$newstate].";
   
   /***********************************************************/
   $script_result = array(
-    "allow_transition" => $result, // Transition allowed?
+    "allow_transition" => true, // Transition allowed?
     "show_message" => false,
     "message" => $message
   );

@@ -69,8 +69,8 @@
               <span class="visible-md"><i class="fa fa-plus"></i> Syllabus-Element</span>
               <span class="visible-xs visible-sm"><i class="fa fa-plus"></i> Syll.-El.</span>
             </button>
-            <!-- TODO: Button to Export all Syllabus to mitsm Homepage -->
-            <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportSyllabus.html', '', actSelection)">
+            <!-- Button to Export all Syllabus to mitsm Homepage -->
+            <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportSyllabus.html', '', actSelection)" ng-disabled="(!actSelection || actSelection.ElementType != 'S')">
               <i class="fa fa-download"></i> Export:{{actSelection.ID}}
             </button>	
           </span>
@@ -226,8 +226,8 @@
               <span class="visible-md"><i class="fa fa-plus"></i> Answer</span>
               <span class="visible-xs visible-sm"><i class="fa fa-plus"></i> Answ.</span>
             </button>
-            <!-- TODO: Button to Export all Questions to homepage -->
-            <button type="button" class="btn btn-default menuitem" ng-disabled="(!questions)" ng-click="open('modalExportQuestions.html', '', actSelection)">
+            <!-- Button to Export all Questions to homepage -->
+            <button type="button" class="btn btn-default menuitem" ng-disabled="(!questions || !actSelection || actSelection.ElementType != 'Q')" ng-click="open('modalExportQuestions.html', '', actSelection)">
               <i class="fa fa-download"></i> Export/Vorschau
             </button>			
           </span>

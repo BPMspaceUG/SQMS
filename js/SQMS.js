@@ -183,7 +183,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   // only get list of actual SE
   $scope.getSE_Q();
   // Debugging
-  /*
+  
   console.log("============================");
   console.log("--- Modal Window opened. ---");
   console.log("============================");
@@ -199,7 +199,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   console.log($scope.allQuestions);
   console.log("----------------------------");
   console.log($scope.topics);
-  */
+  
   /*****************************************************
     Default values should go in here
    ****************************************************/  
@@ -237,11 +237,16 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
     }
   }
 
-  if (cmd.indexOf("create") >= 0) {
+  console.log("Command", cmd);
+  console.log("SEQuestions", $scope.bugFix.SEQuestions);
+
+  if ($scope.object.command.indexOf("create") >= 0) {
     // Creating -> use default data, except parent
     $scope.object.data.parentID = $scope.Element.ID;
-  } else
+    $scope.bugFix.SEQuestions = [];
+  } else {
     $scope.object.data = $scope.Element; // Load data from selection
+  }
   
   // Pre-filter syllabuselements list for Assignment Input Field
   $scope.refreshSEFilterdList = function() {
@@ -282,11 +287,11 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   }
   // Call the function
   $scope.refreshSEFilterdList();
+  $scope.refreshQFilterdList();
   
   // format dates correctly
   if ($scope.object.data.From != null) $scope.object.data.From = new Date($scope.object.data.From);    
   if ($scope.object.data.To != null) $scope.object.data.To = new Date($scope.object.data.To);
-
  
   
   // --- [OK] clicked
