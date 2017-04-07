@@ -1,12 +1,8 @@
 <?php
   // Includes
-  include_once '_dbconfig.inc.php';
+  include_once '../DB_config/login_credentials_DB_bpmspace_sqms.inc.php';
   include_once '_header.inc.php';
 ?>
-<!--------------- SUB MENU --------->
-<div class="clearfix"></div>
-<!--------------- END SUB MENU --------->
-
 <!-- Page -->
 <div class="container">
   <div class="tab-content">
