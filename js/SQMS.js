@@ -76,11 +76,6 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
         else
           $scope.Q_SE[idx2].push(allElms[i].SEID);
       }
-      /*
-      console.log("---------------------- SE <-> Q");
-      console.log($scope.SE_Q);
-      console.log($scope.Q_SE);
-      */
       
       /******** only select relevant Questions for this Element ********/    
       
@@ -152,15 +147,12 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   $scope.Element = Elem;  
   $scope.topics = items.topics;
   $scope.users = items.users;
-  //console.log($scope.users);
   $scope.languages = items.languages;
   $scope.synamelist = items.synamelist;
   $scope.syllabuselements = items.syllabuselements;
   $scope.questypes = items.questypes;
   $scope.questions = items.questionlist;
   $scope.states = items.states;
-  //console.log($scope.states);
-  
   
   // Order Questions in a new array with IDs as Indices
   $scope.allQuestions = [];
@@ -182,24 +174,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 
   // only get list of actual SE
   $scope.getSE_Q();
-  // Debugging
-  /*
-  console.log("============================");
-  console.log("--- Modal Window opened. ---");
-  console.log("============================");
-  console.log("Element:");
-  console.log($scope.Element);
-  console.log("----------------------------");
-  console.log("Items:");
-  console.log(items);
-  console.log("----------------------------");
-  console.log("Scope:");
-  console.log($scope);
-  console.log("----------------------------");
-  console.log($scope.allQuestions);
-  console.log("----------------------------");
-  console.log($scope.topics);
-  */
+
   /*****************************************************
     Default values should go in here
    ****************************************************/  
@@ -291,7 +266,6 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   
   // --- [OK] clicked
   $scope.ok = function () {
-    console.log("ok btn clicked");
     // Set the new Topic if it has changed
     if ($scope.object.data.ngTopic) {
       $scope.object.data.TopicID = $scope.object.data.ngTopic.id;
@@ -314,10 +288,6 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
     for (var i=0;i<$scope.bugFix.QSyllabusElements.length;i++) {
       $scope.object.data.SyllabusElementIDs.push($scope.bugFix.QSyllabusElements[i].ID);
     }
-    /*
-    console.log("============================");
-    console.log("--- Modal Button OK clicked");
-    */
     // Return result
     $uibModalInstance.close($scope.object);
   };
@@ -357,9 +327,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 
 	// Transform single JSON Object to right json format.
 	$scope.toJ = function (a){
-		/* console.log("TOJson Multi " + a['ID']); 
-		console.log(a); */
-	
+
 		if (a.answers.length == 3){
 	$scope.user = 
 		{
@@ -427,23 +395,18 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   $scope.xmldata = function(a){
 	  //Answers 
    $scope.que = function(nr){
-	  // TODO: Workaround. Create cases 4 questions and 2 questions ... Der Fehler trat auf wenn que(n) mit zu großem parameter eingetreten ist.
 	  if ( nr > (a.answers.length -1)){
-		//  console.log("Der Fall ist eingetreten" + nr);
 		return "";
 	  } 
 	  else {
-		  //console.log("Die antwort ist: " + a.answers[nr].answer);
 	  return "<answer fraction=\"" + $scope.fraction(nr) + "\"><text>"
 	  + $scope.escapehtml(a.answers[nr].answer)+ "</text></answer>"
-	 // + "<![CDATA[" +(a.answers[nr].answer) + "]]>" + "</text></answer>"
 	  }
 	}
 	// Returns the fraction dependent of how many right answers there are for example 2 right answers: return 50 for each right answer and 0 for false answer.
    $scope.fraction = function (nr){
 	   $scope.right = function (){
 		   $scope.a = 0;
-		  // console.log("----------- Correctness 0:" + a.answers[0].correct + " " + typeof a.answers[0].correct);
 		   for(var i=0; i<a.answers.length; i++){
 			   if (a.answers[i].correct == true){
 				   $scope.a += 1;
@@ -481,28 +444,19 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 	  + $scope.que(2)
 	  + "<single>false</single></question>";
 	  
-	  //Addition of header tag. Add return $scope.xml
-	  //$scope.xml = "<?xml version=\"1.0\" ?><quiz>" + $scope.question + "</quiz>";
-	  //console.log($scope.xml);
 	  return $scope.question;
   }
 	
   // --- [Cancel] clicked
   $scope.cancel = function () {
-    /*
-    console.log("============================");*/
-    console.log("--- Modal Button Cancel clicked");
-
-	
     $uibModalInstance.dismiss('cancel');
   };
   // --- [Export] clicked
   $scope.export = function () {
-	// TODO: Replace Placeholder with export to maybe Moodle XML
-	console.log("Export button was clicked");
-  };  
-  $scope.filterHTMLTags = function(html) {
-		
+
+  };
+
+  $scope.filterHTMLTags = function(html) {		
       var div = document.createElement("div");
       div.innerHTML = html;
       return div.textContent || div.innerText || "";
@@ -588,25 +542,19 @@ module.controller('SQMSController',
           }
         }
       });
-      modalInstance.result.then(function (result) {
-        $scope.writeData(result.command, result.data); // Send result to server
-      }, function () {
-        console.log('Modal Window closed at: ' + new Date());
-      });
+      modalInstance.result.then(
+      	function (result) {
+        	$scope.writeData(result.command, result.data); // Send result to server
+      	}
+      );
     };
     //--------------------------------------------------------- Select Element
     $scope.setSelection = function(el){ $scope.actSelection = el;};
 	//--------------------------------------------------------- Get Selection
 	$scope.sel = $scope.actSelection;
-	$scope.getSelection = function(){
-		//console.log('Actual selection-id is: ' + $scope.actSelection.ID); // Or ['ID']
-		return $scope.actSelection;
-	}
+	$scope.getSelection = function(){ return $scope.actSelection; }
     //--------------------------------------------------------- Edit Element
     $scope.editEl = function(el) {
-      /*
-      console.log("--- Edit element clicked...");
-      */
       // -- Syllabus
       if (el.ElementType == "S") {
         if (el.state.id == 1) // Only open modal in state "new"
@@ -628,7 +576,6 @@ module.controller('SQMSController',
     }
     //--------------------------------------------------------- Create Successor
     $scope.createsuccessor = function(el) {
-      console.log("Create Nachfolger....", el);
       // Element should not be in state NEW
       if (el.state != 'new') {
         // Syllabus
@@ -686,8 +633,7 @@ module.controller('SQMSController',
       return $scope.reports;
     }
     //--------------------------------------------------------- Get Data Functions
-	
-	
+		
     $scope.getTopics = function() {
       $http.get('getjson.php?c=topics').success(function(data) {
         $scope.topics = data.topiclist; // store in scope
@@ -715,12 +661,10 @@ module.controller('SQMSController',
 	$scope.getStates = function(){
 	  $http.get('getjson.php?c=getStates').success(function(data) {
         $scope.states = data.statelist; // store in scope
-		//console.log($scope.states,data);
       });
 	}
-		
-    $scope.filterHTMLTags = function(html) {
-	
+
+    $scope.filterHTMLTags = function(html) {	
       var div = document.createElement("div");
       div.innerHTML = html;
       return div.textContent || div.innerText || "";
@@ -841,8 +785,6 @@ module.controller('SQMSController',
   }  
   //--------------------------------------------------------- WRITE data to server
   $scope.writeData = function (command, data) {
-    console.log("--- Sending command ("+command+") ...");
-
     // JSON --> String
     seen = [];
     json = JSON.stringify(data, function(key, val) {
@@ -862,12 +804,10 @@ module.controller('SQMSController',
       data: json
     }).
     success(function(response){
-      console.log("--- Executed command successfully! Return: " + response);
       //========================
       // STATE TRANSITION
       //========================
       if (command.indexOf("_state") >= 0) {
-        console.log(response);
         // feedback to user
         if (response.show_message)
           alert(response.message);
@@ -982,7 +922,6 @@ function selectJson(nfield){
   var s = window.getSelection();
   s.removeAllRanges();
   s.addRange(r);
-  document.execCommand("copy");
-  
+  document.execCommand("copy");  
 } 
 
