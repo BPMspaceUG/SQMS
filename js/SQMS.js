@@ -183,7 +183,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   // only get list of actual SE
   $scope.getSE_Q();
   // Debugging
-  
+  /*
   console.log("============================");
   console.log("--- Modal Window opened. ---");
   console.log("============================");
@@ -199,7 +199,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   console.log($scope.allQuestions);
   console.log("----------------------------");
   console.log($scope.topics);
-  
+  */
   /*****************************************************
     Default values should go in here
    ****************************************************/  
@@ -237,16 +237,11 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
     }
   }
 
-  console.log("Command", cmd);
-  console.log("SEQuestions", $scope.bugFix.SEQuestions);
-
-  if ($scope.object.command.indexOf("create") >= 0) {
+  if (cmd.indexOf("create") >= 0) {
     // Creating -> use default data, except parent
     $scope.object.data.parentID = $scope.Element.ID;
-    $scope.bugFix.SEQuestions = [];
-  } else {
+  } else
     $scope.object.data = $scope.Element; // Load data from selection
-  }
   
   // Pre-filter syllabuselements list for Assignment Input Field
   $scope.refreshSEFilterdList = function() {
@@ -287,11 +282,11 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   }
   // Call the function
   $scope.refreshSEFilterdList();
-  $scope.refreshQFilterdList();
   
   // format dates correctly
   if ($scope.object.data.From != null) $scope.object.data.From = new Date($scope.object.data.From);    
   if ($scope.object.data.To != null) $scope.object.data.To = new Date($scope.object.data.To);
+
  
   
   // --- [OK] clicked
@@ -329,75 +324,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   // If there are Wrong or unfinished Questions be true.
 	$scope.wrong = false;
   
-    // Copy Syllabus TODO: Assign Button Select and Copy to this one
-    // --- [Copy 2] clicked Aktuell schreibt es die JSON Datei des aktuell ausgewählten Dokuments in die Konsole. Used in Questions Footer
-  $scope.copy2 = function(){
-	if ($scope.Element.answers.length == 3){
-	$scope.user = 
-		{
-			title: "Example Questions",
-			description: "Only one answer is correct.",
-			questions: {
-				 [$scope.Element.ID]: {
-					question: $scope.Element.Question,
-					answers: [{
-					answer: ($scope.Element.answers[0].answer),
-					correct: ($scope.Element.answers[0].correct)
-				}, {
-					answer: ($scope.Element.answers[1].answer),
-					correct: ($scope.Element.answers[1].correct)
-				}, {
-					answer: ($scope.Element.answers[2].answer),
-					correct: ($scope.Element.answers[2].correct)
-				}],
-				 
-			}},	
-		};
-	}
-	else if ($scope.Element.answers.length == 2)
-	{
-		$scope.user = {
-		title: "Example Questions",
-		description: "Only one answer is correct.",
-		questions: {
-			 [$scope.Element.ID]: {
-				question: $scope.Element.Question,
-				answers: [{
-				answer: ($scope.Element.answers[0].answer),
-				correct: ($scope.Element.answers[0].correct)
-			}, {
-				answer: ($scope.Element.answers[1].answer),
-				correct: ($scope.Element.answers[1].correct)
-			}],
-			
-		}},	
-			};
-	}	
-	else
-	{
-		// Not enough or too many Answers
-		$scope.wrong = true;
-		$scope.user = {};
-	}
-	  // Alert if there are unfinished Questions when loading the modal.
- 	
-	$scope.json = angular.toJson ($scope.user);
-	$scope.jsonString = $scope.json;
-/*	console.log($scope.json);
-	console.log($scope.jsonString);
-	console.log("Copy clicked yes"); 
-*/
-	// Seclet Single Json selectJson delcared on bottom TODO: Get it to angular.
-	selectJson(2);
-	//console.log("Selected: Yes");
-// Trigger songething like this to warn the one whos copying that there are also wrong and unfinished QUestions in the Pool.	
-/* 	if ($scope.wrong == true){
-	  $window.alert("Watch out when copying the Json because there are wrong or unfinished Questions in the current Questionpool!");
-	}  */
-	
-  };
-
-	$scope.topicModel = [];
+  	$scope.topicModel = [];
 	$scope.typeModel = [];
 	$scope.languageModel = [];
 	$scope.zwischenspeicher = [];
@@ -428,7 +355,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 		return $scope.returns;
 	}
 
-	// Transform single JSON Objekt to right json format.
+	// Transform single JSON Object to right json format.
 	$scope.toJ = function (a){
 		/* console.log("TOJson Multi " + a['ID']); 
 		console.log(a); */
@@ -478,7 +405,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
 	{
 		// Not enough or too many Answers
 		$scope.wrong = true;
-		$scope.user = {};
+		$scope.user = "Fehlerhafte Frage";
 	}
 		$scope.json = angular.toJson ($scope.user);
 		$scope.jsonString = $scope.json;
