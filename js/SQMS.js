@@ -152,7 +152,7 @@ module.controller('ModalInstanceCtrl', function ($scope, $window, $http, $uibMod
   $scope.Element = Elem;  
   $scope.topics = items.topics;
   $scope.users = items.users;
-  console.log($scope.users);
+  //console.log($scope.users);
   $scope.languages = items.languages;
   $scope.synamelist = items.synamelist;
   $scope.syllabuselements = items.syllabuselements;
