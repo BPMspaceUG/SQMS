@@ -21,9 +21,8 @@
 <script type="text/ng-template" id="modalFooterExport2.html">
   <div class="modal-footer">
 	
-<!--	<button class="btn btn-default" type="button" ng-click="toJ(Element)"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
     <button class="btn btn-success" uib-popover-template="'exportStatemachine.html'" popover-trigger="focus"
-                type="button" class="btn btn-default btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>
+                type="button" class="btn btn-default btn-sm" ng-disabled="(myDropDown == 'Single')"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>
     <button class="btn btn-default" type="button" ng-click="cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
 	
   </div>
@@ -308,7 +307,6 @@
     </div>
   </div>
 </script>
-<!-- TODO: Delete hardcode create states for myDropDown == Single or Multi-->
 <!-- EXPORT STATES -->
 <script type="text/ng-template" id="exportStatemachine.html">
   <div><small>Export formats:<br/></small>
@@ -411,39 +409,39 @@
 	 </div>
 		<div>
 		
-		<!-- TODO: Add State: Suspect is the undefined answers but not sure this could be a problem if two questions have the exact same answers.-->
-		<!-- Syllabus Questions from Topic selection-->
-		<ul class="form-group" style="list-style-type: none" ng-repeat="sq in (filteredInput = (questions| filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | statefilter:stateModel)) track by sq['ID']">
+			<!-- Syllabus Questions from Topic selection-->
+			<ul class="form-group" style="list-style-type: none" ng-repeat="sq in (filteredInput = (questions| filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | statefilter:stateModel)) track by sq['ID']">
+					
+					<!-- TODO: Topic and Authors could be put at the top, because in some cases for every element the same. But if you don't filter this could be wrong. -->
+				<li>Topic: {{sq['Topic']}}</li>
+				<li>Authors: {{actAuthor(sq)}}</li>
 				
-				<!-- TODO: Topic and Authors could be put at the top, because for every element the same. -->
-			<li>Topic: {{sq['Topic']}}</li>
-			<li>Authors: {{actAuthor(sq)}}</li>
-			
-			<li>ID: <label>{{sq['ID']}}</label></li>
-			<li>Author: <label>{{sq['Owner']}}</label></li>
-			<li>Language: <label>{{filterHTMLTags(sq['Language'])}}</label></li>
-			<li>Question: <label>{{filterHTMLTags(sq['Question'])}}</label></li>
-			<li>Type: <label>{{sq['Type']}}</label></li>
-			<li>State: <label> {{sq.state.name}}</label></li>
-			<li>Answers:
-		  <table class="table table-fixed table-bordered table-striped table-condensed">
-			  <thead>
-				<tr>
-					<th>ID</th>
-					<th>Answer</th>
-					<th>Correct</th></tr>
-			  </thead>
-			  <tbody ng-repeat="answer in sq.answers" >
-			  
-			  <tr> 	
-					<td> {{answer.ID}} </td>
-					<td> {{filterHTMLTags(answer.answer)}} </td>
-					<td> {{filterHTMLTags(answer.correct)}} </td> 
-			  </tr>
-			  </tbody>
-		  </table>
-	  </li>
-		</ul>
+				<li>ID: <label>{{sq['ID']}}</label></li>
+				<li>Author: <label>{{sq['Owner']}}</label></li>
+				<li>Language: <label>{{filterHTMLTags(sq['Language'])}}</label></li>
+				<li>Question: <label>{{filterHTMLTags(sq['Question'])}}</label></li>
+				<li>Type: <label>{{sq['Type']}}</label></li>
+				<li>State: <label> {{sq.state.name}}</label></li>
+				<li>Answers:
+				
+				<table class="table table-fixed table-bordered table-striped table-condensed">
+				  <thead>
+					<tr>
+						<th>ID</th>
+						<th>Answer</th>
+						<th>Correct</th></tr>
+				  </thead>
+				  <tbody ng-repeat="answer in sq.answers" >
+				  
+				  <tr> 	
+						<td> {{answer.ID}} </td>
+						<td> {{filterHTMLTags(answer.answer)}} </td>
+						<td> {{filterHTMLTags(answer.correct)}} </td> 
+				  </tr>
+				  </tbody>
+				</table>
+				</li>
+			</ul>
 		</div>
 		<!-- Don't erase: Could be used later. <h3>JSON Conversion:</h3>
 		<button type="button" onClick="selectJson(1)">Select Json and Copy</button>
@@ -470,6 +468,7 @@
 		</ul> 
 		&lt;/quiz&gt;
 		</fieldset>	-->	
+		
 		</div>
       </fieldset>
 	  
@@ -591,12 +590,12 @@
   <ng-include src="'modalFooterExport.html'"></ng-include>
 </script> 
 
-<!--TODO: Convert to Angular if possible, no document. alternative for Angular found yet.-->
+<!--TODO: Convert to Angular if possible, no alternative for Angular found yet.-->
 <!-- Used in Syllabus Elements Footer Copy Button -->
 <script>
 
 function selectAll(){
-  var e = document.getElementsByTagName('FIELDSET')[0]; <!-- Watch out: If you create a second <fieldset> tag you have to increment [0].-->
+  var e = document.getElementsByTagName('FIELDSET')[0]; <!-- Watch out: If you create a second <fieldset> tag you have to increment [0] or the wrong place is marked.-->
   var r = document.createRange();
   r.selectNodeContents(e);
   var s = window.getSelection();

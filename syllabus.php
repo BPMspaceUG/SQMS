@@ -224,7 +224,7 @@
             </button>
             <!-- Button to Export all Questions to homepage -->
             <button type="button" class="btn btn-default menuitem" ng-disabled="(!questions || !actSelection || actSelection.ElementType != 'Q')" ng-click="open('modalExportQuestions.html', '', actSelection)">
-              <i class="fa fa-download"></i> Export/Vorschau
+              <i class="fa fa-download"></i> Export/Preview
             </button>			
           </span>
         </div>
