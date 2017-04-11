@@ -27,7 +27,7 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
       $http.get('getjson.php?c=authortotopiclist').success(function(data) {
       $scope.authores = data.authortotopic;
       $scope.grenze = $scope.authores;
-      return $scope.authores;   
+      return $scope.authores;
     });
   }
   // Initialize Authors at modal load. And save act values in grenze.
