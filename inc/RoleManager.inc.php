@@ -85,7 +85,7 @@
     }
     public function getUsers() {
       //settype($liamID, 'integer');
-      $query = "SELECT * FROM members;";
+      $query = "SELECT id, deprecated, email, email_verified, firstname, lastname FROM members;";
       $res = $this->dbLIAM->query($query);
       return $this->getResultArray($res);
     }

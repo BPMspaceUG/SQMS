@@ -10,8 +10,8 @@
 <script type="text/ng-template" id="modalFooterExport.html">
   <div class="modal-footer">
 	
-	<button class="btn btn-default" type="button" onClick="selectAll()"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
-    <button class="btn btn-success" type="button" ng-click="export()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>
+	<button class="btn btn-default glyphicon glyphicon-copy" type="button" onClick="selectAll()"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
+   <!-- <button class="btn btn-success" type="button" ng-click="export()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>-->
     <button class="btn btn-default" type="button" ng-click="cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
 	
   </div>
@@ -21,9 +21,8 @@
 <script type="text/ng-template" id="modalFooterExport2.html">
   <div class="modal-footer">
 	
-	<button class="btn btn-default" type="button" ng-click="copy2()"><i class="" aria-hidden="true"></i> Copy</button> <!-- TODO: Copy picture-->
     <button class="btn btn-success" uib-popover-template="'exportStatemachine.html'" popover-trigger="focus"
-                type="button" class="btn btn-default btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>
+                type="button" class="btn btn-default btn-sm" ng-disabled="(myDropDown == 'Single')"><i class="fa fa-floppy-o" aria-hidden="true"></i> Export</button>
     <button class="btn btn-default" type="button" ng-click="cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
 	
   </div>
@@ -46,255 +45,6 @@
   <ng-include src="'modalFooter.html'"></ng-include>
 </script>
 
-<!-- SYLLABUS -->
-<script type="text/ng-template" id="modalSyllabus.html">
-  <div class="modal-header">
-    <h3 class="modal-title">Syllabus</h3>
-  </div>
-  <div class="modal-body">
-    <form class="form-horizontal">
-      <fieldset>
-        <legend>Syllabus Properties</legend>
-        <!-- Name / Topic -->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Name</label>
-          <div class="col-sm-4">
-            <input ng-model="object.data.Name" class="form-control" type="text" />
-          </div>
-          <label class="col-sm-2 control-label">Topic</label>
-          <div class="col-sm-4">
-            <select class="form-control"
-              ng-options="t.name for t in topics"
-              ng-init="getActTopic()"
-              ng-model="object.data.ngTopic"></select>
-          </div>
-        </div>
-        <!-- Valid from / Valid to -->
-        <div class="form-group">
-          <!-- from -->
-          <label class="col-sm-2 control-label">Valid from</label>
-          <div class="col-sm-4">
-            <div class="input-group">
-              <input type="text" class="form-control" ng-model="object.data.From" uib-datepicker-popup="{{format}}" is-open="p1.opened" />
-              <span class="input-group-btn">
-                <button class="btn btn-default" type="button" id="basic-addon2" type="button" ng-click="p1.opened = !p1.opened">
-                  <i class="glyphicon glyphicon-calendar"></i>&nbsp;
-                </button>
-              </span>
-            </div>
-          </div>
-          <!-- to -->
-          <label class="col-sm-2 control-label">Valid to</label>
-          <div class="col-sm-4">
-            <div class="input-group">
-              <input type="text" class="form-control" ng-model="object.data.To" uib-datepicker-popup="{{format}}" is-open="p2.opened" />
-              <span class="input-group-btn">
-                <button class="btn btn-default" type="button" id="basic-addon2" type="button" ng-click="p2.opened = !p2.opened">
-                  <i class="glyphicon glyphicon-calendar"></i>&nbsp;
-                </button>
-              </span>
-            </div>
-          </div>
-        </div>
-        <!-- Language -->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Language</label>
-          <div class="col-sm-4">
-            <select class="form-control"
-              ng-options="l.language for l in languages"
-              ng-init="getActLang()"
-              ng-model="object.data.ngLang"></select>
-          </div>
-        </div>
-        <!-- Owner / Version -->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Owner</label>
-          <div class="col-sm-4">
-            <select class="form-control"
-              ng-options="u.lastname for u in users"
-              ng-init="getActQwner()"
-              ng-model="object.data.ngOwner"></select>
-          </div>
-          <label class="col-sm-2 control-label">Version</label>
-          <div class="col-sm-4">
-            <input ng-model="object.data.Version" class="form-control" type="text" disabled/>
-          </div>
-        </div>
-        <!-- Description -->
-        <label class="control-label">Description</label>
-        <textarea data-ui-tinymce="tinymceOptions" ng-model="object.data.description"></textarea>
-      </fieldset>
-    </form>
-  </div>
-  <ng-include src="'modalFooter.html'"></ng-include>
-</script>
-
-<!-- SYLLABUSELEMENT -->
-<script type="text/ng-template" id="modalSyllabusElement.html">
-  <div class="modal-header">
-    <h3 class="modal-title">SyllabusElement</h3>
-  </div>
-  <div class="modal-body">
-    <form class="form-horizontal">
-      <fieldset>
-        <legend>SyllabusElement Properties</legend>
-        <!-- Name -->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Name</label>
-          <div class="col-sm-10">
-            <input class="form-control" ng-model="object.data.name" type="text" />
-          </div>
-        </div>
-        <!-- ID / Order / Severity -->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">ID</label>
-          <div class="col-sm-2">
-            <input class="form-control" ng-model="object.data.ID" type="text" disabled/>
-          </div>
-          <label class="col-sm-2 control-label">Order</label>
-          <div class="col-sm-2">
-            <input class="form-control" ng-model="object.data.element_order" type="text" />
-          </div>
-          <label class="col-sm-2 control-label">Severity</label>
-          <div class="col-sm-2">
-            <input class="form-control" string-to-number ng-model="object.data.severity" min="0" max="100" type="number" />
-          </div>
-        </div>
-        <!-- Parent / Severity -->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Parent</label>
-          <div class="col-sm-10">
-            <input class="form-control" ng-init="getActParentSyllabElement()" ng-model="object.data.ngParent.Name" disabled/>
-          </div>
-        </div>
-        <!-- Description -->
-        <label class="control-label">Description</label>
-        <textarea data-ui-tinymce="tinymceOptions" ng-model="object.data.description"></textarea>
-        <!-- Questions -->
-        <label class="control-label">Questions</label>        
-        <ui-select multiple ng-model="bugFix.SEQuestions">
-          <ui-select-match placeholder="Select Questions...">
-            <span>{{$item.ID}} <b>{{$item.Question}}</b></span>
-          </ui-select-match>
-          <ui-select-choices repeat="item in QFiltered">
-            <small>{{item.ID}} <b>{{item.Question}}</small>
-          </ui-select-choices>
-        </ui-select>        
-      </fieldset>
-    </form>
-  </div>
-  <ng-include src="'modalFooter.html'"></ng-include>
-</script>
-
-<!-- QUESTION -->
-<script type="text/ng-template" id="modalNewQuestion.html">
-  <div class="modal-header">
-    <h3 class="modal-title">Question</h3>
-  </div>
-  <div class="modal-body">  
-    <form class="form-horizontal">
-      <fieldset>
-        <legend>Question Properties</legend>
-        <!-- Question -->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Question</label>
-          <div class="col-sm-10">
-            <textarea data-ui-tinymce="tinymceOptions" ng-model="object.data.Question"></textarea>
-          </div>
-        </div>
-        <!-- Topic / Language -->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Topic</label>
-          <div class="col-sm-4">
-            <select class="form-control"
-              ng-options="t.name for t in topics"
-              ng-init="getActTopic()"
-              ng-change="refreshSEFilterdList()"
-              ng-model="object.data.ngTopic"></select>
-          </div>
-          <label class="col-sm-2 control-label">Language</label>
-          <div class="col-sm-4">
-            <select class="form-control"
-              ng-options="l.language for l in languages"
-              ng-init="getActLang()"
-              ng-change="refreshSEFilterdList()"
-              ng-model="object.data.ngLang"></select>
-          </div>
-        </div>
-        <!-- Author / Version -->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Owner</label>
-          <div class="col-sm-6">
-            <select class="form-control"
-              ng-options="u.lastname for u in users"
-              ng-init="getActQwner()"
-              ng-model="object.data.ngOwner"></select>
-          </div>
-          <label class="col-sm-2 control-label">Version</label>
-          <div class="col-sm-2">
-            <input ng-model="object.data.Version" class="form-control" type="text" disabled/>
-          </div>
-        </div>
-        <!-- Type / ExtID -->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Type</label>
-          <div class="col-sm-6">
-            <select class="form-control"
-              ng-options="qt.name for qt in questypes"
-              ng-init="getActQuesType()"
-              ng-model="object.data.ngQuesType"></select>
-          </div>
-          <label class="col-sm-2 control-label">Ext.ID</label>
-          <div class="col-sm-2">
-            <input ng-model="object.data.ExtID" class="form-control" type="text" />
-          </div>
-        </div>
-        <!-- SyllabusElements -->
-        <label class="control-label">SyllabusElements</label>
-        <ui-select multiple ng-model="bugFix.QSyllabusElements">
-          <ui-select-match placeholder="Select SyllabusElements...">
-            <span>{{$item.ID}} <b>{{$item.name}}</b></span>
-          </ui-select-match>
-          <ui-select-choices group-by="'parentName'" repeat="item in SElementsFiltered | propsFilter: {name: $select.search}">
-            <div ng-bind-html="item.name | highlight: $select.search"></div>
-            <small>#{{item.ID}} - Severity: {{item.severity}}%</small>
-          </ui-select-choices>
-        </ui-select>
-      </fieldset>
-    </form>
-  </div>
-  <ng-include src="'modalFooter.html'"></ng-include>
-</script>
-
-<!-- ANSWER -->
-<script type="text/ng-template" id="modalAnswer.html">
-  <div class="modal-header">
-    <h3 class="modal-title">Answer</h3>
-  </div>
-  <div class="modal-body">  
-    <form class="form-horizontal">
-      <fieldset>
-        <legend>Answer Properties</legend>
-        <!-- Answer -->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Answer</label>
-          <div class="col-sm-10">
-            <textarea data-ui-tinymce="tinymceOptions" ng-model="object.data.answer"></textarea>
-          </div>
-        </div>
-        <!-- Checkbox -->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Is Correct?</label>
-          <div class="col-sm-10">
-            <p><input type="checkbox" ng-model="object.data.correct"/> Correct</p>
-          </div>
-        </div>
-      </fieldset>
-    </form>
-  </div>
-  <ng-include src="'modalFooter.html'"></ng-include>
-</script>
-
 <!-- STATE MACHINE -->
 <script type="text/ng-template" id="popoverStatemachine.html">
   <div><small>goto state<br/></small>
@@ -306,7 +56,7 @@
     </div>
   </div>
 </script>
-<!-- TODO: Delete hardcode create states for myDropDown == Single or Multi-->
+
 <!-- EXPORT STATES -->
 <script type="text/ng-template" id="exportStatemachine.html">
   <div><small>Export formats:<br/></small>
@@ -318,7 +68,6 @@
    
   </div>
 </script>
-
 
 <!-- EXPORT SYLLABUS QUESTIONS MODAL -->
 <script type="text/ng-template" id="modalExportQuestions.html">
@@ -355,7 +104,9 @@
               ng-options="t.name for t in topics"
               ng-init="getActTopic()"
               ng-model="topicModel"
-			  ></select>
+			  >
+			  <option value=""></option>
+			  </select>
 			  
           </div>
 		  </div>
@@ -366,7 +117,9 @@
               ng-options="l.language for l in languages"
               ng-init="getActLang()"
               ng-model="languageModel"
-			  ></select>
+			  >
+			  <option value=""></option>
+			  </select>
 			  
           </div>
         </div>
@@ -380,7 +133,9 @@
               ng-options="qt.name for qt in questypes"
               ng-init="getActQuesType()"
               ng-model="typeModel"
-			  ></select>
+			  >
+			  <option value=""></option>
+			  </select>
 			  
           </div>
         
@@ -393,7 +148,9 @@
               ng-options="st.name for st in states"
               ng-init="Element.state.name"
               ng-model="stateModel"
-			  ></select>
+			  >
+			  <option value=""></option>
+			  </select>
 			  
           </div>
         
@@ -401,36 +158,39 @@
 	 </div>
 		<div>
 		
-		<!-- TODO: Add State: Suspect is the undefined answers but not sure this could be a problem if two questions have the exact same answers.-->
-		<!-- Syllabus Questions from Topic selection-->
-		<ul class="form-group" style="list-style-type: none" ng-repeat="sq in (filteredInput = (questions| filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | statefilter:stateModel)) track by sq['ID']">
+			<!-- Syllabus Questions from Topic selection-->
+			<ul class="form-group" style="list-style-type: none" ng-repeat="sq in (filteredInput = (questions| filter:topicModel.name | filter:languageModel.language | filter:typeModel.name | statefilter:stateModel)) track by sq['ID']">
+					
+					<!-- TODO: Topic and Authors could be put at the top, because in some cases for every element the same. But if you don't filter this could be wrong. -->
+				<li>Topic: {{sq['Topic']}}</li>
+				<li>Authors: {{actAuthor(sq)}}</li>
 				
-			<li>Topic: {{sq['Topic']}}</li>
-			<li>ID: <label>{{sq['ID']}}</label></li>
-			<li>Author: <label>{{sq['Owner']}}</label></li>
-			<li>Language: <label>{{filterHTMLTags(sq['Language'])}}</label></li>
-			<li>Question: <label>{{filterHTMLTags(sq['Question'])}}</label></li>
-			<li>Type: <label>{{sq['Type']}}</label></li>
-			<li>State: <label> {{sq.state.name}}</label></li>
-			<li>Answers:
-		  <table class="table table-fixed table-bordered table-striped table-condensed">
-			  <thead>
-				<tr>
-					<th>ID</th>
-					<th>Answer</th>
-					<th>Correct</th></tr>
-			  </thead>
-			  <tbody ng-repeat="answer in sq.answers" >
-			  
-			  <tr> 	
-					<td> {{answer.ID}} </td>
-					<td> {{filterHTMLTags(answer.answer)}} </td>
-					<td> {{filterHTMLTags(answer.correct)}} </td> 
-			  </tr>
-			  </tbody>
-		  </table>
-	  </li>
-		</ul>
+				<li>ID: <label>{{sq['ID']}}</label></li>
+				<li>Author: <label>{{sq['Owner']}}</label></li>
+				<li>Language: <label>{{filterHTMLTags(sq['Language'])}}</label></li>
+				<li>Question: <label>{{filterHTMLTags(sq['Question'])}}</label></li>
+				<li>Type: <label>{{sq['Type']}}</label></li>
+				<li>State: <label> {{sq.state.name}}</label></li>
+				<li>Answers:
+				
+				<table class="table table-fixed table-bordered table-striped table-condensed">
+				  <thead>
+					<tr>
+						<th>ID</th>
+						<th>Answer</th>
+						<th>Correct</th></tr>
+				  </thead>
+				  <tbody ng-repeat="answer in sq.answers" >
+				  
+				  <tr> 	
+						<td> {{answer.ID}} </td>
+						<td> {{filterHTMLTags(answer.answer)}} </td>
+						<td> {{filterHTMLTags(answer.correct)}} </td> 
+				  </tr>
+				  </tbody>
+				</table>
+				</li>
+			</ul>
 		</div>
 		<!-- Don't erase: Could be used later. <h3>JSON Conversion:</h3>
 		<button type="button" onClick="selectJson(1)">Select Json and Copy</button>
@@ -457,6 +217,7 @@
 		</ul> 
 		&lt;/quiz&gt;
 		</fieldset>	-->	
+		
 		</div>
       </fieldset>
 	  
@@ -474,9 +235,9 @@
 	  <li>Status: <label>{{Element['state'].name}}</label></li>
 	  <li>State: <label>{{Element['Type']}}</label></li>
 	  <li>Autor/Owner: <label>{{Element['Owner']}}</label></li>
-	  <li><i>Team: <label>{{actAuthor()}}</label></i></li>
+	  <li><i>Team: <label>{{actAuthor(Element)}}</label></i></li>
 	  <li>Version: <label>{{Element['Version']}}</label></li>
-	  <li><i>Grafik oder Tabelle: <label> Nicht in der Testdatenbank vorhanden.</label></i></li>
+	 <!-- <li><i>Grafik oder Tabelle: <label> Nicht in der Testdatenbank vorhanden.</label></i></li>-->
 	  <li>
 		  <table class="table table-bordered table-striped table-condensed">
 			  <thead>
@@ -532,8 +293,6 @@
   <ng-include src="'modalFooterExport2.html'"></ng-include>
 </script> 
 
-
-	
 <!-- EXPORT SYLLABUS MODAL -->
 <script type="text/ng-template" id="modalExportSyllabus.html">
  <div class="modal-header">
@@ -550,10 +309,10 @@
 	  <li>Status: <label>{{Element['state'].name}}</label></li>
 	  <li>Version: <label>{{Element['Version']}}</label></li>
 	  <li>Autor/Owner: <label>{{Element['Owner']}}</label></li>
-	  <li><i>Team: <label>{{actAuthor()}}</label></i></li>
+	  <li><i>Team: <label>{{actAuthor(Element)}}</label></i></li>
 	  <li>Gültig ab: 	<label>{{Element['From'] | date:'yyyy-MM-dd'}}</label></li>
 	  <li>Gültig bis:	<label>{{Element['To'] | date:'yyyy-MM-dd'}}</label></li>
-	  <li><i>Grafik oder Tabelle: <label>In den Testdaten nicht vorhanden</label></i></li>
+	  <li>Description: <label>{{filterHTMLTags(Element['description'])}}</label></li>
 	  <li>
 		  <table style="border: 1px solid black" border="1"><!--  class="table table-striped table-condensed" add -->
 			  <thead >
@@ -566,7 +325,7 @@
 				<tr ng-repeat="se in Element.syllabuselements">
 					<td>{{se.name}}</td>
 					<td>{{se.severity}}%</td>
-					<td>{{filterHTMLTags(se.description)}}</td> <!-- TODO: {{filterHTMLTags(se.description);}} Filter HTML Tags-->
+					<td>{{filterHTMLTags(se.description)}}</td>
 				</tr>
 			  </tbody>
 		  </table>
@@ -580,37 +339,16 @@
   <ng-include src="'modalFooterExport.html'"></ng-include>
 </script> 
 
-<!--TODO: Convert to Angular if possible, no document. alternative for Angular found yet.-->
+<!--TODO: Convert to Angular if possible, no alternative for Angular found yet.-->
 <!-- Used in Syllabus Elements Footer Copy Button -->
 <script>
-
-function selectAll(){
-  var e = document.getElementsByTagName('FIELDSET')[0]; <!-- Watch out: If you create a second <fieldset> tag you have to increment [0].-->
-  var r = document.createRange();
-  r.selectNodeContents(e);
-  var s = window.getSelection();
-  s.removeAllRanges();
-  s.addRange(r);
-  document.execCommand("copy");
-}
+  function selectAll(){
+    var e = document.getElementsByTagName('FIELDSET')[0]; <!-- Watch out: If you create a second <fieldset> tag you have to increment [0] or the wrong place is marked.-->
+    var r = document.createRange();
+    r.selectNodeContents(e);
+    var s = window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+    document.execCommand("copy");
+  }
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

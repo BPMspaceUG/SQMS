@@ -12,16 +12,15 @@
     $logged = 'in';
   }
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" ng-app="SQMSApp">
+<!DOCTYPE html>
+<html ng-app="SQMSApp">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="UTF-8">
   <title>BPMspace SQMS</title>
   <!-- CSS -->
   <link rel="stylesheet" href="../css/bootstrap.min.css">
   <link rel="stylesheet" href="../css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="../css/font-awesome.min.css">
-  <!--<link rel="stylesheet" href="../css/fuelux.min.css">-->
   <link rel="stylesheet" href="../css/xeditable.css">
   <link rel="stylesheet" href="../css/select.min.css">
   <link rel="stylesheet" href="css/SQMS.css">
@@ -37,8 +36,9 @@
   <script type="text/javascript" src="../js/bootstrap.min.js"></script>
   <script type="text/javascript" src="../js/xeditable.min.js"></script>
   <script type="text/javascript" src="../js/select.min.js"></script>
-  <script type="text/javascript" src="js/SQMS.js"></script>
-  <!----- js scripts are loaded in the footer --------------------> 
+  <script type="text/javascript" src="js/SQMS.js"></script>  
+  <script type="text/javascript" src="js/sqms_modalcontroller.js"></script>
+  <script type="text/javascript" src="js/sqms_maincontroller.js"></script>
 </head>
 <body ng-controller="SQMSController">
   <div class="container">
@@ -59,14 +59,6 @@
   <?php
     include_once("inc/RequestHandler.inc.php");    
     $rm = new RoleManager();
-    /*
-    $roleIDs = $rm->getRoleIDsByLIAMid($_SESSION['user_id']); // user_id = LIAM ID
-    echo "LiamID: ".$_SESSION['user_id']."<br/>Roles: ";
-    //var_dump($roleIDs);
-    if ($roleIDs) echo implode(", ", $roleIDs);
-    //var_dump($roles);
-    //echo "Logged in as [Lastname: <b>".$_SESSION['lastname'].", UserID: ".$_SESSION['user_id'].", Roles: ".print_r($roles)."]</b><br/>";
-    */
   ?>
   <div class="container">
     <nav class="navbar navbar-light bg-faded">
@@ -85,26 +77,3 @@
     </nav>
   </div>
   <!--------------- END MAIN MENU --------->
-  <?php
-    /* presente $error_messages when not empty */
-    /*
-    if (!empty($_GET["error_messages"])) {
-      echo '<div class="container alert alert-danger 90_percent" role="alert"> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' ;
-      echo '&nbsp;error:&nbsp;' . htmlspecialchars($_GET["error_messages"]);
-      echo '</br></div>';
-    }
-    $help_text = null; // TODO: Remove!!
-    */
-    /* presente file with helptxt if $help_text = "true" (or set) when not empty */
-    /*
-    if ($help_text) {
-      echo '<div class="container bg-info 90_percent" >' ;
-        echo "<a data-toggle=\"collapse\" data-target=\"#collapse_help_header\" >PSEUDO CODE FOR HEADER PHP - Later here will be the helptext&nbsp;<i class=\"fa fa-chevron-down\"></i></a>";
-        echo "<div id=\"collapse_help_header\" class=\"collapse\"> ";
-        include_once '_header_helptxt.inc.php';
-        echo "</div>";
-      echo "</div><p></p><p></p>";
-    }
-    */
-  ?>
-
