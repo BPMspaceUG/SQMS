@@ -1,6 +1,10 @@
 USE `bpmspace_sqms_v6`;
 
--- WARNUNG you must run "20170309_dump_sqms_structure_and_minimumdata_v6.sql" bevor running this script!
+-- WARNUNG you must run BEVOR running this script!
+-- 1) "20170309_dump_sqms_structure_and_minimumdata_v6.sql"
+-- 2) "20170309_dump_sqms_diff_structure_after_v6.sql"
+-- 3) "20170309_dump_sqms_diff_minimumdata_after_v6.sql"
+
 
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES';
 
