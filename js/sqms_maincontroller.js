@@ -1,50 +1,47 @@
-
 /***********************************************************
  *                    Main Controller                      *
  ***********************************************************/
 module.controller('SQMSController',
-  ['$scope', '$http', '$sce', '$uibModal',
-  function($scope, $http, $sce, $uibModal)
-  {
-    //--------------------------------------------------------- ModalWindow
-    $scope.open = function (TemplateName, command, Element) {
-      var modalInstance = $uibModal.open({
-        animation: false,
-        templateUrl: TemplateName,
-        controller: 'ModalInstanceCtrl', // pass controller
-        resolve: {
-          cmd: function () {
-            return command;
-          },
-          items: function () {
-            return {
-              topics: $scope.topics,
-              users: $scope.users,
-              languages: $scope.languages,
-              synamelist: $scope.syllabi,
-              questypes: $scope.questypes,
-              syllabuselements: $scope.syllabuselements,
-              questionlist: $scope.questions,
-              states: $scope.states
+  function($scope, $http, $sce, $uibModal) {
 
-            };
-          },
-          Elem: function () {
-            return Element;
-          }
+  //--------------------------------------------------------- ModalWindow
+  $scope.open = function (TemplateName, command, Element) {
+    var modalInstance = $uibModal.open({
+      animation: false,
+      templateUrl: TemplateName,
+      controller: 'ModalInstanceCtrl', // pass controller
+      resolve: {
+        cmd: function () {
+          return command;
+        },
+        items: function () {
+          return {
+            topics: $scope.topics,
+            users: $scope.users,
+            languages: $scope.languages,
+            synamelist: $scope.syllabi,
+            questypes: $scope.questypes,
+            syllabuselements: $scope.syllabuselements,
+            questionlist: $scope.questions,
+            states: $scope.states      
+          };
+        },
+        Elem: function () {
+          return Element;
         }
-      });
-      modalInstance.result.then(
-      	function (result) {
-        	$scope.writeData(result.command, result.data); // Send result to server
-        }
-        );
-    };
-    //--------------------------------------------------------- Select Element
-    $scope.setSelection = function(el){ $scope.actSelection = el;};
-	//--------------------------------------------------------- Get Selection
-	$scope.sel = $scope.actSelection;
-	$scope.getSelection = function(){ return $scope.actSelection; }
+      }
+    });
+    modalInstance.result.then(
+      function (result) {
+        $scope.writeData(result.command, result.data); // Send result to server
+      }
+    );
+  };
+  //--------------------------------------------------------- Select Element
+  $scope.setSelection = function(el){ $scope.actSelection = el;};
+  //--------------------------------------------------------- Get Selection
+  $scope.sel = $scope.actSelection;
+  $scope.getSelection = function(){ return $scope.actSelection; }
     //--------------------------------------------------------- Edit Element
     $scope.editEl = function(el) {
       // -- Syllabus
@@ -100,7 +97,7 @@ module.controller('SQMSController',
           elementid: $scope.actSelection.ID,
           stateid: newstate
         }
-        );
+      );
     }
     //--------------------------------------------------------- Sorting Tables
     // TODO: remove redundant code
@@ -125,7 +122,7 @@ module.controller('SQMSController',
       return $scope.reports;
     }
     //--------------------------------------------------------- Get Data Functions
-
+    
     $scope.getTopics = function() {
       $http.get('getjson.php?c=topics').success(function(data) {
         $scope.topics = data.topiclist; // store in scope
@@ -150,17 +147,17 @@ module.controller('SQMSController',
       });    
       return $scope.questypes;    
     }
-    $scope.getStates = function(){
-     $http.get('getjson.php?c=getStates').success(function(data) {
+  $scope.getStates = function(){
+    $http.get('getjson.php?c=getStates').success(function(data) {
         $scope.states = data.statelist; // store in scope
       });
-   }
+  }
 
-   $scope.filterHTMLTags = function(html) {	
-    var div = document.createElement("div");
-    div.innerHTML = html;
-    return div.textContent || div.innerText || "";
-  }    
+    $scope.filterHTMLTags = function(html) {  
+      var div = document.createElement("div");
+      div.innerHTML = html;
+      return div.textContent || div.innerText || "";
+    }    
     //--------------------------------------------------------- #Question  
     $scope.expandedQuestionIDs = [];
     //============================================ Load Q
@@ -258,7 +255,7 @@ module.controller('SQMSController',
         }
       }
     }
-
+  
   //--------------------------------------------------------- Inline editing
   // (can be implemented in writeData() maybe)
   $scope.saveEl = function(actEl, data, cmd) {
@@ -336,71 +333,4 @@ module.controller('SQMSController',
   $scope.getAllQuestions();
   $scope.getAllAnswers();
   $scope.getAllReports(); // Dashboard
-  
-}]);
-
-module.directive('stringToNumber', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModel) {
-      ngModel.$parsers.push(function(value) {
-        return '' + value;
-      });
-      ngModel.$formatters.push(function(value) {
-        return parseFloat(value);
-      });
-    }
-  };
-});
-
-module.filter('propsFilter', function() {
-  return function(items, props) {
-    var out = [];
-
-    if (angular.isArray(items)) {
-      var keys = Object.keys(props);
-
-      items.forEach(function(item) {
-        var itemMatches = false;
-
-        for (var i = 0; i < keys.length; i++) {
-          var prop = keys[i];
-          var text = props[prop].toLowerCase();
-          if (item[prop].toString().toLowerCase().indexOf(text) !== -1) {
-            itemMatches = true;
-            break;
-          }
-        }
-
-        if (itemMatches) {
-          out.push(item);
-        }
-      });
-    } else {
-      // Let the output be the input untouched
-      out = items;
-    }
-
-    return out;
-  };
-  
-});
-
-/* Filter which filters array after models selected in the <select> above */
-module.filter('statefilter', function(){
-	return function(items, stateModel) {
-		var filtered = [];
-
-		if (!stateModel){
-			// return filtered then nothing is shown until a state is chosen.
-			return items;
-		}
-		for(var i = 0; i< items.length; i++){
-			var item = items[i];
-			if ((item.state.name) == (stateModel.name)){
-				filtered.push(item);
-			}
-		}
-		return filtered;
-	};
 });

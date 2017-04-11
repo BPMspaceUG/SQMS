@@ -23,12 +23,12 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
   ds2.setYear(ds2.getFullYear() + 1);
     
   // Get authors of syllabus element to topic and save it as Data in $scope.grenze TODO: I think taht the DB Authors is not in the format expected in the live production.
-  $scope.getAuthors = function () {                 
+  $scope.getAuthors = function () {
       $http.get('getjson.php?c=authortotopiclist').success(function(data) {
       $scope.authores = data.authortotopic;
       $scope.grenze = $scope.authores;
       return $scope.authores;   
-      });
+    });
   }
   // Initialize Authors at modal load. And save act values in grenze.
   $scope.grenze = {};
@@ -81,12 +81,12 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
       if (!$scope.thisQ_SE) $scope.thisQ_SE = []; // empty list
       
       /******  get Questions for SyllabusElement into bugfix Object for Plugin *******/
-      
+
       for (var i=0;i<$scope.thisSE_Q.length;i++){
         var QID = $scope.thisSE_Q[i];
         $scope.bugFix.SEQuestions.push($scope.allQuestions[QID]);
       }
-      
+
       for (var i=0;i<$scope.thisQ_SE.length;i++){
         var tmpID = $scope.thisQ_SE[i];
         $scope.bugFix.QSyllabusElements.push($scope.allSyllabusElements[tmpID]);
@@ -112,22 +112,9 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
   $scope.object = {
     command: cmd,
     data: {
-      name: '',
-      parentID: -1,
-      element_order: 1,
-      severity: 25,
-      answer: '',
-      Owner: '',
-      Version: 1,
-      From: ds,
-      To: ds2,
-      description: '<p>Enter a description...</p>',
-      correct: false,
-      ngTopic: {},
-      ngOwner: {},
-      ngLang: {},
-      ngQuesType: {},
-      ngParent: {}
+      name: '', parentID: -1, element_order: 1, severity: 25, answer: '', Owner: '', Version: 1,
+      From: ds, To: ds2, description: '<p>Enter a description...</p>', correct: false, ngTopic: {},
+      ngOwner: {}, ngLang: {}, ngQuesType: {}, ngParent: {}
     }
   };
   

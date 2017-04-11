@@ -38,8 +38,7 @@
   <script type="text/javascript" src="../js/select.min.js"></script>
   <script type="text/javascript" src="js/SQMS.js"></script>  
   <script type="text/javascript" src="js/sqms_modalcontroller.js"></script>
-  <!--<script type="text/javascript" src="js/sqms_maincontroller.js"></script>-->
-  <script type="text/javascript" src="js/test.js"></script>
+  <script type="text/javascript" src="js/sqms_maincontroller.js"></script>
 </head>
 <body ng-controller="SQMSController">
   <div class="container">
