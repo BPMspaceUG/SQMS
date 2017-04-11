@@ -506,4 +506,6 @@ UPDATE `sqms_question` set question = CONCAT (sqms_question.question, ' (Questio
 
 UPDATE `sqms_answer` set answer = CONCAT (sqms_answer.answer, ' (Answere_ID=',sqms_answer_id,')') where TRUE;
 
+UPDATE `bpmspace_sqms_v6`.`sqms_question` SET `sqms_question_type_id`='8' WHERE TRUE;
+
 UNLOCK TABLES;
