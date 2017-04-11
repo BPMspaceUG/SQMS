@@ -36,7 +36,9 @@
   <script type="text/javascript" src="../js/bootstrap.min.js"></script>
   <script type="text/javascript" src="../js/xeditable.min.js"></script>
   <script type="text/javascript" src="../js/select.min.js"></script>
-  <script type="text/javascript" src="js/SQMS.js"></script>
+  <script type="text/javascript" src="js/SQMS.js"></script>  
+  <!--<script type="text/javascript" src="js/sqms_modalcontroller.js"></script>
+  <script type="text/javascript" src="js/sqms_maincontroller.js"></script>-->
   <!----- js scripts are loaded in the footer --------------------> 
 </head>
 <body ng-controller="SQMSController">
