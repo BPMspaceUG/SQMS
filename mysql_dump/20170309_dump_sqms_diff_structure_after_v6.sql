@@ -35,15 +35,15 @@ create view v_sqms_question_combinator as
     
     concat("<p class=\"sqms_answer_text\">",fnStripTags(sqms_answer_1.answer),"</p><p class=\"sqms_answer_id\">[",LPAD(sqms_answer_1.sqms_question_id,4,"0"),"-",LPAD(sqms_answer_1.sqms_answer_id,4,"0"),"]</p>") as sqms_answer_1, 
 	sqms_answer_1.correct as correct_id_1,
-    (sqms_answer_1.correct/(sqms_answer_1.correct + sqms_answer_2.correct + sqms_answer_3.correct)) as fraction_id_1, 
+    TRUNCATE((sqms_answer_1.correct/(sqms_answer_1.correct + sqms_answer_2.correct + sqms_answer_3.correct))*100, 5) as fraction_id_1, 
     
     concat("<p class=\"sqms_answer_text\">",fnStripTags(sqms_answer_2.answer),"</p><p class=\"sqms_answer_id\">[",LPAD(sqms_answer_1.sqms_question_id,4,"0"),"-",LPAD(sqms_answer_2.sqms_answer_id,4,"0"),"]</p>") as sqms_answer_2, 
 	sqms_answer_2.correct as correct_id_2,
-    (sqms_answer_2.correct/(sqms_answer_1.correct + sqms_answer_2.correct + sqms_answer_3.correct)) as fraction_id_2,
+    TRUNCATE((sqms_answer_2.correct/(sqms_answer_1.correct + sqms_answer_2.correct + sqms_answer_3.correct))*100, 5) as fraction_id_2,
 	
     concat("<p class=\"sqms_answer_text\">",fnStripTags(sqms_answer_3.answer),"</p><p class=\"sqms_answer_id\">[",LPAD(sqms_answer_1.sqms_question_id,4,"0"),"-",LPAD(sqms_answer_3.sqms_answer_id,4,"0"),"]</p>") as sqms_answer_3, 
 	sqms_answer_3.correct as correct_id_3,
-    (sqms_answer_3.correct/(sqms_answer_1.correct + sqms_answer_2.correct + sqms_answer_3.correct)) as fraction_id_3,
+    TRUNCATE((sqms_answer_3.correct/(sqms_answer_1.correct + sqms_answer_2.correct + sqms_answer_3.correct))*100, 5) as fraction_id_3,
     
     sqms_topic.sqms_topic_id,
     sqms_language.language,

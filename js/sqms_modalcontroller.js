@@ -289,27 +289,31 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
   // Export data, JSON format=0 or XML format=1
   $scope.exportData = function(format, input){
   $scope.returns = "";
-    if (format == 0){ // case Json
+    if (format == 0){ // case Json multi
     
-      for (var i in $scope.filteredInput){
+      for (var i in input){
+        console.log("Input ", input);
           $scope.returns += $scope.toJ(input[i]);
       }
     }
-    else if (format == 1){ // case XML
+    else if (format == 02){ // case Json single
+      $scope.returns += $scope.toJ(input);
+    }
+    else if (format == 1){ // case XML multi
     $scope.inner = "";
-      for (var i in $scope.filteredInput){
-          // TODO: Add Xml header.
-          
+      for (var i in input){
           $scope.inner += $scope.xmldata(input[i]);
       }
       $scope.returns = "<?xml version=\"1.0\" ?><quiz>" + $scope.inner + "</quiz>"
     }
-    return $scope.returns;
-  }
+    else if (format == 12){ // case XML single
+    $scope.inner = $scope.xmldata(input);
+      $scope.returns = "<?xml version=\"1.0\" ?><quiz>" + $scope.inner + "</quiz>"
+    }}
 
   // Transform single JSON Object to right json format.
   $scope.toJ = function (a){
-
+console.log(a);
     if (a.answers.length == 3){
   $scope.user = 
     {
@@ -366,12 +370,30 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
     return $scope.jsonString;
   }
     // Escape html in export for security reasons.
-  $scope.escapehtml = function (str){
+  // $scope.escapehtml = function (str){
      
-  str = encodeURIComponent(str);
-    return str;
+  // str = encodeURIComponent(str);
+  //   return str;
 
-  }
+  // }
+
+
+	$scope.escapehtml = function(string) {
+	  var entityMap = {
+		  '&': '&amp;',
+		  '<': '&lt;',
+		  '>': '&gt;',
+		  '"': '&quot;',
+		  "'": '&#39;',
+		  '/': '&#x2F;',
+		  '`': '&#x60;',
+		  '=': '&#x3D;'
+		};
+
+	  return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+	    return entityMap[s];
+	  });
+	}
    
 // TODO: Write the function to create an XML Export element in Moodle XML.
   $scope.xmldata = function(a){
