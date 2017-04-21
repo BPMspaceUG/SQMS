@@ -22,7 +22,7 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
   var ds2 = new Date();
   ds2.setYear(ds2.getFullYear() + 1);
     
-  // Get authors of syllabus element to topic and save it as Data in $scope.grenze TODO: I think taht the DB Authors is not in the format expected in the live production.
+  /* Get authors of syllabus element to topic and save it as Data in $scope.grenze TODO: Improve SQL call and check for security issues*/
   $scope.getAuthors = function () {
       $http.get('getjson.php?c=authortotopiclist').success(function(data) {
       $scope.authores = data.authortotopic;
@@ -30,11 +30,11 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
       return $scope.authores;
     });
   }
-  // Initialize Authors at modal load. And save act values in grenze.
+/* Initialize authors at modal load. And save act values in grenze.*/
   $scope.grenze = {};
   $scope.getAuthors();
   
-  // Check if ActTopic == Topic Name of one of the Object Topics (should be) and if true return the Authors for this Topic.
+ /* Check if ActTopic == Topic Name of one of the Object Topics (should be) and if true return the authors for this topic. */
   $scope.actAuthor = function(Element){
     arr = [];
     for (i =0; i<$scope.grenze.length; i++){
@@ -94,7 +94,7 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
       
     });
   }
-  
+  /* Tool for user input. Text editor*/
   $scope.tinymceOptions = {
     plugins: [
       'advlist autolink lists link image charmap print preview hr anchor pagebreak',
@@ -108,7 +108,7 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
     theme : 'modern'
   };
   
-  // Initial settings
+/* Initial settings */
   $scope.object = {
     command: cmd,
     data: {
@@ -118,11 +118,10 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
     }
   };
   
-  // For Question Selection
-  
+/* For Question Selection  */  
   $scope.single = {availableOptions: ["Single","Multi"], selectedOption: "Single"};
   $scope.myDropDown = 'Single';
-  // HTML to Json 
+/* HTML to Json */
   $scope.jsonString = "";
   
   // Important
@@ -292,9 +291,9 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
   $scope.xmlString = "";
 
 
-  // Filtered Input
+  /* Filtered Input after selection with select boxes. */
   $scope.filteredInput;
-  // Export data, JSON format=0 or XML format=1
+  /* Export data, JSON format=0 or XML format=1 */
   $scope.exportData = function(format, input){
   $scope.returns = "";
     if (format == 0){ // case Json multi
@@ -321,72 +320,90 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
     return $scope.returns
 }
 
-  // Transform single JSON Object to right json format.
+	/* Transform single JSON Object to right json format. TODO: No hard code create questions dynamically. 
+	Before create a check mechanism of which questions are allowed to export for ex. dont export new only released. */
   $scope.toJ = function (a){
-    if (a.answers.length == 3){
-  $scope.user = 
+   if (!(a.answers)){
+   	$scope.user = "This question has no answers!";
+   }
+   else if (a.answers.length == 4){
+    $scope.user = 
     {
-      title: "Example Questions",
-      description: "Only one answer is correct.",
-      questions: {
-        [a.ID] : {
-          question: a.Question,
-          answers: [{
+     title: "Example Questions",
+     description: "Multiple answers can be correct.",
+     questions: {
+      [a.ID] : {
+       question: a.Question,
+       answers: [{
+         answer: (a.answers[0].answer),
+         correct: (a.answers[0].correct)
+       }, {
+         answer: (a.answers[1].answer),
+         correct: (a.answers[1].correct)
+       }, {
+         answer: (a.answers[2].answer),
+         correct: (a.answers[2].correct)
+       }, {
+         answer: (a.answers[3].answer),
+         correct: (a.answers[3].correct)
+       }],
+       
+     }},	
+   };
+ }
+ else if (a.answers.length == 3){
+  $scope.user = 
+  {
+   title: "Example Questions",
+   description: "Multiple answers can be correct.",
+   questions: {
+    [a.ID] : {
+     question: a.Question,
+     answers: [{
+       answer: (a.answers[0].answer),
+       correct: (a.answers[0].correct)
+     }, {
+       answer: (a.answers[1].answer),
+       correct: (a.answers[1].correct)
+     }, {
+       answer: (a.answers[2].answer),
+       correct: (a.answers[2].correct)
+     }],
+     
+   }},	
+ };
+}
+else if (a.answers.length == 2)
+{
+  $scope.user = {
+    title: "Example Questions",
+    description: "Multiple answers can be correct.",
+    questions: {
+      [a.ID]: {
+        question: a.Question,
+        answers: [{
           answer: (a.answers[0].answer),
           correct: (a.answers[0].correct)
         }, {
           answer: (a.answers[1].answer),
           correct: (a.answers[1].correct)
-        }, {
-          answer: (a.answers[2].answer),
-          correct: (a.answers[2].correct)
         }],
-         
-      }}, 
+        
+      }},	
     };
-  }
-  else if (a.answers.length == 2)
-  {
-    $scope.user = {
-    title: "Example Questions",
-    description: "Only one answer is correct.",
-    questions: {
-       [a.ID]: {
-        question: a.Question,
-        answers: [{
-        answer: (a.answers[0].answer),
-        correct: (a.answers[0].correct)
-      }, {
-        answer: (a.answers[1].answer),
-        correct: (a.answers[1].correct)
-      }],
-      
-    }}, 
-      };
-  } 
+  }	
   else 
   {
-    // Not enough or too many Answers
-    $scope.wrong = true;
-    $scope.user = "Fehlerhafte Frage";
-  }
-    $scope.json = angular.toJson ($scope.user);
-    $scope.jsonString = $scope.json;
+		// Not enough or too many Answers
+		$scope.wrong = true;
+		$scope.user = "Error in the question with ID: " + a.ID ;
+	}
+  $scope.json = angular.toJson ($scope.user);
+  $scope.jsonString = $scope.json;
 
-  //  $scope.fullJsonMulti = {}; // Erstmal String zwischenspeicher wieder leeren.
-  //  $scope.fullJsonMulti += $scope.jsonString; 
-
-    return $scope.jsonString;
-  }
-    // Escape html in export for security reasons.
-  // $scope.escapehtml = function (str){
-     
-  // str = encodeURIComponent(str);
-  //   return str;
-
-  // }
-
-
+  return $scope.jsonString;
+}
+ /* Escape html in export for security reasons. */
 	$scope.escapehtml = function(string) {
 	  var entityMap = {
 		  '&': '&amp;',
@@ -404,66 +421,68 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
 	  });
 	}
    
-// Function to create the XML Data in Moodle Format
+/* Function to create an XML Export element in Moodle XML. */
   $scope.xmldata = function(a){
-    //Answers 
-   $scope.que = function(nr){
-    if ( nr > (a.answers.length -1)){
+    /* Returns the single answers dependent of their number nr in moodle/XML format.  */
+ $scope.ans = function(nr){
+   if ( nr > (a.answers.length -1)){
     return "";
-    } 
-    else {
-    return "<answer fraction=\"" + $scope.fraction(nr) + "\"><text>"
-    + $scope.escapehtml(a.answers[nr].answer)+ "</text></answer>"
-    }
-  }
-  // Returns the fraction dependent of how many right answers there are for example 2 right answers: return 50 for each right answer and 0 for false answer.
-   $scope.fraction = function (nr){
-     $scope.right = function (){
-       $scope.a = 0;
-       for(var i=0; i<a.answers.length; i++){
-         if (a.answers[i].correct == true){
-           $scope.a += 1;
-         }
-       }
-      return $scope.a;
-     }
-     // TODO: Create handlers for other cases: 2 questions, 4 ...
-    if ($scope.right() == 1){
-      if (a.answers[nr].correct == false){
-      return "0"}
-      else return "100";    
-    }
-    else if ($scope.right() == 2){
-      if (a.answers[nr].correct == false){
-      return "0"}
-      else return "50";
-    }
-    else if ($scope.right() == 3){
-      if (a.answers[nr].correct == false){
-      return "0"}
-      else return "33.33333";
-    }
-    //TODO: Pop up that there are false elements.
-    else return "too many or few right";
-  }
-    
-    
-    $scope.question = "<question type=\"multichoice\"><name><text>" 
-    + (a.ID) + "</text></name><questiontext format=\"html\"><text>"  //TODO: If a question name exists add it at the beginning of the line
-    //+ "<![CDATA[" + (a.Question)+ "]]>" + "</text></questiontext>" 
-    + $scope.escapehtml(a.Question) + "</text></questiontext>" 
-    + $scope.que(0) 
-    + $scope.que(1)
-    + $scope.que(2)
-    + "<single>false</single></question>";
-    return $scope.question;
+  } 
+  else {
+   return "<answer fraction=\"" + $scope.fraction(nr) + "\"><text>"
+   + $scope.escapehtml(a.answers[nr].answer)+ "</text></answer>"
+ }
+}
+
+/* Returns a string with all answers of actQuestion in XML format*/
+$scope.answ = function(){
+  var q = "";
+  for(var i in a.answers){
+   q += ($scope.ans(i));
+ }
+ return q;
+}
+/* Cuts the decimal number to fit the moodle format of 5 decimal numbers. */
+$scope.truncate = function (num, digits) {
+  var numS = num.toString(),
+  decPos = numS.indexOf('.'),
+  substrLength = decPos == -1 ? numS.length : 1 + decPos + digits,
+  trimmedResult = numS.substr(0, substrLength),
+  finalResult = isNaN(trimmedResult) ? 0 : trimmedResult;
+  return parseFloat(finalResult);
+}
+
+/* Returns the fraction dependent of how many right answers there are for example 2 right answers: return 50 for each right answer and 0 for every false answer. */
+$scope.fraction = function (nr){
+  $scope.right = function (){
+   $scope.a = 0;
+   for(var i=0; i<a.answers.length; i++){
+    if (a.answers[i].correct == true){
+     $scope.a += 1;
+   }
+ }
+ return $scope.a;
+}
+if (a.answers[nr].correct == false){
+  return "0"}
+  else return ($scope.truncate(100/($scope.right()), 5));
+}
+
+/* Returns the complete XML string of the conversion */
+$scope.question = "<question type=\"multichoice\"><name><text>" 
+	  + (a.ID) + "</text></name><questiontext format=\"html\"><text>" // Added the ID of the question to the short description field for moodle, so that there is a reference in moodle to SQMS.
+	  + $scope.escapehtml(a.Question) + "</text></questiontext>"
+	  + $scope.answ()
+	  + "<shuffleanswers>1</shuffleanswers><single>false</single></question>";
+	  
+	  return $scope.question;
   }
   
   // --- [Cancel] clicked
   $scope.cancel = function () {
     $uibModalInstance.dismiss('cancel');
   };
-  // --- [Export] clicked
+  // --- [Export] clicked (not used)
   $scope.export = function () {
 
   };
@@ -475,7 +494,7 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
     };
   
   
-  // Function to save data to a file on PC.
+  /* Function to save data to a file on PC. */
   $scope.saveToPc = function (data, filename, type) {
 
     if (!data) {
@@ -491,7 +510,6 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
     console.error('No type');
     }
     var data2 = $scope.exportData(type, data);
-
     if (typeof data2 === 'object') {
     data2 = JSON.stringify(data, undefined, 2);
     }
