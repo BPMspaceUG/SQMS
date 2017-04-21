@@ -288,12 +288,11 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
   $scope.filteredInput;
   // Export data, JSON format=0 or XML format=1
   $scope.exportData = function(format, input){
-  	console.log(input);
   $scope.returns = "";
     if (format == 0){ // case Json multi
     
       for (var i in input){
-       // console.log("Input ", input);
+
           $scope.returns += $scope.toJ(input[i]);
       }
     }
@@ -316,7 +315,6 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
 
   // Transform single JSON Object to right json format.
   $scope.toJ = function (a){
-//console.log(a);
     if (a.answers.length == 3){
   $scope.user = 
     {
@@ -398,7 +396,7 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
 	  });
 	}
    
-// TODO: Write the function to create an XML Export element in Moodle XML.
+// Function to create the XML Data in Moodle Format
   $scope.xmldata = function(a){
     //Answers 
    $scope.que = function(nr){
@@ -450,7 +448,6 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
     + $scope.que(1)
     + $scope.que(2)
     + "<single>false</single></question>";
-    //console.log($scope.question);
     return $scope.question;
   }
   
