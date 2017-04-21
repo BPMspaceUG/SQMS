@@ -244,8 +244,6 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
   if ($scope.object.data.From != null) $scope.object.data.From = new Date($scope.object.data.From);    
   if ($scope.object.data.To != null) $scope.object.data.To = new Date($scope.object.data.To);
 
- 
-  
   // --- [OK] clicked
   $scope.ok = function () {
     // Set the new Topic if it has changed
@@ -269,14 +267,24 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
     $scope.object.data.SyllabusElementIDs = []; // init new array  
     for (var i=0;i<$scope.bugFix.QSyllabusElements.length;i++) {
       $scope.object.data.SyllabusElementIDs.push($scope.bugFix.QSyllabusElements[i].ID);
-    }
+    }    
     // Return result
     $uibModalInstance.close($scope.object);
   };
+
+  $scope.okandnew = function () {    
+    // Reopen
+    console.log("XXX", $scope);
+    $scope.$$prevSibling.open('modalAnswer.html', 'create_answer', $scope.Element);
+    // Save
+    $scope.ok();
+  };
+
+
   // If there are Wrong or unfinished Questions be true.
   $scope.wrong = false;
   
-    $scope.topicModel = [];
+  $scope.topicModel = [];
   $scope.typeModel = [];
   $scope.languageModel = [];
   $scope.zwischenspeicher = [];
