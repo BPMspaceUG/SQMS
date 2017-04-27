@@ -74,3 +74,40 @@ CREATE
     END
     //
     DELIMITER ;
+
+# Create a new table as copy of coms_participant.
+
+DROP TABLE IF EXISTS bpmspace_coms_v1.coms_participant_history;
+
+CREATE TABLE `coms_participant_history` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `coms_participant_id` int(11) NOT NULL,
+  `coms_participant_lastname` varchar(60) DEFAULT NULL,
+  `coms_participant_firstname` varchar(60) DEFAULT NULL,
+  `coms_participant_public` tinyint(4) DEFAULT '0',
+  `coms_participant_placeofbirth` varchar(60) DEFAULT NULL,
+  `coms_participant_birthcountry` varchar(60) DEFAULT NULL,
+  `coms_participant_dateofbirth` date DEFAULT NULL,
+  `coms_participant_LIAM_id` int(11) NOT NULL,
+  `coms_participant_gender` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+# Create trigger for coms participants.
+
+DROP TRIGGER IF EXISTS `bpmspace_coms_v1.coms_participant_update`;
+DELIMITER //
+
+CREATE
+	TRIGGER `bpmspace_coms_v1.coms_participant_update` AFTER UPDATE 
+	ON `coms_participant`
+	FOR EACH ROW BEGIN
+	
+	INSERT INTO coms_participant_history (coms_participant_id, coms_participant_lastname, coms_participant_firstname, coms_participant_public, coms_participant_placeofbirth, coms_participant_birthcountry, coms_participant_dateofbirth, coms_participant_LIAM_id, coms_participant_gender) 
+	VALUES (OLD.coms_participant_id, OLD.coms_participant_lastname, OLD.coms_participant_firstname, OLD.coms_participant_public, OLD.coms_participant_placeofbirth, OLD.coms_participant_birthcountry, OLD.coms_participant_dateofbirth, OLD.coms_participant_LIAM_id, OLD.coms_participant_gender);
+
+    END
+    //
+    DELIMITER ;
+
