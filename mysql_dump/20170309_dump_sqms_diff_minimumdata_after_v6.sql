@@ -36,4 +36,10 @@ ADD CONSTRAINT `sqms_exam_version_id_fk_1`
   FOREIGN KEY (`sqms_exam_version_id`)
   REFERENCES `bpmspace_sqms_v6`.`sqms_exam_version` (`sqms_exam_version_id`)
   ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+
+ADD CONSTRAINT `sqms_question_id_fk_2` 
+  FOREIGN KEY (`sqms_question_id`) 
+  REFERENCES `sqms_question` (`sqms_question_id`) 
+  ON DELETE NO ACTION 
   ON UPDATE NO ACTION;
