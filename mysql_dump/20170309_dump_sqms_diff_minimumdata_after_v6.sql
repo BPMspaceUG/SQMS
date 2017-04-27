@@ -43,3 +43,34 @@ ADD CONSTRAINT `sqms_question_id_fk_2`
   REFERENCES `sqms_question` (`sqms_question_id`) 
   ON DELETE NO ACTION 
   ON UPDATE NO ACTION;
+
+# Add triggers
+DROP TRIGGER IF EXISTS `bpmspace_sqms_v6.question_after_update`;
+DELIMITER //
+
+CREATE
+	TRIGGER `bpmspace_sqms_v6.question_after_update` AFTER UPDATE 
+	ON `sqms_question`
+	FOR EACH ROW BEGIN
+	
+	INSERT INTO sqms_history (sqms_users_login, timestamp, table_name, main_id, column_name, value_OLD, value_NEW) 
+    VALUES (CURRENT_USER(), NOW(), "sqms_question", OLD.sqms_question_id, "sqms_question_state_id", OLD.sqms_question_state_id, NEW.sqms_question_state_id);
+	
+    END
+    //
+    DELIMITER ;
+	
+DROP TRIGGER IF EXISTS `bpmspace_sqms_v6.answer_after_update`;
+DELIMITER //
+
+CREATE
+	TRIGGER `bpmspace_sqms_v6.answer_after_update` AFTER UPDATE 
+	ON `sqms_answer`
+	FOR EACH ROW BEGIN
+	
+	INSERT INTO sqms_history (sqms_users_login, timestamp, table_name, main_id, column_name, value_OLD, value_NEW) 
+    VALUES (CURRENT_USER(), NOW(), "sqms_answer", OLD.sqms_answer_id, "sqms_question_id", OLD.sqms_question_id, NEW.sqms_question_id);
+	
+    END
+    //
+    DELIMITER ;
