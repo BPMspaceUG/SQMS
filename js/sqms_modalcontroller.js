@@ -454,18 +454,10 @@ $scope.truncate = function (num, digits) {
 
 /* Returns the fraction dependent of how many right answers there are for example 2 right answers: return 50 for each right answer and 0 for every false answer. */
 $scope.fraction = function (nr){
-  $scope.right = function (){
-   $scope.a = 0;
-   for(var i=0; i<a.answers.length; i++){
-    if (a.answers[i].correct == true){
-     $scope.a += 1;
-   }
- }
- return $scope.a;
-}
+  
 if (a.answers[nr].correct == false){
   return "0"}
-  else return ($scope.truncate(100/($scope.right()), 5));
+  else return ($scope.truncate(100, 5));
 }
 
 /* Returns the complete XML string of the conversion */
