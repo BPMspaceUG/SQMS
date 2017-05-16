@@ -314,7 +314,7 @@ class RequestHandler
       }
       $suffix = substr($suffix, 0, -4); // remove last " OR "
     }
-
+   
     $query = "SELECT 
       sqms_syllabus_id AS 'ID',
       a.name AS 'Name',
@@ -329,6 +329,8 @@ class RequestHandler
       c.sqms_language_id AS 'LangID',
       a.sqms_syllabus_id_successor AS 'SuccID',
       a.sqms_syllabus_id_predecessor AS 'PredID',
+	  a.sqms_syllabus_time AS 'Time',
+      a.sqms_syllabus_question_nr AS 'QuestionNr',
       CONCAT('Language: ', c.language, ' - Version: ', version) AS displTxt,
       'S' AS 'ElementType'
   FROM

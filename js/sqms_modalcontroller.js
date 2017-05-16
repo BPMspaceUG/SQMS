@@ -125,6 +125,7 @@ angular.module('SQMSApp').controller('ModalInstanceCtrl',
   $scope.jsonString = "";
   
   // Important
+  $scope.expression = 'This is <p>a paragraph</p> in html';
   $scope.Element = Elem;  
   $scope.topics = items.topics;
   $scope.users = items.users;
