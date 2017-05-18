@@ -388,3 +388,63 @@ VIEW `bpmspace_sqms_v6`.`v_sqms_syllabus_syllabuselement` AS
 
             AND (`TOPIC`.`sqms_topic_id` = `SYLLA`.`sqms_topic_id`));
 
+
+# Export in one Cell.
+
+CREATE OR REPLACE
+VIEW `v_sqms_short_xml_export_moodle2` AS
+    SELECT 
+    
+		CONCAT('<question type="multichoice">
+		 <name>
+			 <text>', CONCAT('[',
+                LPAD(`d`.`sqms_question_id`, 4, '0'),
+                '-',
+                LPAD(`d`.`sqms_answer_id_1`, 4, '0'),
+                '-',
+                LPAD(`d`.`sqms_answer_id_2`, 4, '0'),
+                '-',
+                LPAD(`d`.`sqms_answer_id_3`, 4, '0'),
+                ']',
+                `f`.`name`,
+                '-',
+                `g`.`language`,
+                '-',
+                SUBSTR(`e`.`question`, 1, 20)), '</text>
+		 </name>
+		 <questiontext format="html">
+			 <text>', `e`.`question` , '</text>
+		 </questiontext>
+			<answer fraction="', (CASE
+            WHEN `a`.`correct` THEN 100.00000
+            ELSE 0
+        END), '">
+				<text>', `a`.`answer`, '</text>
+			</answer>
+			<answer fraction="', (CASE
+            WHEN `b`.`correct` THEN 100.00000
+            ELSE 0
+        END), '">
+				<text>', `b`.`answer`, '</text>
+			</answer>
+			<answer fraction="', (CASE
+            WHEN `c`.`correct` THEN 100.00000
+            ELSE 0
+        END), '">
+				<text>', `c`.`answer`, '</text>
+			</answer>
+			<shuffleanswers>1</shuffleanswers>
+			<single>false</single>
+			<answernumbering>123</answernumbering>
+	</question>') AS `moodle`
+    
+    FROM
+        ((((((`sqms_question_answer_exam_version` `d`
+        JOIN `sqms_topic` `f`)
+        JOIN `sqms_language` `g`)
+        JOIN `sqms_question` `e` ON (((`d`.`sqms_question_id` = `e`.`sqms_question_id`)
+            AND (`f`.`sqms_topic_id` = `e`.`sqms_topic_id`)
+            AND (`g`.`sqms_language_id` = `e`.`sqms_language_id`))))
+        JOIN `sqms_answer` `a` ON ((`a`.`sqms_answer_id` = `d`.`sqms_answer_id_1`)))
+        JOIN `sqms_answer` `b` ON ((`b`.`sqms_answer_id` = `d`.`sqms_answer_id_2`)))
+        JOIN `sqms_answer` `c` ON ((`c`.`sqms_answer_id` = `d`.`sqms_answer_id_3`)))
