@@ -205,3 +205,186 @@ c.answer as answer_3, CASE
                ELSE 0 
        END as fraction_id_3
 FROM bpmspace_sqms_v6.sqms_question_answer_exam_version d natural join sqms_topic f natural join sqms_language g natural join sqms_question e join sqms_answer a on a.sqms_answer_id = d.sqms_answer_id_1 join sqms_answer b on b.sqms_answer_id = sqms_answer_id_2 join sqms_answer c on c.sqms_answer_id = sqms_answer_id_3;
+
+DROP TABLE IF EXISTS `bpmspace_sqms_v6.sqms_syllabus`;
+
+CREATE TABLE `sqms_syllabus` (
+  `sqms_syllabus_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL,
+  `sqms_state_id` bigint(20) NOT NULL,
+  `version` bigint(20) NOT NULL,
+  `sqms_topic_id` bigint(20) NOT NULL,
+  `owner` varchar(32) NOT NULL,
+  `sqms_language_id` bigint(20) NOT NULL,
+  `sqms_syllabus_id_predecessor` bigint(20) DEFAULT NULL,
+  `sqms_syllabus_id_successor` bigint(20) DEFAULT NULL,
+  `validity_period_from` date DEFAULT NULL,
+  `validity_period_to` date DEFAULT NULL,
+  `description` mediumtext,
+  `sqms_syllabus_time` int(11) DEFAULT NULL,
+  `sqms_syllabus_question_nr` int(11) DEFAULT NULL,
+  PRIMARY KEY (`sqms_syllabus_id`),
+  KEY `fk_sqms_syllabus_sqms_language1_idx` (`sqms_language_id`),
+  KEY `fk_sqms_syllabus_sqms_state1_idx` (`sqms_state_id`),
+  CONSTRAINT `fk_sqms_syllabus_sqms_language1` FOREIGN KEY (`sqms_language_id`) REFERENCES `sqms_language` (`sqms_language_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sqms_syllabus_sqms_state1` FOREIGN KEY (`sqms_state_id`) REFERENCES `sqms_syllabus_state` (`sqms_syllabus_state_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=120 DEFAULT CHARSET=utf8;
+
+CREATE OR REPLACE
+
+    VIEW `bpmspace_sqms_v6`.`v_sqms_syllabus_syllabuselement_question` AS
+
+    SELECT
+
+        `SYLLA`.`sqms_syllabus_id` AS `sqms_syllabus_id`,
+
+        `SYLLA`.`name` AS `S_name`,
+
+        `SYLLA`.`description` AS `S_description`,
+
+        `SYLEL`.`sqms_syllabus_element_id` AS `sqms_syllabus_element_id`,
+
+        `SYLEL`.`element_order` AS `element_order`,
+
+        `SYLEL`.`name` AS `SE_name`,
+
+        `SYLEL`.`description` AS `SE_description`,
+
+        `SYLEL`.`severity` AS `severity`,
+
+        (ROUND((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_time`) / 100) * 2),
+
+                0) / 2) AS `time`,
+
+        (ROUND((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 2),
+
+                0) / 2) AS `question_count`,
+
+        (ROUND(((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 1.2) * 2),
+
+                0) / 2) AS `question_count_max`,
+
+        (ROUND(((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 0.8) * 2),
+
+                0) / 2) AS `question_count_min`,
+
+        `QUEST`.`sqms_question_id` AS `sqms_question_id`,
+
+        `QUEST`.`question` AS `question`
+
+    FROM
+
+        (((`bpmspace_sqms_v6`.`sqms_syllabus_element` `SYLEL`
+
+        LEFT JOIN `bpmspace_sqms_v6`.`sqms_syllabus` `SYLLA` ON ((`SYLLA`.`sqms_syllabus_id` = `SYLEL`.`sqms_syllabus_id`)))
+
+        LEFT JOIN `bpmspace_sqms_v6`.`sqms_syllabus_element_question` `SYLEL_Q` ON ((`SYLEL`.`sqms_syllabus_element_id` = `SYLEL_Q`.`sqms_syllabus_element_id`)))
+
+        LEFT JOIN `bpmspace_sqms_v6`.`sqms_question` `QUEST` ON ((`SYLEL_Q`.`sqms_question_id` = `QUEST`.`sqms_question_id`)))
+
+    ORDER BY `SYLLA`.`sqms_syllabus_id` , `SYLEL`.`element_order`;
+
+CREATE OR REPLACE
+
+VIEW `bpmspace_sqms_v6`.`v_sqms_syllabus_syllabuselement` AS
+
+    SELECT
+
+        `SYLLA`.`sqms_syllabus_id` AS `sqms_syllabus_id`,
+
+        `STATE`.`name` AS `State`,
+
+        `SYLLA`.`name` AS `S_name`,
+
+        `TOPIC`.`name` AS `Topic`,
+
+        `SYLLA`.`description` AS `S_description`,
+
+        `SYLLA`.`owner` AS `S_owner`,
+
+        `SYLLA`.`validity_period_from` AS `validity_period_from`,
+
+        `SYLLA`.`validity_period_to` AS `validity_period_to`,
+
+        `SYLLA`.`version` AS `S_version`,
+
+        `LANG`.`language` AS `language`,
+
+        `SYLLA`.`sqms_syllabus_question_nr` AS `sqms_syllabus_question_nr`,
+
+        `SYLLA`.`sqms_syllabus_time` AS `sqms_syllabus_time`,
+
+        `SYLEL`.`element_order` AS `element_order`,
+
+        `SYLEL`.`name` AS `SE_name`,
+
+        `SYLEL`.`description` AS `SE_description`,
+
+        `SYLEL`.`severity` AS `severity`,
+
+        (ROUND((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_time`) / 100) * 2),
+
+                0) / 2) AS `time`,
+
+        (ROUND((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 2),
+
+                0) / 2) AS `question_count`,
+
+        (ROUND(((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 1.2) * 2),
+
+                0) / 2) AS `question_count_max`,
+
+        (ROUND(((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 0.8) * 2),
+
+                0) / 2) AS `question_count_min`,
+
+        CONCAT('State: ',
+
+                `STATE`.`name`,
+
+                ' - ID: ',
+
+                `SYLLA`.`sqms_syllabus_id`,
+
+                ' - Topic: ',
+
+                `TOPIC`.`name`,
+
+                ' - Version: ',
+
+                `SYLLA`.`version`,
+
+                ' - language: ',
+
+                `LANG`.`language`,
+
+                ' - valid from ',
+
+                `SYLLA`.`validity_period_from`,
+
+                ' valid until ',
+
+                `SYLLA`.`validity_period_to`) AS `Syllabus_Info`
+
+    FROM
+
+        ((((`bpmspace_sqms_v6`.`sqms_syllabus_element` `SYLEL`
+
+        JOIN `bpmspace_sqms_v6`.`sqms_syllabus` `SYLLA`)
+
+        JOIN `bpmspace_sqms_v6`.`sqms_language` `LANG`)
+
+        JOIN `bpmspace_sqms_v6`.`sqms_syllabus_state` `STATE`)
+
+        JOIN `bpmspace_sqms_v6`.`sqms_topic` `TOPIC`)
+
+    WHERE
+
+        ((`SYLLA`.`sqms_syllabus_id` = `SYLEL`.`sqms_syllabus_id`)
+
+            AND (`LANG`.`sqms_language_id` = `SYLLA`.`sqms_language_id`)
+
+            AND (`STATE`.`sqms_syllabus_state_id` = `SYLLA`.`sqms_state_id`)
+
+            AND (`TOPIC`.`sqms_topic_id` = `SYLLA`.`sqms_topic_id`));
+
