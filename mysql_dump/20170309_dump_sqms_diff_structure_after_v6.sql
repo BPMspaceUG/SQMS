@@ -234,60 +234,6 @@ CREATE TABLE `sqms_syllabus` (
 
 CREATE OR REPLACE
 
-    VIEW `v_sqms_syllabus_syllabuselement_question` AS
-
-    SELECT
-
-        `SYLLA`.`sqms_syllabus_id` AS `sqms_syllabus_id`,
-
-        `SYLLA`.`name` AS `S_name`,
-
-        `SYLLA`.`description` AS `S_description`,
-
-        `SYLEL`.`sqms_syllabus_element_id` AS `sqms_syllabus_element_id`,
-
-        `SYLEL`.`element_order` AS `element_order`,
-
-        `SYLEL`.`name` AS `SE_name`,
-
-        `SYLEL`.`description` AS `SE_description`,
-
-        `SYLEL`.`severity` AS `severity`,
-
-        (ROUND((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_time`) / 100) * 2),
-
-                0) / 2) AS `time`,
-
-        (ROUND((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 2),
-
-                0) / 2) AS `question_count`,
-
-        (ROUND(((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 1.2) * 2),
-
-                0) / 2) AS `question_count_max`,
-
-        (ROUND(((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 0.8) * 2),
-
-                0) / 2) AS `question_count_min`,
-
-        `QUEST`.`sqms_question_id` AS `sqms_question_id`,
-
-        `QUEST`.`question` AS `question`
-
-    FROM
-
-        (((`sqms_syllabus_element` `SYLEL`
-
-        LEFT JOIN `sqms_syllabus` `SYLLA` ON ((`SYLLA`.`sqms_syllabus_id` = `SYLEL`.`sqms_syllabus_id`)))
-
-        LEFT JOIN `sqms_syllabus_element_question` `SYLEL_Q` ON ((`SYLEL`.`sqms_syllabus_element_id` = `SYLEL_Q`.`sqms_syllabus_element_id`)))
-
-        LEFT JOIN `sqms_question` `QUEST` ON ((`SYLEL_Q`.`sqms_question_id` = `QUEST`.`sqms_question_id`)))
-
-    ORDER BY `SYLLA`.`sqms_syllabus_id` , `SYLEL`.`element_order`;
-
-CREATE OR REPLACE
-
 VIEW `v_sqms_syllabus_syllabuselement` AS
 
     SELECT
@@ -311,36 +257,8 @@ VIEW `v_sqms_syllabus_syllabuselement` AS
         `SYLLA`.`version` AS `S_version`,
 
         `LANG`.`language` AS `language`,
-
-        `SYLLA`.`sqms_syllabus_question_nr` AS `sqms_syllabus_question_nr`,
-
-        `SYLLA`.`sqms_syllabus_time` AS `sqms_syllabus_time`,
-
-        `SYLEL`.`element_order` AS `element_order`,
-
-        `SYLEL`.`name` AS `SE_name`,
-
-        `SYLEL`.`description` AS `SE_description`,
-
-        `SYLEL`.`severity` AS `severity`,
-
-        (ROUND((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_time`) / 100) * 2),
-
-                0) / 2) AS `time`,
-
-        (ROUND((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 2),
-
-                0) / 2) AS `question_count`,
-
-        (ROUND(((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 1.2) * 2),
-
-                0) / 2) AS `question_count_max`,
-
-        (ROUND(((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 0.8) * 2),
-
-                0) / 2) AS `question_count_min`,
-
-        CONCAT('State: ',
+		
+		CONCAT('State: ',
 
                 `STATE`.`name`,
 
@@ -366,7 +284,47 @@ VIEW `v_sqms_syllabus_syllabuselement` AS
 
                 ' valid until ',
 
-                `SYLLA`.`validity_period_to`) AS `Syllabus_Info`
+                `SYLLA`.`validity_period_to`) AS `Syllabus_Info`,
+
+        `SYLLA`.`sqms_syllabus_question_nr` AS `sqms_syllabus_question_nr`,
+
+        `SYLLA`.`sqms_syllabus_time` AS `sqms_syllabus_time`,
+		
+		`SYLEL`.`sqms_syllabus_element_id` AS `syllabus_element_id`,
+
+        `SYLEL`.`element_order` AS `element_order`,
+
+        `SYLEL`.`name` AS `SE_name`,
+
+        `SYLEL`.`description` AS `SE_description`,
+
+        `SYLEL`.`severity` AS `severity`,
+        
+        (ROUND((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_time`) / 100) * 2), 0) / 2) AS `time`,
+        
+        (ROUND(((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 0.8) * 2), 0) / 2) AS `question_count_min`,
+        
+        (ROUND((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 2), 0) / 2) AS `question_count`,
+	
+		(ROUND(((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 1.2) * 2), 0) / 2) AS `question_count_max`,
+        
+       	CONCAT('Minutes: ',	TRUNCATE((ROUND((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_time`) / 100) * 2), 0) / 2),0) ,
+
+                ' - min/avg/max Question Number: ',
+                
+                TRUNCATE(ROUND(((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 0.8) * 2), 0) / 2,1),
+
+				'/',
+                
+                TRUNCATE((ROUND((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 2), 0) / 2),1),
+
+				'/',
+                
+                TRUNCATE((ROUND(((((`SYLEL`.`severity` * `SYLLA`.`sqms_syllabus_question_nr`) / 100) * 1.2) * 2), 0) / 2),1)
+                
+                ) 
+
+				AS `SyllabusElement_Info`
 
     FROM
 
@@ -389,6 +347,31 @@ VIEW `v_sqms_syllabus_syllabuselement` AS
             AND (`STATE`.`sqms_syllabus_state_id` = `SYLLA`.`sqms_state_id`)
 
             AND (`TOPIC`.`sqms_topic_id` = `SYLLA`.`sqms_topic_id`));
+
+
+			
+CREATE OR REPLACE
+
+    VIEW `v_sqms_syllabus_syllabuselement_question` AS
+
+    SELECT
+
+        `V_SYLLA`.*,
+
+        `QUEST`.`sqms_question_id` AS `sqms_question_id`,
+
+        `QUEST`.`question` AS `question`
+
+    FROM
+
+        (`v_sqms_syllabus_syllabuselement` `V_SYLLA` JOIN `sqms_syllabus_element_question` `SE_QUEST`) JOIN  `sqms_question` `QUEST`
+	
+	WHERE 
+	
+		(`V_SYLLA`.`syllabus_element_id` = `SE_QUEST`.sqms_syllabus_element_id) AND
+		(`SE_QUEST`.`sqms_question_id` = `QUEST`.`sqms_question_id`);
+
+		
 
 
 # Export in one Cell.
