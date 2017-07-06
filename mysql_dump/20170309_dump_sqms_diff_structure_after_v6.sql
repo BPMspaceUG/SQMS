@@ -440,7 +440,8 @@ VIEW `v_sqms_short_xml_export_moodle2` AS
 
 -- Join all questions in one cell for convenient export to moodle.
 
-CREATE VIEW `v_sqms_moodle_export_full` AS
+CREATE OR REPLACE 
+VIEW `v_sqms_moodle_export_full` AS
     SELECT 
         GROUP_CONCAT(DISTINCT `v_sqms_short_xml_export_moodle2`.`moodle`
             ORDER BY `v_sqms_short_xml_export_moodle2`.`moodle` ASC
