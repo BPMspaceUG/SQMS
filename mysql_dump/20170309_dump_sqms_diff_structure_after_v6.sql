@@ -432,11 +432,11 @@ VIEW `v_sqms_short_xml_export_moodle2` AS
             AND (`g`.`sqms_language_id` = `e`.`sqms_language_id`))))
         JOIN `sqms_answer` `a` ON ((`a`.`sqms_answer_id` = `d`.`sqms_answer_id_1`)))
         JOIN `sqms_answer` `b` ON ((`b`.`sqms_answer_id` = `d`.`sqms_answer_id_2`)))
-        JOIN `sqms_answer` `c` ON ((`c`.`sqms_answer_id` = `d`.`sqms_answer_id_3`)))
+        JOIN `sqms_answer` `c` ON ((`c`.`sqms_answer_id` = `d`.`sqms_answer_id_3`)));
 
--- Alter the where statement where the number represents the sqms_exam_version_id of the set that should be exported.
+-- Alter the where statement where the number represents the sqms_exam_version_id of the set that should be exported. if you add this line you have to erase the semicolon the line above.
 --    WHERE
---        (`d`.`sqms_exam_version_id` = 2)
+--        (`d`.`sqms_exam_version_id` = 2);
 
 -- Join all questions in one cell for convenient export to moodle.
 
@@ -446,4 +446,4 @@ CREATE VIEW `v_sqms_moodle_export_full` AS
             ORDER BY `v_sqms_short_xml_export_moodle2`.`moodle` ASC
             SEPARATOR ' ') AS `quiz`
     FROM
-        `v_sqms_short_xml_export_moodle2`
+        `v_sqms_short_xml_export_moodle2`;
