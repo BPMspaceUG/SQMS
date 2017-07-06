@@ -372,7 +372,9 @@ CREATE OR REPLACE
 		(`SE_QUEST`.`sqms_question_id` = `QUEST`.`sqms_question_id`);
 
 		
+-- Set up global group concat length for moodle export
 
+SET GLOBAL group_concat_max_len=100000;
 
 -- Export every question in one Cell.
 
