@@ -374,7 +374,7 @@ CREATE OR REPLACE
 		
 
 
-# Export in one Cell.
+-- Export every question in one Cell.
 
 CREATE OR REPLACE
 VIEW `v_sqms_short_xml_export_moodle2` AS
@@ -433,3 +433,17 @@ VIEW `v_sqms_short_xml_export_moodle2` AS
         JOIN `sqms_answer` `a` ON ((`a`.`sqms_answer_id` = `d`.`sqms_answer_id_1`)))
         JOIN `sqms_answer` `b` ON ((`b`.`sqms_answer_id` = `d`.`sqms_answer_id_2`)))
         JOIN `sqms_answer` `c` ON ((`c`.`sqms_answer_id` = `d`.`sqms_answer_id_3`)))
+
+-- Alter the where statement where the number represents the sqms_exam_version_id of the set that should be exported.
+--    WHERE
+--        (`d`.`sqms_exam_version_id` = 2)
+
+-- Join all questions in one cell for convenient export to moodle.
+
+CREATE VIEW `v_sqms_moodle_export_full` AS
+    SELECT 
+        GROUP_CONCAT(DISTINCT `v_sqms_short_xml_export_moodle2`.`moodle`
+            ORDER BY `v_sqms_short_xml_export_moodle2`.`moodle` ASC
+            SEPARATOR ' ') AS `quiz`
+    FROM
+        `v_sqms_short_xml_export_moodle2`
