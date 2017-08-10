@@ -17,7 +17,9 @@
             <span class="visible-xs visible-sm"><i class="fa fa-plus"></i> Syll.-El.</span>
           </button>
           <!-- Button to Export all Syllabus to mitsm Homepage -->
-          <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportSyllabus.html', '', actSelection)" ng-disabled="(!actSelection || actSelection.ElementType != 'S')">
+        <!--  <button type="button" class="btn btn-default menuitem" ng-click="open('modalExportSyllabus.html', '', actSelection)" ng-disabled="(!actSelection || actSelection.ElementType != 'S')">-->
+         <button type="button" class="btn btn-default menuitem" ng-click="openpdf(actSelection.ID)" ng-disabled="(!actSelection || actSelection.ElementType != 'S')">
+            
             <i class="fa fa-download"></i> Export:{{actSelection.ID}}
           </button>	
         </span>

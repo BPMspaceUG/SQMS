@@ -208,6 +208,11 @@ module.controller('SQMSController',
         }
       }
     }
+
+      //PDF Lehrplan Export:
+    $scope.openpdf = function(id){
+      document.location="../test/syllabus_export.php?syllabus="+id;
+    }
     //--------------------------------------------------------- #Syllabus
     $scope.expandedSyllabusIDs = [];
     //============================================ Load S
