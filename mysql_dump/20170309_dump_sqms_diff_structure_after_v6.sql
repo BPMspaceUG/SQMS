@@ -450,3 +450,119 @@ VIEW `v_sqms_moodle_export_full` AS
             SEPARATOR ' ') AS `quiz`
     FROM
         `v_sqms_short_xml_export_moodle2`;
+		
+---------------------------
+
+ALTER TABLE `bpmspace_sqms_v6`.`sqms_question_answer_exam_version` 
+ADD COLUMN `sqms_answer_id_4` BIGINT(20) NULL DEFAULT NULL AFTER `sqms_answer_id_3`,
+ADD COLUMN `sqms_answer_id_5` BIGINT(20) NULL DEFAULT NULL AFTER `sqms_answer_id_4`,
+ADD COLUMN `sqms_answer_id_6` BIGINT(20) NULL DEFAULT NULL AFTER `sqms_answer_id_5`;
+
+		
+---------------------
+
+
+CREATE 
+VIEW `v_sqms_question_combinator_4` AS
+    SELECT 
+        CONCAT('[',
+                LPAD(`sqms_answer_1`.`sqms_question_id`,
+                        4,
+                        '0'),
+                '-',
+                LPAD(`sqms_answer_1`.`sqms_answer_id`, 4, '0'),
+                '-',
+                LPAD(`sqms_answer_2`.`sqms_answer_id`, 4, '0'),
+                '-',
+                LPAD(`sqms_answer_3`.`sqms_answer_id`, 4, '0'),
+                '-',
+				LPAD(`sqms_answer_4`.`sqms_answer_id`, 4, '0'),
+                ']',
+                `sqms_topic`.`name`,
+                '-',
+                `sqms_language`.`language`,
+                '-',
+                SUBSTR(`sqms_question`.`question`,
+                    1,
+                    20)) AS `name_text_preview`,
+        `sqms_question`.`sqms_question_id` AS `sqms_question_id`,
+        CONCAT('<p class="sqms_question_text">',
+                FNSTRIPTAGS(`sqms_question`.`question`),
+                '</p>',
+                '<p class="sqms_question_id">[',
+                LPAD(`sqms_answer_1`.`sqms_question_id`,
+                        4,
+                        '0'),
+                '-',
+                LPAD(`sqms_answer_1`.`sqms_answer_id`, 4, '0'),
+                '-',
+                LPAD(`sqms_answer_2`.`sqms_answer_id`, 4, '0'),
+                '-',
+				LPAD(`sqms_answer_3`.`sqms_answer_id`, 4, '0'),
+                '-',
+                LPAD(`sqms_answer_4`.`sqms_answer_id`, 4, '0'),
+                ']</p>') AS `question`,
+        (((`sqms_answer_1`.`correct` + `sqms_answer_2`.`correct`) + `sqms_answer_3`.`correct`)+ `sqms_answer_4`.`correct`) AS `maxpoint`,
+        CONCAT('<p class="sqms_answer_text">',
+                FNSTRIPTAGS(`sqms_answer_1`.`answer`),
+                '</p><p class="sqms_answer_id"></p>') AS `sqms_answer_1`,
+        `sqms_answer_1`.`correct` AS `correct_id_1`,
+		
+        TRUNCATE((`sqms_answer_1`.`correct` / (((`sqms_answer_1`.`correct` + `sqms_answer_2`.`correct`) + `sqms_answer_3`.`correct`)+ `sqms_answer_4`.`correct`) * 100),
+            5) AS `fraction_id_1`,
+        CONCAT('<p class="sqms_answer_text">',
+                FNSTRIPTAGS(`sqms_answer_2`.`answer`),
+                '</p><p class="sqms_answer_id"></p>') AS `sqms_answer_2`,
+        `sqms_answer_2`.`correct` AS `correct_id_2`,
+        TRUNCATE((`sqms_answer_2`.`correct` / (((`sqms_answer_1`.`correct` + `sqms_answer_2`.`correct`) + `sqms_answer_3`.`correct`)+ `sqms_answer_4`.`correct`) * 100),
+            5) AS `fraction_id_2`,
+        CONCAT('<p class="sqms_answer_text">',
+                FNSTRIPTAGS(`sqms_answer_3`.`answer`),
+                '</p><p class="sqms_answer_id"></p>') AS `sqms_answer_3`,
+        `sqms_answer_3`.`correct` AS `correct_id_3`,
+        TRUNCATE((`sqms_answer_3`.`correct` / (((`sqms_answer_1`.`correct` + `sqms_answer_2`.`correct`) + `sqms_answer_3`.`correct`)+ `sqms_answer_4`.`correct`) * 100),
+            5) AS `fraction_id_3`,
+			
+		CONCAT('<p class="sqms_answer_text">',
+                FNSTRIPTAGS(`sqms_answer_4`.`answer`),
+                '</p><p class="sqms_answer_id"></p>') AS `sqms_answer_4`,
+        `sqms_answer_4`.`correct` AS `correct_id_4`,
+        TRUNCATE((`sqms_answer_4`.`correct` / (((`sqms_answer_1`.`correct` + `sqms_answer_2`.`correct`) + `sqms_answer_3`.`correct`)+ `sqms_answer_4`.`correct`) * 100),
+            5) AS `fraction_id_4`,	
+			
+        `sqms_topic`.`sqms_topic_id` AS `sqms_topic_id`,
+        `sqms_language`.`language` AS `language`,
+        CONCAT('[',
+                LPAD(`sqms_answer_1`.`sqms_question_id`,
+                        4,
+                        '0'),
+                '-',
+                LPAD(`sqms_answer_1`.`sqms_answer_id`, 4, '0'),
+                '-',
+                LPAD(`sqms_answer_2`.`sqms_answer_id`, 4, '0'),
+                '-',
+				LPAD(`sqms_answer_3`.`sqms_answer_id`, 4, '0'),
+                '-',
+                LPAD(`sqms_answer_4`.`sqms_answer_id`, 4, '0'),
+                ']') AS `unique_id`
+    FROM
+        ((((((`sqms_answer` `sqms_answer_1`
+        JOIN `sqms_answer` `sqms_answer_2`)
+        JOIN `sqms_answer` `sqms_answer_3`)
+		JOIN `sqms_answer` `sqms_answer_4`)
+        JOIN `sqms_question`)
+        JOIN `sqms_language`)
+        JOIN `sqms_topic` ON (((`sqms_answer_1`.`sqms_question_id` = `sqms_answer_2`.`sqms_question_id`)
+            AND (`sqms_answer_2`.`sqms_question_id` = `sqms_answer_3`.`sqms_question_id`)
+            AND (`sqms_answer_3`.`sqms_question_id` = `sqms_answer_4`.`sqms_question_id`)
+            AND (`sqms_answer_2`.`sqms_answer_id` <> `sqms_answer_1`.`sqms_answer_id`)
+            AND (`sqms_answer_3`.`sqms_answer_id` <> `sqms_answer_1`.`sqms_answer_id`)
+            AND (`sqms_answer_4`.`sqms_answer_id` <> `sqms_answer_1`.`sqms_answer_id`)
+            AND (`sqms_answer_4`.`sqms_answer_id` > `sqms_answer_3`.`sqms_answer_id`)
+            AND (`sqms_answer_3`.`sqms_answer_id` > `sqms_answer_2`.`sqms_answer_id`)
+            AND (`sqms_answer_2`.`sqms_answer_id` > `sqms_answer_1`.`sqms_answer_id`)
+            AND (`sqms_question`.`sqms_question_id` = `sqms_answer_1`.`sqms_question_id`)
+            AND (`sqms_question`.`sqms_language_id` = `sqms_language`.`sqms_language_id`)
+            AND (`sqms_topic`.`sqms_topic_id` = `sqms_question`.`sqms_topic_id`))));
+
+-----------------
