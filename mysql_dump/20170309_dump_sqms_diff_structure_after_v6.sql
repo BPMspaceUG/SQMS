@@ -458,12 +458,195 @@ ADD COLUMN `sqms_answer_id_4` BIGINT(20) NULL DEFAULT NULL AFTER `sqms_answer_id
 ADD COLUMN `sqms_answer_id_5` BIGINT(20) NULL DEFAULT NULL AFTER `sqms_answer_id_4`,
 ADD COLUMN `sqms_answer_id_6` BIGINT(20) NULL DEFAULT NULL AFTER `sqms_answer_id_5`;
 
+
+CREATE VIEW `v_sqms_short_xml_export_moodle2_4` AS
+    SELECT 
+        CONCAT('<question type="multichoiceset">
+                                				<name>
+                                				<text>',
+                CONCAT('[',
+                        LPAD(`sqms_question_answer_exam_version`.`sqms_question_id`,
+                                4,
+                                '0'),
+                        '-',
+                        LPAD(`sqms_question_answer_exam_version`.`sqms_answer_id_1`,
+                                4,
+                                '0'),
+                        '-',
+                        LPAD(`sqms_question_answer_exam_version`.`sqms_answer_id_2`,
+                                4,
+                                '0'),
+                        '-',
+                        LPAD(`sqms_question_answer_exam_version`.`sqms_answer_id_3`,
+                                4,
+                                '0'),
+                        '-',
+                        LPAD(`sqms_question_answer_exam_version`.`sqms_answer_id_4`,
+                                4,
+                                '0'),
+                        ']',
+                        `sqms_topic`.`name`,
+                        '-',
+                        `sqms_language`.`language`,
+                        '-',
+                        SUBSTR(`sqms_question`.`question`,
+                            1,
+                            20)),
+                '</text>
+				</name>
+				<questiontext format="html">
+				<text>',
+                `sqms_question`.`question`,
+                '</text>
+				</questiontext>
+				<answer fraction="',
+                (CASE
+                    WHEN `answer_a`.`correct` THEN 100.00000
+                    ELSE 0
+                END),
+                '">
+				<text>',
+                `answer_a`.`answer`,
+                '</text>
+				</answer>
+				<answer fraction="',
+                (CASE
+                    WHEN `answer_b`.`correct` THEN 100.00000
+                    ELSE 0
+                END),
+                '">
+				<text>',
+                `answer_b`.`answer`,
+                '</text>
+				</answer>
+				<answer fraction="',
+                (CASE
+                    WHEN `answer_c`.`correct` THEN 100.00000
+                    ELSE 0
+                END),
+                '">
+				<text>',
+                `answer_c`.`answer`,
+                '</text>
+				</answer>
+				<answer fraction="',
+                (CASE
+                    WHEN `answer_d`.`correct` THEN 100.00000
+                    ELSE 0
+                END),
+                '">
+				<text>',
+                `answer_d`.`answer`,
+                '</text>
+				</answer>
+				<shuffleanswers>1</shuffleanswers>
+				<single>false</single>
+				<answernumbering>123</answernumbering>
+				</question>') AS `moodle`
+    FROM
+        (((((((`sqms_question_answer_exam_version`
+        JOIN `sqms_topic`)
+        JOIN `sqms_language`)
+        JOIN `sqms_question` ON (((`sqms_question_answer_exam_version`.`sqms_question_id` = `sqms_question`.`sqms_question_id`)
+            AND (`sqms_topic`.`sqms_topic_id` = `sqms_question`.`sqms_topic_id`)
+            AND (`sqms_language`.`sqms_language_id` = `sqms_question`.`sqms_language_id`))))
+        JOIN `sqms_answer` `answer_a` ON ((`answer_a`.`sqms_answer_id` = `sqms_question_answer_exam_version`.`sqms_answer_id_1`)))
+        JOIN `sqms_answer` `answer_b` ON ((`answer_b`.`sqms_answer_id` = `sqms_question_answer_exam_version`.`sqms_answer_id_2`)))
+        JOIN `sqms_answer` `answer_c` ON ((`answer_c`.`sqms_answer_id` = `sqms_question_answer_exam_version`.`sqms_answer_id_3`)))
+        JOIN `sqms_answer` `answer_d` ON ((`answer_d`.`sqms_answer_id` = `sqms_question_answer_exam_version`.`sqms_answer_id_4`)))
+    WHERE
+        (`sqms_question_answer_exam_version`.`sqms_exam_version_id` = 54689);
+
+		---------------------
+
+CREATE VIEW `v_sqms_short_xml_export_moodle2_3` AS
+    SELECT 
+        CONCAT('<question type="multichoiceset">
+			<name>
+			<text>',
+                CONCAT('[',
+                        LPAD(`sqms_question_answer_exam_version`.`sqms_question_id`,
+                                4,
+                                '0'),
+                        '-',
+                        LPAD(`sqms_question_answer_exam_version`.`sqms_answer_id_1`,
+                                4,
+                                '0'),
+                        '-',
+                        LPAD(`sqms_question_answer_exam_version`.`sqms_answer_id_2`,
+                                4,
+                                '0'),
+                        '-',
+                        LPAD(`sqms_question_answer_exam_version`.`sqms_answer_id_3`,
+                                4,
+                                '0'),
+                        ']',
+                        `sqms_topic`.`name`,
+                        '-',
+                        `sqms_language`.`language`,
+                        '-',
+                        SUBSTR(`sqms_question`.`question`,
+                            1,
+                            20)),
+                '</text>
+				</name>
+				<questiontext format="html">
+				<text>',
+                `sqms_question`.`question`,
+                '</text>
+				</questiontext>
+				<answer fraction="',
+                (CASE
+                    WHEN `answer_a`.`correct` THEN 100.00000
+                    ELSE 0
+                END),
+                '">
+				<text>',
+                `answer_a`.`answer`,
+                '</text>
+				</answer>
+				<answer fraction="',
+                (CASE
+                    WHEN `answer_b`.`correct` THEN 100.00000
+                    ELSE 0
+                END),
+                '">
+				<text>',
+                `answer_b`.`answer`,
+                '</text>
+				</answer>
+				<answer fraction="',
+                (CASE
+                    WHEN `answer_c`.`correct` THEN 100.00000
+                    ELSE 0
+                END),
+                '">
+				<text>',
+                `answer_c`.`answer`,
+                '</text>
+				</answer>
+				<shuffleanswers>1</shuffleanswers>
+				<single>false</single>
+				<answernumbering>123</answernumbering>
+				</question>
+				') AS `moodle`
+    FROM
+        ((((((`sqms_question_answer_exam_version`
+        JOIN `sqms_topic`)
+        JOIN `sqms_language`)
+        JOIN `sqms_question` ON (((`sqms_question_answer_exam_version`.`sqms_question_id` = `sqms_question`.`sqms_question_id`)
+            AND (`sqms_topic`.`sqms_topic_id` = `sqms_question`.`sqms_topic_id`)
+            AND (`sqms_language`.`sqms_language_id` = `sqms_question`.`sqms_language_id`))))
+        JOIN `sqms_answer` `answer_a` ON ((`answer_a`.`sqms_answer_id` = `sqms_question_answer_exam_version`.`sqms_answer_id_1`)))
+        JOIN `sqms_answer` `answer_b` ON ((`answer_b`.`sqms_answer_id` = `sqms_question_answer_exam_version`.`sqms_answer_id_2`)))
+        JOIN `sqms_answer` `answer_c` ON ((`answer_c`.`sqms_answer_id` = `sqms_question_answer_exam_version`.`sqms_answer_id_3`)))
+    WHERE
+        (`sqms_question_answer_exam_version`.`sqms_exam_version_id` = 54683);
 		
----------------------
 
+		---------------------
 
-CREATE 
-VIEW `v_sqms_question_combinator_4` AS
+CREATE VIEW `v_sqms_question_combinator_4` AS
     SELECT 
         CONCAT('[',
                 LPAD(`sqms_answer_1`.`sqms_question_id`,
@@ -566,3 +749,155 @@ VIEW `v_sqms_question_combinator_4` AS
             AND (`sqms_topic`.`sqms_topic_id` = `sqms_question`.`sqms_topic_id`))));
 
 -----------------
+
+CREATE VIEW `v_sqms_moodle_export_full2_4` AS
+    SELECT 
+        GROUP_CONCAT(DISTINCT REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(`v_sqms_short_xml_export_moodle2_4`.`moodle`,
+                                                                                                                                                '<p><span>',
+                                                                                                                                                'lt;p&gt;&lt;span'),
+                                                                                                                                            '</p></span>',
+                                                                                                                                            '&lt;/span&gt;&lt;/p&gt;'),
+                                                                                                                                        '</p>',
+                                                                                                                                        '&lt;/p&gt;'),
+                                                                                                                                    '<p>',
+                                                                                                                                    '&lt;p&gt;'),
+                                                                                                                                '<span>',
+                                                                                                                                '&lt;span&gt;'),
+                                                                                                                            '</span>',
+                                                                                                                            '&lt;/span&gt;'),
+                                                                                                                        '<span class="st"',
+                                                                                                                        '&lt;span; classe="st"'),
+                                                                                                                    '&uuml;',
+                                                                                                                    '&amp;uuml;'),
+                                                                                                                '&auml;',
+                                                                                                                '&amp;auml;'),
+                                                                                                            '&ouml;',
+                                                                                                            '&amp;ouml;'),
+                                                                                                        '&szlig;',
+                                                                                                        '&amp;szlig;'),
+                                                                                                    '&nbsp;',
+                                                                                                    '&amp;nbsp;'),
+                                                                                                '<ROW>',
+                                                                                                ''),
+                                                                                            '</ROW>',
+                                                                                            ''),
+                                                                                        '<DATA>',
+                                                                                        ''),
+                                                                                    '</DATA>',
+                                                                                    ''),
+                                                                                '<moodle>',
+                                                                                ''),
+                                                                            '</moodle>',
+                                                                            ''),
+                                                                        '<span',
+                                                                        '&lt;span;'),
+                                                                    '&Uuml;',
+                                                                    '&amp;Uuml;'),
+                                                                '&Auml;',
+                                                                '&amp;Auml;'),
+                                                            '&Ouml;',
+                                                            '&amp;Ouml;'),
+                                                        'Aktivit&au',
+                                                        'Aktivit&amp;auml'),
+                                                    'F&uuml',
+                                                    'F&amp;uuml'),
+                                                'grunds&aum',
+                                                'grunds&amp;auml;'),
+                                            'vollst&a</text>',
+                                            'vollst&amp;auml;</text>'),
+                                        '&bdquo;',
+                                        '&amp;bdquo;'),
+                                    '&ldquo;',
+                                    '&amp;ldquo;'),
+                                'Welche Angriffsm&</text>',
+                                'Welche Angriffsm&amp;ouml;</text>'),
+                            'Welche Gegenma&sz</text>',
+                            'Welche Gegenma&amp;szlig;</text>'),
+                        'Welche Antwortm&o</text>',
+                        'Welche Antwortm&amp;ouml;</text>'),
+                    '<br />',
+                    '&lt;br/&gt;'),
+                '&ndash;',
+                '&amp;ndash;')
+            ORDER BY `v_sqms_short_xml_export_moodle2_4`.`moodle` ASC
+            SEPARATOR ' ') AS `quiz`
+    FROM
+        `v_sqms_short_xml_export_moodle2_4`;
+		
+-------------------------------------------------------------
+
+CREATE VIEW `v_sqms_moodle_export_full2_3` AS
+    SELECT 
+        GROUP_CONCAT(DISTINCT REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(`v_sqms_short_xml_export_moodle2_3`.`moodle`,
+                                                                                                                                                '<p><span>',
+                                                                                                                                                'lt;p&gt;&lt;span'),
+                                                                                                                                            '</p></span>',
+                                                                                                                                            '&lt;/span&gt;&lt;/p&gt;'),
+                                                                                                                                        '</p>',
+                                                                                                                                        '&lt;/p&gt;'),
+                                                                                                                                    '<p>',
+                                                                                                                                    '&lt;p&gt;'),
+                                                                                                                                '<span>',
+                                                                                                                                '&lt;span&gt;'),
+                                                                                                                            '</span>',
+                                                                                                                            '&lt;/span&gt;'),
+                                                                                                                        '<span class="st"',
+                                                                                                                        '&lt;span; classe="st"'),
+                                                                                                                    '&uuml;',
+                                                                                                                    '&amp;uuml;'),
+                                                                                                                '&auml;',
+                                                                                                                '&amp;auml;'),
+                                                                                                            '&ouml;',
+                                                                                                            '&amp;ouml;'),
+                                                                                                        '&szlig;',
+                                                                                                        '&amp;szlig;'),
+                                                                                                    '&nbsp;',
+                                                                                                    '&amp;nbsp;'),
+                                                                                                '<ROW>',
+                                                                                                ''),
+                                                                                            '</ROW>',
+                                                                                            ''),
+                                                                                        '<DATA>',
+                                                                                        ''),
+                                                                                    '</DATA>',
+                                                                                    ''),
+                                                                                '<moodle>',
+                                                                                ''),
+                                                                            '</moodle>',
+                                                                            ''),
+                                                                        '<span',
+                                                                        '&lt;span;'),
+                                                                    '&Uuml;',
+                                                                    '&amp;Uuml;'),
+                                                                '&Auml;',
+                                                                '&amp;Auml;'),
+                                                            '&Ouml;',
+                                                            '&amp;Ouml;'),
+                                                        'Aktivit&au',
+                                                        'Aktivit&amp;auml'),
+                                                    'F&uuml',
+                                                    'F&amp;uuml'),
+                                                'grunds&aum',
+                                                'grunds&amp;auml;'),
+                                            'vollst&a</text>',
+                                            'vollst&amp;auml;</text>'),
+                                        '&bdquo;',
+                                        '&amp;bdquo;'),
+                                    '&ldquo;',
+                                    '&amp;ldquo;'),
+                                'Welche Angriffsm&</text>',
+                                'Welche Angriffsm&amp;ouml;</text>'),
+                            'Welche Gegenma&sz</text>',
+                            'Welche Gegenma&amp;szlig;</text>'),
+                        'Welche Antwortm&o</text>',
+                        'Welche Antwortm&amp;ouml;</text>'),
+                    '<br />',
+                    '&lt;br/&gt;'),
+                '&ndash;',
+                '&amp;ndash;')
+            ORDER BY `v_sqms_short_xml_export_moodle2_3`.`moodle` ASC
+            SEPARATOR ' ') AS `quiz`
+    FROM
+        `v_sqms_short_xml_export_moodle2_3`;
+
+
