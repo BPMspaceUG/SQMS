@@ -901,3 +901,30 @@ CREATE VIEW `v_sqms_moodle_export_full2_3` AS
         `v_sqms_short_xml_export_moodle2_3`;
 
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `csvexport`(IN table_s CHAR(255), IN table_n CHAR(255), IN outfile_path CHAR(255))
+BEGIN
+SET @table_schema = table_s;
+SET @table_n = table_n;
+SET @outfile_path = outfile_path;
+
+SET @col_names = (
+SELECT GROUP_CONCAT(QUOTE(column_name)) AS columns
+FROM information_schema.columns
+WHERE table_schema = @table_schema
+AND table_name = @table_n);
+
+SET @cols = CONCAT('(SELECT ', @col_names, ')');
+
+SET @query = CONCAT('(SELECT * FROM ', @table_schema, '.', @table_n,
+' INTO OUTFILE \'',@outfile_path,'/',@table_n,'.csv\'
+FIELDS ENCLOSED BY \'\\\'\' TERMINATED BY \'\t\' ESCAPED BY \'\'
+LINES TERMINATED BY \'\n\')');
+
+/* Concatenates column names to query */
+SET @sql = CONCAT(@cols, ' UNION ALL ', @query);
+
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+END
