@@ -928,3 +928,6 @@ PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 END
+
+USE `bpmspace_sqms_v6`;
+CREATE  OR REPLACE VIEW `v_sqms_check_double_answers` AS SELECT sqms_exam_version_id, sqms_question_id, sqms_answer_id_1, sqms_answer_id_2, sqms_answer_id_3, sqms_answer_id_4 FROM bpmspace_sqms_v6.sqms_question_answer_exam_version where sqms_answer_id_1 = sqms_answer_id_2 OR sqms_answer_id_1 = sqms_answer_id_3 OR sqms_answer_id_1 = sqms_answer_id_4 OR sqms_answer_id_2 = sqms_answer_id_3 OR sqms_answer_id_2 = sqms_answer_id_4 OR sqms_answer_id_3 = sqms_answer_id_4;;
