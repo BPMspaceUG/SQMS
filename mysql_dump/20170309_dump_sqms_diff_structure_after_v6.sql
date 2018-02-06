@@ -939,3 +939,23 @@ WHERE sqms_answer_id_1 = sqms_answer_id_2
   OR sqms_answer_id_2 = sqms_answer_id_3 
   OR sqms_answer_id_2 = sqms_answer_id_4 
   OR sqms_answer_id_3 = sqms_answer_id_4;
+
+CREATE  OR REPLACE VIEW `v_sqms_check_wrong_answer_1` 
+AS SELECT sqaev.* FROM bpmspace_sqms_v6.sqms_question_answer_exam_version sqaev, sqms_answer a
+WHERE sqaev.sqms_answer_id_1 = a.sqms_answer_id 
+  AND a.sqms_question_id != sqaev.sqms_question_id;
+
+CREATE  OR REPLACE VIEW `v_sqms_check_wrong_answer_2` 
+AS SELECT sqaev.* FROM bpmspace_sqms_v6.sqms_question_answer_exam_version sqaev, sqms_answer a
+WHERE sqaev.sqms_answer_id_2 = a.sqms_answer_id 
+  AND a.sqms_question_id != sqaev.sqms_question_id;
+  
+CREATE  OR REPLACE VIEW `v_sqms_check_wrong_answer_3` 
+AS SELECT sqaev.* FROM bpmspace_sqms_v6.sqms_question_answer_exam_version sqaev, sqms_answer a
+WHERE sqaev.sqms_answer_id_3 = a.sqms_answer_id 
+  AND a.sqms_question_id != sqaev.sqms_question_id;
+
+CREATE  OR REPLACE VIEW `v_sqms_check_wrong_answer_4` 
+AS SELECT sqaev.* FROM bpmspace_sqms_v6.sqms_question_answer_exam_version sqaev, sqms_answer a
+WHERE sqaev.sqms_answer_id_4 = a.sqms_answer_id 
+  AND a.sqms_question_id != sqaev.sqms_question_id;
