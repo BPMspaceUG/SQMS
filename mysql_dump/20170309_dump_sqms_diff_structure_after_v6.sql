@@ -973,3 +973,14 @@ CREATE  OR REPLACE TABLE `sqms_question_answer_exam_version_2` (
   CONSTRAINT `sqms_exam_version_id_fk_43` FOREIGN KEY (`sqms_exam_version_id`) REFERENCES `sqms_exam_version` (`sqms_exam_version_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `sqms_question_id_fk_45` FOREIGN KEY (`sqms_question_id`) REFERENCES `sqms_question` (`sqms_question_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=564299 DEFAULT CHARSET=utf8;
+
+CREATE  OR REPLACE VIEW `v_sqms_check_double_answers_2` AS
+    SELECT 
+        `sqms_question_answer_exam_version_2`.`sqms_exam_version_id` AS `sqms_exam_version_id`,
+        `sqms_question_answer_exam_version_2`.`sqms_question_id` AS `sqms_question_id`,
+        `sqms_question_answer_exam_version_2`.`sqms_answer_id` AS `sqms_answer_id`,
+		COUNT(sqms_question_answer_exam_version_id) AS cnt
+    FROM
+        `sqms_question_answer_exam_version_2`
+	GROUP BY `sqms_exam_version_id`,`sqms_question_id`,`sqms_answer_id`
+	HAVING cnt > 1
