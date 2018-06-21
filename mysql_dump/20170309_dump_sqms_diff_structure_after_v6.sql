@@ -959,3 +959,17 @@ CREATE  OR REPLACE VIEW `v_sqms_check_wrong_answer_4`
 AS SELECT sqaev.* FROM bpmspace_sqms_v6.sqms_question_answer_exam_version sqaev, sqms_answer a
 WHERE sqaev.sqms_answer_id_4 = a.sqms_answer_id 
   AND a.sqms_question_id != sqaev.sqms_question_id;
+		 
+CREATE  OR REPLACE TABLE `sqms_question_answer_exam_version_2` (
+  `sqms_question_answer_exam_version_id` int(11) NOT NULL AUTO_INCREMENT,
+  `sqms_exam_version_id` int(11) NOT NULL,
+  `sqms_question_id` bigint(20) NOT NULL,
+  `sqms_answer_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`sqms_question_answer_exam_version_id`),
+  KEY `sqms_exam_version_id_fk_43_idx` (`sqms_exam_version_id`),
+  KEY `sqms_question_id_fk_45_idx` (`sqms_question_id`),
+  KEY `sqms_answer_id_fk_47_idx` (`sqms_answer_id`),
+  CONSTRAINT `sqms_answer_id_fk_47` FOREIGN KEY (`sqms_answer_id`) REFERENCES `sqms_answer` (`sqms_answer_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `sqms_exam_version_id_fk_43` FOREIGN KEY (`sqms_exam_version_id`) REFERENCES `sqms_exam_version` (`sqms_exam_version_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `sqms_question_id_fk_45` FOREIGN KEY (`sqms_question_id`) REFERENCES `sqms_question` (`sqms_question_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=564299 DEFAULT CHARSET=utf8;
