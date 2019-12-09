@@ -1,3 +1,4 @@
+use bpmspace_sqms_v6_anonym;
 SET GLOBAL log_bin_trust_function_creators = 1;
 
 DROP function if exists generate_fname;
@@ -228,17 +229,6 @@ UPDATE `sqms_syllabus` SET `description` = concat("Description Syllabus with ID 
 UPDATE `sqms_syllabus` SET `owner`= generate_fname();
 
 
-UPDATE `sqms_exam_version` EV1
-  INNER JOIN sqms_syllabus ON EV1.sqms_syllabus_id =
-    sqms_syllabus.sqms_syllabus_id
-  INNER JOIN sqms_language ON EV1.sqms_language_id =
-    sqms_language.sqms_language_id
-SET
-sqms_exam_version_name = concat ("Exam Set for ", `sqms_syllabus`.`name`," - ",
-  `sqms_language`.`language_short`," set-",
-  `EV1`.`sqms_exam_set`," v-",
-  `EV1`.`sqms_exam_version`, 
-  COALESCE((select "-SAMPLE_SET" from `sqms_exam_version` EV2 where `EV2`.`sqms_exam_version_sample_set` = 1 AND `EV1`.`sqms_exam_version_id` = `EV2`.`sqms_exam_version_id`),''));
 
 UPDATE `sqms_exam_version` EV1
   INNER JOIN sqms_syllabus ON EV1.sqms_syllabus_id =
@@ -246,13 +236,13 @@ UPDATE `sqms_exam_version` EV1
   INNER JOIN sqms_language ON EV1.sqms_language_id =
     sqms_language.sqms_language_id
 SET  
-sqms_exam_version_name = concat ("Exam Set with ID [", `sqms_exam_version_id`,"] ",
+  EV1.`sqms_exam_version_name` = concat ("Exam Set with ID [", `sqms_exam_version_id`,"] ",
   `sqms_language`.`language_short`," set-",
   `EV1`.`sqms_exam_set`," v-",
-  `EV1`.`sqms_exam_version`, 
-  COALESCE((select "-SAMPLE_SET" from `sqms_exam_version` EV2 where `EV2`.`sqms_exam_version_sample_set` = 1 AND `EV1`.`sqms_exam_version_id` = `EV2`.`sqms_exam_version_id`),''))
-  where sqms_syllabus_id IS NULL;
-  ;
+  `EV1`.`sqms_exam_version`)  ;
+
+UPDATE `sqms_exam_version` SET `sqms_exam_version_name`=concat(`sqms_exam_version_name`," - SAMPLE SET") where sqms_exam_version_sample_set = '1';
+UPDATE `sqms_exam_version` SET `sqms_exam_version_name`=concat(`sqms_exam_version_id`," - MULTIPLE Syllaby") where sqms_syllabus_id IS NULL;
 
 
 call add_html2_fields();
